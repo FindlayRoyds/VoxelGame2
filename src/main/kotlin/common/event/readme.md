@@ -1,0 +1,6 @@
+- client network events:
+  - events received from the server and run on the client
+- server network events:
+  - events received from the client and run on the server
+- server events:
+  - events added to the event queue by the server, run on the server
