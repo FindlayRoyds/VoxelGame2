@@ -3,12 +3,11 @@ package common.player
 import java.util.*
 
 class Players {
-    var playersMap = Collections.synchronizedMap(HashMap<Int, Player>())
+    private var playersMap: MutableMap<Int, Player> = Collections.synchronizedMap(HashMap<Int, Player>())
     private var nextAvailableUserID = 0
 
     fun addPlayer(player: Player) {
         playersMap[player.userID] = player
-        println("Player ${player.username} was added!")
     }
 
     fun getNextUserID(): Int {

@@ -28,9 +28,11 @@ class NetworkHandler(private val socket: Socket, private val eventQueue: EventQu
         val reader = ObjectInputStream(socket.getInputStream())
 
         while (true) {
-            val event: Event = reader.readObject() as Event
-            event.socket = socket
-            eventQueue.addEvent(event)
+            val event = reader.readObject()
+            if (event is Event) {
+                event.socket = socket
+                eventQueue.addEvent(event)
+            }
         }
     }
 }
