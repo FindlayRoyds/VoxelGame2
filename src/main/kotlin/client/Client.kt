@@ -29,6 +29,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     private fun main() {
         while (true) {
             eventQueue.runEvents()
+            Thread.sleep(1000)
+            println(GameEngineProvider.getGameEngine().players.getPlayerList())
         }
     }
 }

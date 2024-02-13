@@ -5,6 +5,7 @@ import common.GameEngineProvider
 import common.event.Event
 import common.networking.SocketHandler
 import common.player.Player
+import server.Server
 import java.net.ServerSocket
 import java.net.Socket
 import kotlin.concurrent.thread
@@ -42,6 +43,20 @@ class ServerNetwork(port: Int, private val eventQueue: EventQueue) {
 
     fun sendEventToPlayer(event: Event, player: Player) {
         sendEventToUserID(event, player.userID)
+    }
+
+    fun sendEventToEveryone(event: Event) {
+        val server = GameEngineProvider.getGameEngine() as Server
+        for (player in server.players.getPlayerList())
+            sendEventToPlayer(event, player)
+
+    }
+
+    fun sendEventToEveryoneExcluding(event: Event, excludedPlayer: Player) {
+        val server = GameEngineProvider.getGameEngine() as Server
+        for (player in server.players.getPlayerList())
+            if (player != excludedPlayer)
+                sendEventToPlayer(event, player)
     }
 
     fun removeUserID(userID: Int) {
