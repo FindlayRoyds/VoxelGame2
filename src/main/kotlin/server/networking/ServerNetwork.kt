@@ -3,17 +3,17 @@ package server.networking
 import common.EventQueue
 import common.GameEngineProvider
 import common.event.Event
-import common.networking.NetworkHandler
+import common.networking.SocketHandler
 import common.player.Player
 import java.net.ServerSocket
 import java.net.Socket
 import kotlin.concurrent.thread
 
-class ServerSocketHandler(port: Int, private val eventQueue: EventQueue) {
+class ServerNetwork(port: Int, private val eventQueue: EventQueue) {
     private var serverSocket = ServerSocket(port)
     private var socketToUserIDMap = HashMap<Socket, Int>()
     private var userIDToSocketMap = HashMap<Int, Socket>()
-    private var networkHandlers = HashMap<Socket, NetworkHandler>()
+    private var socketHandlers = HashMap<Socket, SocketHandler>()
     private var listenerThread: Thread
 
     init {
@@ -33,7 +33,7 @@ class ServerSocketHandler(port: Int, private val eventQueue: EventQueue) {
     }
 
     private fun sendEventToSocket(event: Event, socket: Socket) {
-        networkHandlers[socket]!!.sendEvent(event)
+        socketHandlers[socket]!!.sendEvent(event)
     }
 
     fun sendEventToUserID(event: Event, userID: Int) {
@@ -42,6 +42,13 @@ class ServerSocketHandler(port: Int, private val eventQueue: EventQueue) {
 
     fun sendEventToPlayer(event: Event, player: Player) {
         sendEventToUserID(event, player.userID)
+    }
+
+    fun removeUserID(userID: Int) {
+        val socket = userIDToSocketMap[userID]
+        socketToUserIDMap.remove(socket)
+        socketHandlers.remove(socket)
+        userIDToSocketMap.remove(userID)
     }
 
     private fun listener() {
@@ -54,8 +61,8 @@ class ServerSocketHandler(port: Int, private val eventQueue: EventQueue) {
 
             thread {
                 GameEngineProvider.setGameEngine(gameEngine)
-                val networkHandler = NetworkHandler(clientSocket, eventQueue)
-                networkHandlers[clientSocket] = networkHandler
+                val socketHandler = SocketHandler(clientSocket, eventQueue)
+                socketHandlers[clientSocket] = socketHandler
             }
         }
     }

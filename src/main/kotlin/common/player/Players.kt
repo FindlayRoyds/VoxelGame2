@@ -20,7 +20,7 @@ class Players {
         return playersMap[userID]
     }
 
-    fun removePlayer(userID: Int) {
-        playersMap.remove(userID)
+    fun removePlayer(player: Player) {
+        playersMap.remove(player.userID)
     }
 }

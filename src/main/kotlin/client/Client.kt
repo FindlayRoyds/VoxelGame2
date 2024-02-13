@@ -2,19 +2,19 @@ package client
 
 import common.GameEngine
 import common.GameEngineProvider
-import common.event.serverevents.ConnectionRequest
-import common.networking.NetworkHandler
+import common.event.serverevents.ConnectionRequestEvent
+import common.networking.SocketHandler
 import java.net.Socket
 
 class Client(serverAddress: String, serverPort: Int): GameEngine() {
-    private var networkHandler: NetworkHandler
+    private var socketHandler: SocketHandler
 
     init {
         GameEngineProvider.setGameEngine(this)
-        networkHandler = NetworkHandler(Socket(serverAddress, serverPort), eventQueue)
+        socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
         println("Client Starting...")
 
-        networkHandler.sendEvent(ConnectionRequest("MineOrienteer69"))
+        socketHandler.sendEvent(ConnectionRequestEvent("MineOrienteer69"))
         main()
     }
 

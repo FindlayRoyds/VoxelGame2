@@ -3,17 +3,17 @@ package server
 import common.Config
 import common.GameEngine
 import common.GameEngineProvider
-import server.networking.ServerSocketHandler
+import server.networking.ServerNetwork
 
 
 class Server(port: Int) : GameEngine() {
-    var serverSocketHandler: ServerSocketHandler
+    var serverNetwork: ServerNetwork
 
     init {
         GameEngineProvider.setGameEngine(this)
         println("Server starting...")
 
-        serverSocketHandler = ServerSocketHandler(port, eventQueue)
+        serverNetwork = ServerNetwork(port, eventQueue)
         this.main()
     }
 

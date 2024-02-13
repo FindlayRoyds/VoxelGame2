@@ -5,6 +5,10 @@ import java.net.Socket
 
 abstract class Event : Serializable {
     var socket: Socket? = null
-    abstract fun run()
+
+    open fun run() {
+        event()
+    }
+
     abstract fun event()
 }

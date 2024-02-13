@@ -3,12 +3,13 @@ package common.networking
 import common.EventQueue
 import common.GameEngineProvider
 import common.event.Event
+import common.event.commonevents.DisconnectEvent
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.Socket
 import kotlin.concurrent.thread
 
-class NetworkHandler(private val socket: Socket, private val eventQueue: EventQueue) {
+class SocketHandler(private val socket: Socket, private val eventQueue: EventQueue) {
     private val writer = ObjectOutputStream(socket.getOutputStream())
     private var listenerThread: Thread
 
@@ -27,12 +28,20 @@ class NetworkHandler(private val socket: Socket, private val eventQueue: EventQu
     private fun listener() {
         val reader = ObjectInputStream(socket.getInputStream())
 
-        while (true) {
-            val event = reader.readObject()
-            if (event is Event) {
-                event.socket = socket
-                eventQueue.addEvent(event)
+        try {
+            while (true) {
+                val event = reader.readObject()
+                if (event is Event) {
+                    event.socket = socket
+                    eventQueue.addEvent(event)
+                }
             }
+        } catch (exception: Exception) {
+            val disconnectEvent = DisconnectEvent()
+            disconnectEvent.socket = socket
+            eventQueue.addEvent(disconnectEvent)
+        } finally {
+            socket.close()
         }
     }
 }

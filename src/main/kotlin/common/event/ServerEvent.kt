@@ -14,7 +14,7 @@ abstract class ServerEvent : Event() {
 
         if (socket != null) {
             val server = GameEngineProvider.getGameEngine() as Server
-            val userID = server.serverSocketHandler.getUserIDFromSocket(socket!!)
+            val userID = server.serverNetwork.getUserIDFromSocket(socket!!)
             playerReceivedFrom = server.players.getPlayer(userID)
         }
 
