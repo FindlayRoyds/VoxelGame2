@@ -23,6 +23,7 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("MainKt")
+    applicationDefaultJvmArgs = listOf("-XstartOnFirstThread")
 }
 
 dependencies {

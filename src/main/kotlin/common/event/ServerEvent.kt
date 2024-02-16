@@ -5,7 +5,7 @@ import common.player.Player
 import server.Server
 
 abstract class ServerEvent : Event() {
-    protected var playerReceivedFrom: Player? = null
+    protected var player: Player? = null
     protected var server: Server? = null
 
     override fun run() {
@@ -17,7 +17,7 @@ abstract class ServerEvent : Event() {
         if (socket != null) {
             val server = GameEngineProvider.getGameEngine() as Server
             val userID = server.serverNetwork.getUserIDFromSocket(socket!!)
-            playerReceivedFrom = server.players.getPlayer(userID)
+            player = server.players.getPlayer(userID!!)
         }
 
         event()

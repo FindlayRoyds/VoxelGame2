@@ -6,7 +6,7 @@ import common.player.Player
 
 class ConnectionRequestEvent(private val username: String) : ServerEvent() {
     override fun event() {
-        val newPlayerUserID = server!!.serverNetwork.getUserIDFromSocket(socket!!)
+        val newPlayerUserID = server!!.serverNetwork.getUserIDFromSocket(socket!!)!!
         val newPlayer = Player(newPlayerUserID, username)
         server!!.players.addPlayer(newPlayer)
 

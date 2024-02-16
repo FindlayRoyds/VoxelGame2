@@ -5,3 +5,4 @@ gradle/
 gradlew
 gradlew.*
 .DS_Store
+out/

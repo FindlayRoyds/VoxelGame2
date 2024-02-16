@@ -1,21 +1,31 @@
 package client
 
+import client.graphics.SceneManager
 import common.GameEngine
 import common.GameEngineProvider
 import common.event.serverevents.ConnectionRequestEvent
+import common.event.serverevents.SendChatEvent
 import common.networking.SocketHandler
 import java.net.Socket
+import kotlin.concurrent.thread
 
 class Client(serverAddress: String, serverPort: Int): GameEngine() {
-    private var socketHandler: SocketHandler
+    var socketHandler: SocketHandler
+    private var sceneManager: SceneManager
 
     init {
+        println("Client Starting...")
         GameEngineProvider.setGameEngine(this)
         socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
-        println("Client Starting...")
+        thread {
+            GameEngineProvider.setGameEngine(this)
+            main()
+        }
 
         socketHandler.sendEvent(ConnectionRequestEvent("MineOrienteer69"))
-        main()
+
+        sceneManager = SceneManager(eventQueue)
+        sceneManager.run()
     }
 
     override fun isServer(): Boolean {
@@ -27,10 +37,17 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun main() {
+        thread { inputListener() }
         while (true) {
             eventQueue.runEvents()
-            Thread.sleep(1000)
-            println(GameEngineProvider.getGameEngine().players.getPlayerList())
+        }
+    }
+
+    private fun inputListener() {
+        while (true) {
+            println("Enter message to send: ")
+            val sendChatEvent = SendChatEvent(readln())
+            socketHandler.sendEvent(sendChatEvent)
         }
     }
 }

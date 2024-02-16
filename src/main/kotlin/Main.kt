@@ -5,16 +5,15 @@ import kotlin.concurrent.thread
 
 
 fun startServer(port: Int) {
-    println("Server thread: ${Thread.currentThread().name}")
     Server(port)
 }
 
 fun startClient(address: String, port: Int) {
-    println("Client thread: ${Thread.currentThread().name}")
     Client(address, port)
 }
 
 fun startClientWithoutAddress(port: Int) {
+    print("Enter server address: ")
     val address = readln()
     Client(address, port)
 }
@@ -28,6 +27,7 @@ fun main() {
     val address = "localhost"
     val port = 4444
 
+    print("Startup type (client, server, both): ")
     when (readlnOrNull()) {
         "server" -> startServer(port)
         "client" -> startClientWithoutAddress(port)

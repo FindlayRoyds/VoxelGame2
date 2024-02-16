@@ -25,8 +25,8 @@ class ServerNetwork(port: Int, private val eventQueue: EventQueue) {
         }
     }
 
-    fun getUserIDFromSocket(socket: Socket): Int {
-        return socketToUserIDMap[socket]!!
+    fun getUserIDFromSocket(socket: Socket): Int? {
+        return socketToUserIDMap[socket]
     }
 
     private fun getSocketFromUserID(userID: Int): Socket {

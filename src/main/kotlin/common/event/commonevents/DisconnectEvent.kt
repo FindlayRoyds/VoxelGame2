@@ -3,6 +3,7 @@ package common.event.commonevents
 import common.GameEngineProvider
 import common.event.Event
 import server.Server
+import kotlin.system.exitProcess
 
 class DisconnectEvent : Event() {
     override fun event() {
@@ -10,13 +11,17 @@ class DisconnectEvent : Event() {
         if (gameEngine.isServer()) {
             val server = gameEngine as Server
             val userID = server.serverNetwork.getUserIDFromSocket(socket!!)
-            server.serverNetwork.removeUserID(userID)
-            val player = server.players.getPlayer(userID)
-            if (player != null) {
-                server.players.removePlayer(player)
+            if (userID != null) {
+                server.serverNetwork.removeUserID(userID)
+                val player = server.players.getPlayer(userID)
+                if (player != null) {
+                    server.players.removePlayer(player)
+                }
             }
+            socket?.close()
         } else {
             println("Disconnected from server")
+            exitProcess(0)
         }
     }
 }
