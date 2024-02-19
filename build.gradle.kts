@@ -27,7 +27,7 @@ application {
 }
 
 dependencies {
-    implementation("org.lwjgl:lwjgl:3.1.0")
+    implementation("org.lwjgl:lwjgl:3.3.3")
     implementation("org.lwjgl:lwjgl-glfw:3.3.3")
     implementation("org.lwjgl:lwjgl-opengl:3.3.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
@@ -110,6 +110,8 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-xxhash::$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-yoga::$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-zstd::$lwjglNatives")
+
+    implementation("org.tinylog:tinylog:1.3.6")
 }
 
 kotlin {
