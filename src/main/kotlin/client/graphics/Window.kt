@@ -3,8 +3,6 @@ package client.graphics
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
-import org.lwjgl.opengl.GL
-import org.lwjgl.opengl.GL11.*
 import org.lwjgl.system.MemoryUtil
 import org.pmw.tinylog.Logger
 
@@ -15,7 +13,7 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
     var height: Int
 
     class WindowOptions(
-        val compatableProfile: Boolean,
+        val compatibleProfile: Boolean,
         val fps: Int,
         val height: Int,
         val width: Int,
@@ -31,14 +29,14 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4)
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1)
-        if (windowOptions.compatableProfile) {
+        if (windowOptions.compatibleProfile) {
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE)
         } else {
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE)
         }
 
-        /*if (windowOptions.width > 0 && windowOptions.height > 0) {
+        if (windowOptions.width > 0 && windowOptions.height > 0) {
             width = windowOptions.width
             height = windowOptions.height
         } else {
@@ -46,7 +44,7 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
             val vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor())!!
             width = vidMode.width()
             height = vidMode.height()
-        }*/
+        }
 
         windowHandle = glfwCreateWindow(windowOptions.width, windowOptions.height, "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL)
         if (windowHandle == MemoryUtil.NULL) {
@@ -67,6 +65,7 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
             keyCallBack(key, action)
         }
 
+        println("Making context current")
         glfwMakeContextCurrent(windowHandle);
 
         if (windowOptions.fps > 0) {
@@ -84,7 +83,7 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
         height = arrayHeight[0]
     }
 
-    fun keyCallBack(key: Int, action: Int) {
+    private fun keyCallBack(key: Int, action: Int) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
             glfwSetWindowShouldClose(windowHandle, true) // We will detect this in the rendering loop
         }
@@ -105,7 +104,7 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
         glfwPollEvents()
     }
 
-    protected fun resized(newWidth: Int, newHeight: Int) {
+    private fun resized(newWidth: Int, newHeight: Int) {
         width = newWidth
         height = newHeight
         try {
@@ -118,22 +117,19 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
     fun update() {
         glfwSwapBuffers(windowHandle)
 
-        GL.createCapabilities()
+        // GL.createCapabilities()
 
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f)
+        // glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
 
-        while (!glfwWindowShouldClose(windowHandle)) {
-            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-            glfwSwapBuffers(windowHandle)
-
-            glfwPollEvents()
-        }
+//        while (!glfwWindowShouldClose(windowHandle)) {
+//            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+//            glfwSwapBuffers(windowHandle)
+//
+//            glfwPollEvents()
+//        }
     }
 
     fun shouldClose(): Boolean {
-        val v = glfwWindowShouldClose(windowHandle)
-        if (v == true)
-            println("True!!!")
-        return v
+        return glfwWindowShouldClose(windowHandle)
     }
 }
