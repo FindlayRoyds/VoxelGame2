@@ -1,25 +1,50 @@
 package client.graphics
 
 import org.lwjgl.opengl.GL
-import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL41.*
 
-class Renderer {
-    val sceneRenderer: SceneRenderer
+class Renderer(width: Int, height: Int) {
+    private val shaderProgram: ShaderProgram
+    private val uniformsMap: UniformsMap
+    private val projection = Projection(width, height)
 
     init {
         println("Creating capabilities")
         GL.createCapabilities()
-        sceneRenderer = SceneRenderer()
+        glEnable(GL_DEPTH_TEST);
+
+        val shaderModuleDataList: MutableList<ShaderProgram.ShaderModuleData> = ArrayList()
+        shaderModuleDataList.add(ShaderProgram.ShaderModuleData("/shaders/world.vert", GL_VERTEX_SHADER))
+        shaderModuleDataList.add(ShaderProgram.ShaderModuleData("/shaders/world.frag", GL_FRAGMENT_SHADER))
+        shaderProgram = ShaderProgram(shaderModuleDataList)
+
+        uniformsMap = UniformsMap(shaderProgram.programId)
+        uniformsMap.createUniform("projectionMatrix");
     }
 
     fun cleanup() {
-        sceneRenderer.cleanup()
+        shaderProgram.cleanup()
     }
 
     fun render(window: Window, scene: Scene) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-
         glViewport(0, 0, window.width, window.height)
-        sceneRenderer.render(scene)
+
+        shaderProgram.bind()
+
+        uniformsMap.setUniform("projectionMatrix", projection.matrix)
+
+        scene.getMeshMap().values.forEach { mesh ->
+            glBindVertexArray(mesh.vaoId)
+            glDrawElements(GL_TRIANGLES, mesh.numVertices, GL_UNSIGNED_INT, 0)
+        }
+
+        glBindVertexArray(0);
+
+        shaderProgram.unbind();
+    }
+
+    fun resize(width: Int, height: Int) {
+        projection.update(width, height)
     }
 }

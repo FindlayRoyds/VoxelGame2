@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL30.*
 
 
 class ShaderProgram(shaderModuleDataList: MutableList<ShaderModuleData>) {
-    private val programId = glCreateProgram()
+    val programId = glCreateProgram()
 
     init {
         if (programId == 0) {

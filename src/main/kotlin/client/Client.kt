@@ -13,13 +13,13 @@ import java.net.Socket
 
 
 class Client(serverAddress: String, serverPort: Int): GameEngine() {
-    var socketHandler: SocketHandler
-    var running = false
     private var window = Window(
         "Test",
-        Window.WindowOptions(true, 60, 400, 400)
+        Window.WindowOptions(false, 60, 600, 100)
     ) { resize() }
-    private var renderer = Renderer()
+    var socketHandler: SocketHandler
+    var running = false
+    private var renderer = Renderer(window.width, window.height)
     private var scene = Scene()
 
     init {
@@ -32,10 +32,10 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         GameEngineProvider.setGameEngine(this)
 
         val positions = floatArrayOf(
-            -0.5f, 0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.5f, 0.5f, 0.0f,
+            -0.5f,  0.5f, -1.0f,
+            -0.5f, -0.5f, -1.0f,
+             0.5f, -0.5f, -1.0f,
+             0.5f,  0.5f, -1.0f,
         )
         val colors = floatArrayOf(
             0.5f, 0.0f, 0.0f,
@@ -73,17 +73,17 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         var deltaFps = 0f
 
         while (running && !window.shouldClose()) {
-            window.pollEvents()
-            eventQueue.runEvents()
             val now = System.currentTimeMillis()
             deltaFps += (now - initialTime) / timeR
             /*if (targetFps <= 0 || deltaFps >= 1) {
                 appLogic.input(window, scene, now - initialTime)
             }*/
             if (wantedFps <= 0 || deltaFps >= 1) {
+                window.pollEvents()
+                eventQueue.runEvents()
                 renderer.render(window, scene)
-                deltaFps--
                 window.update()
+                deltaFps--
             }
             initialTime = now
         }
@@ -97,6 +97,6 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun resize() {
-        // Nothing to be done yet
+        renderer.resize(window.width, window.height)
     }
 }

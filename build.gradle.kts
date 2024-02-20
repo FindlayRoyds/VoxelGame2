@@ -112,6 +112,7 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-zstd::$lwjglNatives")
 
     implementation("org.tinylog:tinylog:1.3.6")
+    implementation("org.joml:joml:1.10.5")
 }
 
 kotlin {

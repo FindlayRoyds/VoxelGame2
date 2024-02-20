@@ -61,8 +61,12 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
             )
         }
 
-        glfwSetKeyCallback(windowHandle) { _: Long, key: Int, scancode: Int, action: Int, mods: Int ->
+        glfwSetKeyCallback(windowHandle) { _: Long, key: Int, _: Int, action: Int, _: Int ->
             keyCallBack(key, action)
+        }
+
+        glfwSetWindowCloseCallback(windowHandle) {
+            windowCloseCallBack() // Doesn't work :(
         }
 
         println("Making context current")
@@ -85,8 +89,12 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
 
     private fun keyCallBack(key: Int, action: Int) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-            glfwSetWindowShouldClose(windowHandle, true) // We will detect this in the rendering loop
+            glfwSetWindowShouldClose(windowHandle, true)
         }
+    }
+
+    private fun windowCloseCallBack() {
+        glfwSetWindowShouldClose(windowHandle, true)
     }
 
     fun cleanup() {
