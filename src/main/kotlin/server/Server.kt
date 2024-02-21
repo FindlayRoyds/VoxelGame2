@@ -27,10 +27,12 @@ class Server(port: Int) : GameEngine() {
 
     private fun main() {
         var startTime = System.currentTimeMillis()
-        while (true) {
-            eventQueue.runEvents()
+        var delayTime = 0L
 
-            val delayTime = Config.tickTime - (System.currentTimeMillis() - startTime)
+        while (true) {
+            eventQueue.runEvents(delayTime.toDouble())
+
+            delayTime = Config.tickTime - (System.currentTimeMillis() - startTime)
             Thread.sleep(delayTime)
             startTime = System.currentTimeMillis()
         }

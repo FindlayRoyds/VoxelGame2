@@ -15,7 +15,7 @@ import java.net.Socket
 class Client(serverAddress: String, serverPort: Int): GameEngine() {
     var window = Window(
         "Test",
-        Window.WindowOptions(false, 60, 600, 800)
+        Window.WindowOptions(false, 120, 600, 800)
     ) { resize() }
     var socketHandler: SocketHandler
     var running = false
@@ -37,16 +37,10 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
              0.5f, -0.5f, -1.0f,
              0.5f,  0.5f, -1.0f,
         )
-        val colors = floatArrayOf(
-            0.5f, 0.0f, 0.0f,
-            0.0f, 0.5f, 0.0f,
-            0.0f, 0.0f, 0.5f,
-            0.0f, 0.5f, 0.5f,
-        )
         val indices = intArrayOf(
             0, 1, 3, 3, 1, 2,
         )
-        val mesh = Mesh(positions, colors, indices)
+        val mesh = Mesh(positions, indices)
         scene.addMesh("quad", mesh)
 
         main()
@@ -56,6 +50,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         running = false
         val disconnectEvent = DisconnectEvent()
         socketHandler.sendEvent(disconnectEvent)
+        disconnectEvent.run()
     }
 
     override fun isServer(): Boolean {
@@ -67,22 +62,24 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun main() {
-        val wantedFps = 60
+        val wantedFps = window.windowOptions.fps
         var initialTime = System.currentTimeMillis()
-        val timeR = if (wantedFps > 0) 1000.0f / wantedFps else 0f
-        var deltaFps = 0f
+        val timeR = if (wantedFps > 0) 1000.0 / wantedFps else 0.0
+        var deltaFps = 0.0
+        var deltaTimeMillis = 0.0
 
         while (running && !window.shouldClose()) {
             val now = System.currentTimeMillis()
+
+            deltaTimeMillis += (now - initialTime).toDouble()
             deltaFps += (now - initialTime) / timeR
-            /*if (targetFps <= 0 || deltaFps >= 1) {
-                appLogic.input(window, scene, now - initialTime)
-            }*/
             if (wantedFps <= 0 || deltaFps >= 1) {
                 pollEvents()
-                runEvents()
+                runEvents(deltaTimeMillis / 1000)
                 runGraphics()
+
                 deltaFps--
+                deltaTimeMillis = 0.0
             }
             initialTime = now
         }
@@ -96,8 +93,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         window.pollEvents()
     }
 
-    private fun runEvents() {
-        eventQueue.runEvents()
+    private fun runEvents(deltaTimeS: Double) {
+        eventQueue.runEvents(deltaTimeS)
     }
 
     private fun runGraphics() {

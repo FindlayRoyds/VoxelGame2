@@ -12,6 +12,8 @@ class Renderer(width: Int, height: Int) {
     init {
         GL.createCapabilities()
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE)
+        glCullFace(GL_BACK)
 
         val shaderModuleDataList: MutableList<ShaderProgram.ShaderModuleData> = ArrayList()
         shaderModuleDataList.add(ShaderProgram.ShaderModuleData("/shaders/world.vert", GL_VERTEX_SHADER))

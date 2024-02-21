@@ -1,11 +1,11 @@
 package client.graphics
 
-import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL30.*
 import org.lwjgl.system.MemoryStack
 
 
-class Mesh(positions: FloatArray, colors: FloatArray, indices: IntArray) {
+class Mesh(positions: FloatArray, indices: IntArray) {
     val vaoId: Int
     val vboIdList: MutableList<Int>
     val numVertices = indices.size
@@ -25,17 +25,6 @@ class Mesh(positions: FloatArray, colors: FloatArray, indices: IntArray) {
             glBufferData(GL_ARRAY_BUFFER, positionsBuffer, GL_STATIC_DRAW)
             glEnableVertexAttribArray(0)
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0)
-
-            // Color VBO
-            vboId = glGenBuffers()
-            vboIdList.add(vboId)
-            val colorsBuffer = stack.callocFloat(colors.size)
-            colorsBuffer.put(0, colors)
-            colorsBuffer.put(0, colors)
-            glBindBuffer(GL_ARRAY_BUFFER, vboId)
-            glBufferData(GL_ARRAY_BUFFER, colorsBuffer, GL_STATIC_DRAW)
-            glEnableVertexAttribArray(1)
-            glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0)
 
             // Index VBO
             vboId = glGenBuffers()

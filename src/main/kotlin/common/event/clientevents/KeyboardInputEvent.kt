@@ -12,29 +12,30 @@ class KeyboardInputEvent: ClientEvent() {
 
     fun characterMovement() {
         val input = client!!.window.keyboardInput
-        val increment = Vector3f()
+        val moveDirection = Vector3f()
 
         if (input.isKeyPressed(GLFW_KEY_W)) {
-            increment.z += Config.characterFlySpeed.toFloat()
+            moveDirection.z += 1
         }
         if (input.isKeyPressed(GLFW_KEY_S)) {
-            increment.z -= Config.characterFlySpeed.toFloat()
+            moveDirection.z -= 1
         }
 
         if (input.isKeyPressed(GLFW_KEY_A)) {
-            increment.x += Config.characterFlySpeed.toFloat()
+            moveDirection.x += 1
         }
         if (input.isKeyPressed(GLFW_KEY_D)) {
-            increment.x -= Config.characterFlySpeed.toFloat()
+            moveDirection.x -= 1
         }
 
         if (input.isKeyPressed(GLFW_KEY_SPACE)) {
-            increment.y += Config.characterFlySpeed.toFloat()
+            moveDirection.y += 1
         }
         if (input.isKeyPressed(GLFW_KEY_LEFT_SHIFT) || input.isKeyPressed(GLFW_KEY_RIGHT_SHIFT)) {
-            increment.y -= Config.characterFlySpeed.toFloat()
+            moveDirection.y -= 1
         }
 
-        client!!.renderer.camera.addPosition(increment)
+        val speed = Config.characterFlySpeed * client!!.eventQueue.deltaTimeS
+        client!!.renderer.camera.addPosition(moveDirection.mul(speed.toFloat()))
     }
 }
