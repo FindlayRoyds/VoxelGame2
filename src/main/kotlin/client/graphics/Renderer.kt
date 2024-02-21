@@ -7,9 +7,9 @@ class Renderer(width: Int, height: Int) {
     private val shaderProgram: ShaderProgram
     private val uniformsMap: UniformsMap
     private val projection = Projection(width, height)
+    val camera = Camera()
 
     init {
-        println("Creating capabilities")
         GL.createCapabilities()
         glEnable(GL_DEPTH_TEST);
 
@@ -20,6 +20,7 @@ class Renderer(width: Int, height: Int) {
 
         uniformsMap = UniformsMap(shaderProgram.programId)
         uniformsMap.createUniform("projectionMatrix");
+        uniformsMap.createUniform("viewMatrix")
     }
 
     fun cleanup() {
@@ -33,6 +34,7 @@ class Renderer(width: Int, height: Int) {
         shaderProgram.bind()
 
         uniformsMap.setUniform("projectionMatrix", projection.matrix)
+        uniformsMap.setUniform("viewMatrix", camera.viewMatrix)
 
         scene.getMeshMap().values.forEach { mesh ->
             glBindVertexArray(mesh.vaoId)

@@ -1,5 +1,7 @@
 package client.graphics
 
+import client.graphics.input.KeyboardInput
+import client.graphics.input.MouseInput
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
@@ -8,7 +10,9 @@ import org.pmw.tinylog.Logger
 
 
 class Window(title: String, var windowOptions: WindowOptions, private val resizeFunction: () -> Unit) {
-    val windowHandle: Long
+    val mouseInput: MouseInput
+    val keyboardInput: KeyboardInput
+    val handle: Long
     var width: Int
     var height: Int
 
@@ -46,13 +50,13 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
             height = vidMode.height()
         }
 
-        windowHandle = glfwCreateWindow(windowOptions.width, windowOptions.height, "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL)
-        if (windowHandle == MemoryUtil.NULL) {
+        handle = glfwCreateWindow(windowOptions.width, windowOptions.height, "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL)
+        if (handle == MemoryUtil.NULL) {
             throw RuntimeException("Failed to create the GLFW window")
         }
 
         glfwSetFramebufferSizeCallback(
-            windowHandle
+            handle
         ) { window: Long, w: Int, h: Int -> resized(w, h) }
 
         glfwSetErrorCallback { errorCode: Int, msgPtr: Long ->
@@ -61,16 +65,16 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
             )
         }
 
-        glfwSetKeyCallback(windowHandle) { _: Long, key: Int, _: Int, action: Int, _: Int ->
+        glfwSetKeyCallback(handle) { _: Long, key: Int, _: Int, action: Int, _: Int ->
             keyCallBack(key, action)
         }
 
-        glfwSetWindowCloseCallback(windowHandle) {
+        glfwSetWindowCloseCallback(handle) {
             windowCloseCallBack() // Doesn't work :(
         }
 
         println("Making context current")
-        glfwMakeContextCurrent(windowHandle);
+        glfwMakeContextCurrent(handle);
 
         if (windowOptions.fps > 0) {
             glfwSwapInterval(0)
@@ -78,34 +82,34 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
             glfwSwapInterval(1)
         }
 
-        glfwShowWindow(windowHandle)
+        glfwShowWindow(handle)
 
         val arrayWidth = IntArray(1)
         val arrayHeight = IntArray(1)
-        glfwGetFramebufferSize(windowHandle, arrayWidth, arrayHeight)
+        glfwGetFramebufferSize(handle, arrayWidth, arrayHeight)
         width = arrayWidth[0]
         height = arrayHeight[0]
+
+        mouseInput = MouseInput(this)
+        keyboardInput = KeyboardInput(this)
     }
 
     private fun keyCallBack(key: Int, action: Int) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-            glfwSetWindowShouldClose(windowHandle, true)
+            glfwSetWindowShouldClose(handle, true)
         }
     }
 
     private fun windowCloseCallBack() {
-        glfwSetWindowShouldClose(windowHandle, true)
+        glfwSetWindowShouldClose(handle, true)
     }
 
     fun cleanup() {
-        glfwFreeCallbacks(windowHandle)
-        glfwDestroyWindow(windowHandle)
+        mouseInput.cleanup()
+        glfwFreeCallbacks(handle)
+        glfwDestroyWindow(handle)
         glfwTerminate()
         glfwSetErrorCallback(null)?.free()
-    }
-
-    fun isKeyPressed(keyCode: Int): Boolean {
-        return glfwGetKey(windowHandle, keyCode) == GLFW_PRESS
     }
 
     fun pollEvents() {
@@ -123,7 +127,7 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
     }
 
     fun update() {
-        glfwSwapBuffers(windowHandle)
+        glfwSwapBuffers(handle)
 
         // GL.createCapabilities()
 
@@ -138,6 +142,6 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
     }
 
     fun shouldClose(): Boolean {
-        return glfwWindowShouldClose(windowHandle)
+        return glfwWindowShouldClose(handle)
     }
 }

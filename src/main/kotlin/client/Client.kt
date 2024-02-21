@@ -13,14 +13,14 @@ import java.net.Socket
 
 
 class Client(serverAddress: String, serverPort: Int): GameEngine() {
-    private var window = Window(
+    var window = Window(
         "Test",
-        Window.WindowOptions(false, 60, 600, 100)
+        Window.WindowOptions(false, 60, 600, 800)
     ) { resize() }
     var socketHandler: SocketHandler
     var running = false
-    private var renderer = Renderer(window.width, window.height)
-    private var scene = Scene()
+    var renderer = Renderer(window.width, window.height)
+    var scene = Scene()
 
     init {
         running = true
@@ -79,16 +79,30 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
                 appLogic.input(window, scene, now - initialTime)
             }*/
             if (wantedFps <= 0 || deltaFps >= 1) {
-                window.pollEvents()
-                eventQueue.runEvents()
-                renderer.render(window, scene)
-                window.update()
+                pollEvents()
+                runEvents()
+                runGraphics()
                 deltaFps--
             }
             initialTime = now
         }
 
         cleanup()
+    }
+
+    private fun pollEvents() {
+        window.mouseInput.pollInput()
+        window.keyboardInput.pollInput()
+        window.pollEvents()
+    }
+
+    private fun runEvents() {
+        eventQueue.runEvents()
+    }
+
+    private fun runGraphics() {
+        renderer.render(window, scene)
+        window.update()
     }
 
     private fun cleanup() {
@@ -98,5 +112,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
 
     private fun resize() {
         renderer.resize(window.width, window.height)
+        renderer.render(window, scene)
+        window.update()
     }
 }
