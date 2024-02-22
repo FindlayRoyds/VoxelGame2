@@ -1,8 +1,8 @@
 package client.graphics
 
 import org.joml.Matrix4f
-import org.lwjgl.opengl.GL40.glGetUniformLocation
-import org.lwjgl.opengl.GL40.glUniformMatrix4fv
+import org.joml.Vector3f
+import org.lwjgl.opengl.GL41.*
 import org.lwjgl.system.MemoryStack
 
 
@@ -18,10 +18,27 @@ class UniformsMap(private val programId: Int) {
     }
 
     fun setUniform(uniformName: String, value: Matrix4f) {
+        val location = uniforms[uniformName]
+            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+
         MemoryStack.stackPush().use { stack ->
-            val location = uniforms[uniformName]
-                ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
             glUniformMatrix4fv(location, false, value[stack.mallocFloat(16)])
+        }
+    }
+
+    fun setUniform(uniformName: String, value: Array<Vector3f>) {
+        val location = uniforms[uniformName]
+            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+
+        val bufferSize = value.size *  3
+        MemoryStack.stackPush().use { stack ->
+            val buffer = stack.mallocFloat(bufferSize)
+            for (i in value.indices) {
+                buffer.put(value[i].x).put(value[i].y).put(value[i].z)
+            }
+            buffer.flip()
+
+            glUniform3fv(location, buffer)
         }
     }
 }

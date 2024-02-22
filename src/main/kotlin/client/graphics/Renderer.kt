@@ -1,5 +1,6 @@
 package client.graphics
 
+import org.joml.Vector3f
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL41.*
 
@@ -19,10 +20,20 @@ class Renderer(width: Int, height: Int) {
         shaderModuleDataList.add(ShaderProgram.ShaderModuleData("/shaders/world.vert", GL_VERTEX_SHADER))
         shaderModuleDataList.add(ShaderProgram.ShaderModuleData("/shaders/world.frag", GL_FRAGMENT_SHADER))
         shaderProgram = ShaderProgram(shaderModuleDataList)
+        shaderProgram.bind()
 
         uniformsMap = UniformsMap(shaderProgram.programId)
         uniformsMap.createUniform("projectionMatrix");
         uniformsMap.createUniform("viewMatrix")
+        uniformsMap.createUniform("vertexDataArray")
+
+        val vertexDataArray = arrayOf(
+            Vector3f(-0.5f,  0.5f, -1.0f),
+            Vector3f(-0.5f, -0.5f, -1.0f),
+            Vector3f(0.5f,  0.5f, -1.0f),
+            Vector3f(0.5f, -0.5f, -1.0f),
+        )
+        uniformsMap.setUniform("vertexDataArray", vertexDataArray)
     }
 
     fun cleanup() {
@@ -38,9 +49,10 @@ class Renderer(width: Int, height: Int) {
         uniformsMap.setUniform("projectionMatrix", projection.matrix)
         uniformsMap.setUniform("viewMatrix", camera.viewMatrix)
 
+
         scene.getMeshMap().values.forEach { mesh ->
             glBindVertexArray(mesh.vaoId)
-            glDrawElements(GL_TRIANGLES, mesh.numVertices, GL_UNSIGNED_INT, 0)
+            glDrawArrays(GL_TRIANGLES, 0, mesh.numVertices)
         }
 
         glBindVertexArray(0);

@@ -31,16 +31,11 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
 
         GameEngineProvider.setGameEngine(this)
 
-        val positions = floatArrayOf(
-            -0.5f,  0.5f, -1.0f,
-            -0.5f, -0.5f, -1.0f,
-             0.5f, -0.5f, -1.0f,
-             0.5f,  0.5f, -1.0f,
+        val positions = byteArrayOf(
+            0, 1, 3, 2, 0, 3
         )
-        val indices = intArrayOf(
-            0, 1, 3, 3, 1, 2,
-        )
-        val mesh = Mesh(positions, indices)
+
+        val mesh = Mesh(positions, positions.size)
         scene.addMesh("quad", mesh)
 
         main()
