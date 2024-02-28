@@ -1,14 +1,13 @@
 package client
 
-import client.graphics.Mesh
 import client.graphics.Renderer
-import client.graphics.Scene
 import client.graphics.Window
 import common.GameEngine
 import common.GameEngineProvider
 import common.event.commonevents.DisconnectEvent
 import common.event.serverevents.ConnectionRequestEvent
 import common.networking.SocketHandler
+import org.joml.Vector3i
 import java.net.Socket
 
 
@@ -20,7 +19,6 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     var socketHandler: SocketHandler
     var running = false
     var renderer = Renderer(window.width, window.height)
-    var scene = Scene()
 
     init {
         running = true
@@ -29,14 +27,11 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
         socketHandler.sendEvent(ConnectionRequestEvent("MineOrienteer69"))
 
-        GameEngineProvider.setGameEngine(this)
-
-        val positions = byteArrayOf(
-            0, 1, 3, 2, 0, 3
-        )
-
-        val mesh = Mesh(positions, positions.size)
-        scene.addMesh("quad", mesh)
+        for (x in -5..5) {
+            for (z in -5..5) {
+                world.chunkManager.generateChunk(Vector3i(x, 0, z))
+            }
+        }
 
         main()
     }
@@ -93,7 +88,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun runGraphics() {
-        renderer.render(window, scene)
+        renderer.render(window, world)
         window.update()
     }
 
@@ -104,7 +99,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
 
     private fun resize() {
         renderer.resize(window.width, window.height)
-        renderer.render(window, scene)
+        renderer.render(window, world)
         window.update()
     }
 }

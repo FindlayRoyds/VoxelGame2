@@ -98,6 +98,7 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
         if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
             glfwSetWindowShouldClose(handle, true)
         }
+        keyboardInput.keyCallBack(key, action)
     }
 
     private fun windowCloseCallBack() {

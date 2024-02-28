@@ -1,5 +1,6 @@
 package client.graphics
 
+import common.world.World
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL41.*
@@ -9,6 +10,7 @@ class Renderer(width: Int, height: Int) {
     private val uniformsMap: UniformsMap
     private val projection = Projection(width, height)
     val camera = Camera()
+    var isWireframe = false
 
     init {
         GL.createCapabilities()
@@ -26,12 +28,50 @@ class Renderer(width: Int, height: Int) {
         uniformsMap.createUniform("projectionMatrix");
         uniformsMap.createUniform("viewMatrix")
         uniformsMap.createUniform("vertexDataArray")
+        uniformsMap.createUniform("chunkPosition")
 
         val vertexDataArray = arrayOf(
-            Vector3f(-0.5f,  0.5f, -1.0f),
-            Vector3f(-0.5f, -0.5f, -1.0f),
-            Vector3f(0.5f,  0.5f, -1.0f),
-            Vector3f(0.5f, -0.5f, -1.0f),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f,  0.5f, -0.5f,),
+            Vector3f(0.5f,  0.5f, -0.5f,),
+            Vector3f(-0.5f,  0.5f, -0.5f,),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
+
+            Vector3f(-0.5f, -0.5f,  0.5f,),
+            Vector3f(0.5f, -0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f, -0.5f,  0.5f,),
+
+            Vector3f(-0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f, -0.5f,),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
+            Vector3f(-0.5f, -0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f,  0.5f,),
+
+            Vector3f(0.5f,  0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
+
+            Vector3f(-0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f,  0.5f,),
+            Vector3f(0.5f, -0.5f,  0.5f,),
+            Vector3f(-0.5f, -0.5f,  0.5f,),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
+
+            Vector3f(-0.5f,  0.5f, -0.5f,),
+            Vector3f(0.5f,  0.5f, -0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f, -0.5f,),
         )
         uniformsMap.setUniform("vertexDataArray", vertexDataArray)
     }
@@ -40,7 +80,7 @@ class Renderer(width: Int, height: Int) {
         shaderProgram.cleanup()
     }
 
-    fun render(window: Window, scene: Scene) {
+    fun render(window: Window, world: World) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         glViewport(0, 0, window.width, window.height)
 
@@ -50,9 +90,13 @@ class Renderer(width: Int, height: Int) {
         uniformsMap.setUniform("viewMatrix", camera.viewMatrix)
 
 
-        scene.getMeshMap().values.forEach { mesh ->
-            glBindVertexArray(mesh.vaoId)
-            glDrawArrays(GL_TRIANGLES, 0, mesh.numVertices)
+        world.chunkManager.getLoadedChunks().forEach { chunk ->
+            val chunkMesh = chunk.mesh
+            uniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
+            if (chunkMesh != null) {
+                glBindVertexArray(chunkMesh.vaoId)
+                glDrawArrays(GL_TRIANGLES, 0, chunkMesh.numVertices)
+            }
         }
 
         glBindVertexArray(0);
@@ -62,5 +106,14 @@ class Renderer(width: Int, height: Int) {
 
     fun resize(width: Int, height: Int) {
         projection.update(width, height)
+    }
+
+    fun toggleWireframe() {
+        isWireframe = !isWireframe
+        if (isWireframe) {
+            glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+        } else {
+            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+        }
     }
 }

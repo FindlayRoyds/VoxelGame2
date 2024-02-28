@@ -2,6 +2,7 @@ package client.graphics
 
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import org.joml.Vector3i
 import org.lwjgl.opengl.GL41.*
 import org.lwjgl.system.MemoryStack
 
@@ -39,6 +40,15 @@ class UniformsMap(private val programId: Int) {
             buffer.flip()
 
             glUniform3fv(location, buffer)
+        }
+    }
+
+    fun setUniform(uniformName: String, value: Vector3i) {
+        val location = uniforms[uniformName]
+            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+
+        MemoryStack.stackPush().use { stack ->
+            glUniform3i(location, value.x, value.y, value.z)
         }
     }
 }
