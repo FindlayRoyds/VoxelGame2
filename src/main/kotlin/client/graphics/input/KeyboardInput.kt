@@ -20,9 +20,9 @@ class KeyboardInput(private val window: Window) {
 
     fun keyCallBack(key: Int, action: Int) {
         if (action == GLFW_PRESS) {
-            println("pressed")
+            // println("pressed")
         } else if (action == GLFW_RELEASE) {
-            println("released")
+            // println("released")
         }
     }
 

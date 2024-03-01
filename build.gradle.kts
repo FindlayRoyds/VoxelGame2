@@ -113,6 +113,7 @@ dependencies {
 
     implementation("org.tinylog:tinylog:1.3.6")
     implementation("org.joml:joml:1.10.5")
+    implementation("dev.romainguy:kotlin-math:1.5.3")
 }
 
 kotlin {

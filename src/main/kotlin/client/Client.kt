@@ -6,8 +6,8 @@ import common.GameEngine
 import common.GameEngineProvider
 import common.event.commonevents.DisconnectEvent
 import common.event.serverevents.ConnectionRequestEvent
+import common.math.Int3
 import common.networking.SocketHandler
-import org.joml.Vector3i
 import java.net.Socket
 
 
@@ -29,9 +29,12 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
 
         for (x in -5..5) {
             for (z in -5..5) {
-                world.chunkManager.generateChunk(Vector3i(x, 0, z))
+                for (y in -5..5) {
+                    world.chunkManager.generateChunk(Int3(x, y, z))
+                }
             }
         }
+//        world.chunkManager.generateChunk(Int3(0, 0, 0))
 
         main()
     }

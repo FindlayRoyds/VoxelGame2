@@ -1,13 +1,19 @@
 package common.world
 
 import client.graphics.Mesh
-import org.joml.Vector3i
+import common.Config
+import common.math.Int3
+import kotlin.math.sin
 
-class Chunk(val chunkPosition: Vector3i) {
+
+class Chunk(val chunkPosition: Int3) {
     var mesh: Mesh? = null
-    var blockData = BooleanArray(32 * 32 * 32)
+    var blockData = BooleanArray(Config.chunkSize * Config.chunkSize * Config.chunkSize)
+    val blockNeighbors = ArrayList<Int3>(26)
 
     init {
+        calculateBlockNeighborValues()
+
         generate()
         buildMesh()
     }
@@ -26,7 +32,9 @@ class Chunk(val chunkPosition: Vector3i) {
         val blockPositions = ArrayList<Int>()
 
         for (blockIndex in blockData.indices) {
-            val randomInt = (0..7).random()
+            if (!isBlockVisible(blockIndexToBlockPosition(blockIndex)))
+                continue
+
             for (vertexId in blockVertexIds) {
                 if (blockData[blockIndex]) {
                     vertexIds.add(vertexId)
@@ -38,11 +46,25 @@ class Chunk(val chunkPosition: Vector3i) {
         mesh = Mesh(vertexIds.toIntArray(), blockPositions.toIntArray())
     }
 
+    private fun isBlockVisible(position: Int3): Boolean {
+        for (neighbor in blockNeighbors) {
+
+        }
+        return true
+    }
+
     fun generate() {
         for (blockIndex in blockData.indices) {
             val blockPosition = blockIndexToBlockPosition(blockIndex)
-            val blockWorldPosition = blockPositionToWorldPosition(blockPosition)
-            if ((blockWorldPosition.y + blockWorldPosition.x + blockWorldPosition.z) % 16 == 0) {
+            val worldPosition = blockPositionToWorldPosition(blockPosition)
+            // if ((blockWorldPosition.y + blockWorldPosition.x + blockWorldPosition.z) % 32 == 0) {
+            // if (blockWorldPosition.y + (blockPosition.x % 2) + ((blockPosition.z / 4) % 2) <= 2) {
+            if ((
+                sin(worldPosition.x.toDouble() / 47 - worldPosition.z.toDouble() / 53) * 37
+                + sin(worldPosition.x.toDouble() / 5 + worldPosition.z.toDouble() / 3) * 2
+                + sin(worldPosition.x.toDouble() / 10) * 6
+                + sin(worldPosition.z.toDouble() / 7) * 3
+                ).toInt() + worldPosition.y - 18 in -1..0) {
                 blockData[blockIndex] = true
             } else {
                 blockData[blockIndex] = false
@@ -50,15 +72,38 @@ class Chunk(val chunkPosition: Vector3i) {
         }
     }
 
-    private fun blockPositionToBlockIndex(blockPosition: Vector3i): Int {
-        return (blockPosition.x *  32 *  32) + (blockPosition.y *  32) + blockPosition.z
+    private fun blockPositionToBlockIndex(blockPosition: Int3): Int {
+        return (blockPosition.x *  Config.chunkSize *  Config.chunkSize) + (blockPosition.y *  Config.chunkSize) + blockPosition.z
     }
 
-    private fun blockIndexToBlockPosition(blockIndex: Int): Vector3i {
-        return Vector3i(blockIndex / (32 * 32), (blockIndex / 32) % 32, blockIndex % 32)
+    private fun blockIndexToBlockPosition(blockIndex: Int): Int3 {
+        return Int3(blockIndex / (Config.chunkSize * Config.chunkSize), (blockIndex / Config.chunkSize) % Config.chunkSize, blockIndex % Config.chunkSize)
     }
 
-    private fun blockPositionToWorldPosition(blockPosition: Vector3i): Vector3i {
-        return Vector3i(chunkPosition).mul(32).add(blockPosition)
+    private fun blockPositionToWorldPosition(blockPosition: Int3): Int3 {
+        return chunkPosition * Config.chunkSize + blockPosition
+    }
+
+    private fun isBlockPositionInChunk(blockPosition: Int3): Boolean {
+        if (blockPosition.x !in 0 until Config.chunkSize)
+            return false
+        if (blockPosition.y !in 0 until Config.chunkSize)
+            return false
+        if (blockPosition.z !in 0 until Config.chunkSize)
+            return false
+        return true
+    }
+
+    private fun calculateBlockNeighborValues() {
+        for (x in -1..1) {
+            for (y in -1..1) {
+                for (z in -1..1) {
+                    val neighbor = Int3(x, y, z)
+                    if (neighbor != Int3(0, 0, 0)) {
+                        blockNeighbors.add(neighbor)
+                    }
+                }
+            }
+        }
     }
 }
