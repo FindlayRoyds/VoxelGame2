@@ -1,6 +1,8 @@
 package common
 
 object Config {
+    const val cameraVerticalLimit = 88
+
     // How many times per second a game tick occurs (when all the events in the queue are run)
     const val tickRate = 20
     const val chunkSize = 32

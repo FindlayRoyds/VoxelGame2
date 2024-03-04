@@ -6,7 +6,6 @@ import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.system.MemoryUtil
-import org.pmw.tinylog.Logger
 
 
 class Window(title: String, var windowOptions: WindowOptions, private val resizeFunction: () -> Unit) {
@@ -62,8 +61,8 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
         ) { window: Long, w: Int, h: Int -> resized(w, h) }
 
         glfwSetErrorCallback { errorCode: Int, msgPtr: Long ->
-            Logger.error(
-                "Error code [{}], msg [{}]", errorCode, MemoryUtil.memUTF8(msgPtr)
+            throw RuntimeException(
+                "Error code [{}], msg [{}], $errorCode, ${MemoryUtil.memUTF8(msgPtr)}"
             )
         }
 
@@ -125,7 +124,7 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
         try {
             resizeFunction()
         } catch (exception: Exception) {
-            Logger.error("Error calling resize callback", exception)
+            throw RuntimeException("Error calling resize callback", exception)
         }
     }
 

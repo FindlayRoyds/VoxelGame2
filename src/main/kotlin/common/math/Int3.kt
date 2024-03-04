@@ -46,8 +46,6 @@ data class Int3(var x: Int, var y: Int, var z: Int) {
         other as Int3
         if (x != other.x) return false
         if (y != other.y) return false
-        if (z != other.z) return false
-
-        return true
+        return z == other.z
     }
 }

@@ -1,8 +1,8 @@
 package client.graphics
 
+import common.math.Float3
 import common.math.Int3
 import org.joml.Matrix4f
-import org.joml.Vector3f
 import org.lwjgl.opengl.GL41.*
 import org.lwjgl.system.MemoryStack
 
@@ -27,7 +27,7 @@ class UniformsMap(private val programId: Int) {
         }
     }
 
-    fun setUniform(uniformName: String, value: Array<Vector3f>) {
+    fun setUniform(uniformName: String, value: Array<Float3>) {
         val location = uniforms[uniformName]
             ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
 

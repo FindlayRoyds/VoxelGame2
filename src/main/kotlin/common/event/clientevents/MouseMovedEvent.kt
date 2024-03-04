@@ -2,11 +2,11 @@ package common.event.clientevents
 
 import common.Config
 import common.event.ClientEvent
-import org.joml.Vector2f
+import common.math.Float2
 
-class MouseMovedEvent(val displacement: Vector2f): ClientEvent() {
+class MouseMovedEvent(val displacement: Float2): ClientEvent() {
     override fun event() {
         val camera = client!!.renderer.camera
-        camera.addRotation(displacement.mul(Config.mouseSensitivity.toFloat()))
+        camera.addRotation(displacement * Config.mouseSensitivity.toFloat())
     }
 }

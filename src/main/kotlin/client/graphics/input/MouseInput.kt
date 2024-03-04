@@ -4,14 +4,14 @@ import client.Client
 import client.graphics.Window
 import common.GameEngineProvider
 import common.event.clientevents.MouseMovedEvent
-import org.joml.Vector2f
+import common.math.Float2
 import org.lwjgl.glfw.GLFW.*
 
 
 class MouseInput(private val window: Window) {
-    val currentPos = Vector2f()
-    val previousPos = Vector2f()
-    val displacement = Vector2f()
+    val currentPos = Float2(0f, 0f)
+    val previousPos = Float2(0f, 0f)
+    val displacement = Float2(0f, 0f)
     var windowFocused = false // glfwGetWindowAttrib(window.handle, GLFW_FOCUSED) == GLFW_TRUE
     var leftButtonPressed = false
     var rightButtonPressed = false
@@ -57,8 +57,8 @@ class MouseInput(private val window: Window) {
         val xPos = DoubleArray(1)
         val yPos = DoubleArray(1)
         glfwGetCursorPos(window.handle, xPos, yPos)
-        previousPos.set(xPos[0], yPos[0])
-        currentPos.set(xPos[0], yPos[0])
+        previousPos.set(xPos[0].toFloat(), yPos[0].toFloat())
+        currentPos.set(xPos[0].toFloat(), yPos[0].toFloat())
     }
 
     fun cleanup() {

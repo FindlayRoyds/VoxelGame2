@@ -2,9 +2,8 @@ package common.event.clientevents
 
 import common.Config
 import common.event.ClientEvent
-import org.joml.Vector3f
+import common.math.Float3
 import org.lwjgl.glfw.GLFW.*
-import org.lwjgl.opengl.GL41.glPolygonMode
 
 class KeyboardInputEvent: ClientEvent() {
     override fun event() {
@@ -14,7 +13,7 @@ class KeyboardInputEvent: ClientEvent() {
 
     fun characterMovement() {
         val input = client!!.window.keyboardInput
-        val moveDirection = Vector3f()
+        val moveDirection = Float3(0f, 0f, 0f)
 
         if (input.isKeyPressed(GLFW_KEY_W)) {
             moveDirection.z += 1
@@ -38,7 +37,7 @@ class KeyboardInputEvent: ClientEvent() {
         }
 
         val speed = Config.characterFlySpeed * client!!.eventQueue.deltaTimeS
-        client!!.renderer.camera.addPosition(moveDirection.mul(speed.toFloat()))
+        client!!.renderer.camera.addPosition(moveDirection * speed.toFloat())
     }
 
     fun wireframeToggle() {

@@ -1,16 +1,17 @@
 package client.graphics
 
+import common.Config
+import common.math.Float2
+import common.math.Float3
 import org.joml.Matrix4f
-import org.joml.Vector2f
-import org.joml.Vector3f
 
 
 class Camera {
-    var lookVector = Vector3f()
-    var upVector = Vector3f()
-    var rightVector = Vector3f()
-    var position = Vector3f()
-    var rotation = Vector3f()
+    var lookVector = Float3(0f, 0f, 0f)
+    var upVector = Float3(0f, 0f, 0f)
+    var rightVector = Float3(0f, 0f, 0f)
+    val position = Float3(0f, 0f, 0f)
+    val rotation = Float3(0f, 0f, 0f)
     var viewMatrix = Matrix4f()
         get() {
             return field.identity()
@@ -20,44 +21,43 @@ class Camera {
         }
 
     fun addRotation(x: Float, y: Float) {
-        rotation.add(x, y, 0f)
+        rotation += Float3(x, y, 0f)
+
+        // Limit rotation around X-axis to prevent camera from going upside down
+        rotation.x = rotation.x.coerceIn(Math.toRadians((-Config.cameraVerticalLimit).toDouble()).toFloat(), Math.toRadians(Config.cameraVerticalLimit.toDouble()).toFloat())
     }
 
-    fun addRotation(rotation: Vector2f) {
+    fun addRotation(rotation: Float2) {
         addRotation(rotation.x, rotation.y)
     }
 
     fun moveBackwards(inc: Float) {
-        viewMatrix.positiveZ(lookVector).negate().mul(inc)
-        position.sub(lookVector)
+        position += viewMatrix.positiveZ(lookVector.toVector3f()).mul(inc)
     }
 
     fun moveDown(inc: Float) {
-        viewMatrix.positiveY(upVector).mul(inc)
-        position.sub(upVector)
+        viewMatrix.positiveY(upVector.toVector3f()).mul(inc)
+        position -= Float3(0f, inc, 0f)
     }
 
     fun moveForward(inc: Float) {
-        viewMatrix.positiveZ(lookVector).negate().mul(inc)
-        position.add(lookVector)
+        position -= viewMatrix.positiveZ(lookVector.toVector3f()).mul(inc)
     }
 
     fun moveLeft(inc: Float) {
-        viewMatrix.positiveX(rightVector).mul(inc)
-        position.sub(rightVector)
+        position -= viewMatrix.positiveX(rightVector.toVector3f()).mul(inc)
     }
 
     fun moveRight(inc: Float) {
-        viewMatrix.positiveX(rightVector).mul(inc)
-        position.add(rightVector)
+        position += viewMatrix.positiveX(rightVector.toVector3f()).mul(inc)
     }
 
     fun moveUp(inc: Float) {
-        viewMatrix.positiveY(upVector).mul(inc)
-        position.add(upVector)
+        viewMatrix.positiveY(upVector.toVector3f()).mul(inc)
+        position += Float3(0f, inc, 0f)
     }
 
-    fun addPosition(inc: Vector3f) {
+    fun addPosition(inc: Float3) {
         moveForward(inc.z)
         moveUp(inc.y)
         moveLeft(inc.x)

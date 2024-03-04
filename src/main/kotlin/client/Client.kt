@@ -27,9 +27,9 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
         socketHandler.sendEvent(ConnectionRequestEvent("MineOrienteer69"))
 
-        for (x in -5..5) {
-            for (z in -5..5) {
-                for (y in -5..5) {
+        for (x in -4..4) {
+            for (z in -4..4) {
+                for (y in -4..4) {
                     world.chunkManager.generateChunk(Int3(x, y, z))
                 }
             }
