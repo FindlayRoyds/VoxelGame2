@@ -4,14 +4,14 @@ import client.Client
 import client.graphics.Window
 import common.GameEngineProvider
 import common.event.clientevents.MouseMovedEvent
-import common.math.Float2
+import common.math.Double2
 import org.lwjgl.glfw.GLFW.*
 
 
 class MouseInput(private val window: Window) {
-    val currentPos = Float2(0f, 0f)
-    val previousPos = Float2(0f, 0f)
-    val displacement = Float2(0f, 0f)
+    val currentPos = Double2(0, 0)
+    val previousPos = Double2(0, 0)
+    val displacement = Double2(0, 0)
     var windowFocused = false // glfwGetWindowAttrib(window.handle, GLFW_FOCUSED) == GLFW_TRUE
     var leftButtonPressed = false
     var rightButtonPressed = false
@@ -28,8 +28,8 @@ class MouseInput(private val window: Window) {
         }
 
         glfwSetCursorPosCallback(window.handle) { _: Long, xpos: Double, ypos: Double ->
-            currentPos.x = xpos.toFloat()
-            currentPos.y = ypos.toFloat()
+            currentPos.x = xpos
+            currentPos.y = ypos
         }
 
         glfwSetMouseButtonCallback(window.handle) { _: Long, button: Int, action: Int, _: Int ->
@@ -43,7 +43,7 @@ class MouseInput(private val window: Window) {
             displacement.y = currentPos.x - previousPos.x
             displacement.x = currentPos.y - previousPos.y
 
-            if (displacement.x != 0f || displacement.y != 0f) {
+            if (displacement.x != 0.0 || displacement.y != 0.0) {
                 val mouseMovedEvent = MouseMovedEvent(displacement)
                 val client = GameEngineProvider.getGameEngine() as Client
                 client.eventQueue.addEvent(mouseMovedEvent)
@@ -57,8 +57,8 @@ class MouseInput(private val window: Window) {
         val xPos = DoubleArray(1)
         val yPos = DoubleArray(1)
         glfwGetCursorPos(window.handle, xPos, yPos)
-        previousPos.set(xPos[0].toFloat(), yPos[0].toFloat())
-        currentPos.set(xPos[0].toFloat(), yPos[0].toFloat())
+        previousPos.set(xPos[0], yPos[0])
+        currentPos.set(xPos[0], yPos[0])
     }
 
     fun cleanup() {

@@ -1,7 +1,7 @@
 package common.world
 
 import common.Config
-import common.math.Float3
+import common.math.Double3
 import common.math.Int3
 
 class ChunkManager {
@@ -16,7 +16,7 @@ class ChunkManager {
         return chunks.values
     }
 
-    fun worldPositionToChunkPosition(position: Float3): Int3 {
+    fun worldPositionToChunkPosition(position: Double3): Int3 {
         return (position / Config.chunkSize).toInt3()
     }
 }

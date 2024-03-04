@@ -1,18 +1,18 @@
 package client.graphics
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4d
 
 class Projection(width: Int, height: Int) {
-    var fov = Math.toRadians(60.0).toFloat()
-    var zFar = 1000f
-    var zNear = 0.1f
-    val matrix = Matrix4f()
+    var fov = Math.toRadians(60.0)
+    var zFar = 1000.0
+    var zNear = 0.1
+    val matrix = Matrix4d()
 
     init {
         update(width, height)
     }
 
     fun update(width: Int, height: Int) {
-        matrix.setPerspective(fov, width.toFloat() / height.toFloat(), zNear, zFar)
+        matrix.setPerspective(fov, width.toDouble() / height.toDouble(), zNear, zFar)
     }
 }

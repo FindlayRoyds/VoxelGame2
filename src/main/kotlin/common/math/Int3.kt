@@ -4,9 +4,9 @@ import java.io.Serializable
 import kotlin.math.sqrt
 
 data class Int3(var x: Int, var y: Int, var z: Int) : Serializable {
-    val magnitude: Float
+    val magnitude: Double
         get() {
-            return sqrt((x * x + y * y + z * z).toFloat())
+            return sqrt((x * x + y * y + z * z).toDouble())
         }
 
     operator fun plus(other: Int3): Int3 = Int3(x + other.x, y + other.y, z + other.z)

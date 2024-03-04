@@ -2,7 +2,7 @@ package common.event.clientevents
 
 import common.Config
 import common.event.ClientEvent
-import common.math.Float3
+import common.math.Double3
 import org.lwjgl.glfw.GLFW.*
 
 class KeyboardInputEvent: ClientEvent() {
@@ -13,7 +13,7 @@ class KeyboardInputEvent: ClientEvent() {
 
     fun characterMovement() {
         val input = client!!.window.keyboardInput
-        val moveDirection = Float3(0f, 0f, 0f)
+        val moveDirection = Double3(0, 0, 0)
 
         if (input.isKeyPressed(GLFW_KEY_W)) {
             moveDirection.z += 1
@@ -37,7 +37,7 @@ class KeyboardInputEvent: ClientEvent() {
         }
 
         val speed = Config.characterFlySpeed * client!!.eventQueue.deltaTimeS
-        client!!.renderer.camera.addPosition(moveDirection * speed.toFloat())
+        client!!.renderer.camera.addPosition(moveDirection * speed)
     }
 
     fun wireframeToggle() {

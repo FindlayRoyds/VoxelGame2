@@ -1,7 +1,7 @@
 package client.graphics
 
-import common.math.Float3
 import common.world.World
+import org.joml.Vector3f
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL41.*
 
@@ -31,47 +31,47 @@ class Renderer(width: Int, height: Int) {
         uniformsMap.createUniform("chunkPosition")
 
         val vertexDataArray = arrayOf(
-            Float3(-0.5f, -0.5f, -0.5f,),
-            Float3(0.5f, -0.5f, -0.5f,),
-            Float3(0.5f,  0.5f, -0.5f,),
-            Float3(0.5f,  0.5f, -0.5f,),
-            Float3(-0.5f,  0.5f, -0.5f,),
-            Float3(-0.5f, -0.5f, -0.5f,),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f,  0.5f, -0.5f,),
+            Vector3f(0.5f,  0.5f, -0.5f,),
+            Vector3f(-0.5f,  0.5f, -0.5f,),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
 
-            Float3(-0.5f, -0.5f,  0.5f,),
-            Float3(0.5f, -0.5f,  0.5f,),
-            Float3(0.5f,  0.5f,  0.5f,),
-            Float3(0.5f,  0.5f,  0.5f,),
-            Float3(-0.5f,  0.5f,  0.5f,),
-            Float3(-0.5f, -0.5f,  0.5f,),
+            Vector3f(-0.5f, -0.5f,  0.5f,),
+            Vector3f(0.5f, -0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f, -0.5f,  0.5f,),
 
-            Float3(-0.5f,  0.5f,  0.5f,),
-            Float3(-0.5f,  0.5f, -0.5f,),
-            Float3(-0.5f, -0.5f, -0.5f,),
-            Float3(-0.5f, -0.5f, -0.5f,),
-            Float3(-0.5f, -0.5f,  0.5f,),
-            Float3(-0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f, -0.5f,),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
+            Vector3f(-0.5f, -0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f,  0.5f,),
 
-            Float3(0.5f,  0.5f,  0.5f,),
-            Float3(0.5f,  0.5f, -0.5f,),
-            Float3(0.5f, -0.5f, -0.5f,),
-            Float3(0.5f, -0.5f, -0.5f,),
-            Float3(0.5f, -0.5f,  0.5f,),
-            Float3(0.5f,  0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
 
-            Float3(-0.5f, -0.5f, -0.5f,),
-            Float3(0.5f, -0.5f, -0.5f,),
-            Float3(0.5f, -0.5f,  0.5f,),
-            Float3(0.5f, -0.5f,  0.5f,),
-            Float3(-0.5f, -0.5f,  0.5f,),
-            Float3(-0.5f, -0.5f, -0.5f,),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f, -0.5f,),
+            Vector3f(0.5f, -0.5f,  0.5f,),
+            Vector3f(0.5f, -0.5f,  0.5f,),
+            Vector3f(-0.5f, -0.5f,  0.5f,),
+            Vector3f(-0.5f, -0.5f, -0.5f,),
 
-            Float3(-0.5f,  0.5f, -0.5f,),
-            Float3(0.5f,  0.5f, -0.5f,),
-            Float3(0.5f,  0.5f,  0.5f,),
-            Float3(0.5f,  0.5f,  0.5f,),
-            Float3(-0.5f,  0.5f,  0.5f,),
-            Float3(-0.5f,  0.5f, -0.5f,),
+            Vector3f(-0.5f,  0.5f, -0.5f,),
+            Vector3f(0.5f,  0.5f, -0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
+            Vector3f(0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f,  0.5f,),
+            Vector3f(-0.5f,  0.5f, -0.5f,),
         )
         uniformsMap.setUniform("vertexDataArray", vertexDataArray)
     }

@@ -1,8 +1,9 @@
 package client.graphics
 
-import common.math.Float3
 import common.math.Int3
-import org.joml.Matrix4f
+import org.joml.Matrix4d
+import org.joml.Vector3f
+import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL41.*
 import org.lwjgl.system.MemoryStack
 
@@ -18,16 +19,17 @@ class UniformsMap(private val programId: Int) {
         uniforms.put(uniformName, uniformLocation)
     }
 
-    fun setUniform(uniformName: String, value: Matrix4f) {
+    fun setUniform(uniformName: String, value: Matrix4d) {
         val location = uniforms[uniformName]
-            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+            ?: throw RuntimeException("Could not find uniform [$uniformName]")
 
-        MemoryStack.stackPush().use { stack ->
-            glUniformMatrix4fv(location, false, value[stack.mallocFloat(16)])
-        }
+        val buffer = BufferUtils.createFloatBuffer(16)
+        value.get(buffer)
+
+        glUniformMatrix4fv(location, false, buffer)
     }
 
-    fun setUniform(uniformName: String, value: Array<Float3>) {
+    fun setUniform(uniformName: String, value: Array<Vector3f>) {
         val location = uniforms[uniformName]
             ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
 
