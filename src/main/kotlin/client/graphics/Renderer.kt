@@ -89,7 +89,6 @@ class Renderer(width: Int, height: Int) {
         uniformsMap.setUniform("projectionMatrix", projection.matrix)
         uniformsMap.setUniform("viewMatrix", camera.viewMatrix)
 
-
         world.chunkManager.getLoadedChunks().forEach { chunk ->
             val chunkMesh = chunk.mesh
             uniformsMap.setUniform("chunkPosition", chunk.chunkPosition)

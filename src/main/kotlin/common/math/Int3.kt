@@ -1,6 +1,14 @@
 package common.math
 
-data class Int3(var x: Int, var y: Int, var z: Int) {
+import java.io.Serializable
+import kotlin.math.sqrt
+
+data class Int3(var x: Int, var y: Int, var z: Int) : Serializable {
+    val magnitude: Float
+        get() {
+            return sqrt((x * x + y * y + z * z).toFloat())
+        }
+
     operator fun plus(other: Int3): Int3 = Int3(x + other.x, y + other.y, z + other.z)
 
     operator fun minus(other: Int3): Int3 = Int3(x - other.x, y - other.y, z - other.z)
@@ -9,6 +17,8 @@ data class Int3(var x: Int, var y: Int, var z: Int) {
     operator fun times(other: Int): Int3 = Int3(x * other, y * other, z * other)
 
     operator fun div(other: Int3): Int3 = Int3(x / other.x, y / other.y, z / other.z)
+    operator fun div(other: Int): Int3 = Int3(x / other, y / other, z / other)
+    // operator fun div(other: Float): Int3 = Int3(x / other, y / other, z / other)
 
     operator fun plusAssign(other: Int3) {
         x += other.x

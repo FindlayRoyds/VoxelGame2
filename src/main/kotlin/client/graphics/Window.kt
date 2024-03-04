@@ -51,7 +51,7 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
             height = vidMode.height()
         }
 
-        handle = glfwCreateWindow(windowOptions.width, windowOptions.height, "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL)
+        handle = glfwCreateWindow(windowOptions.width, windowOptions.height, title, MemoryUtil.NULL, MemoryUtil.NULL)
         if (handle == MemoryUtil.NULL) {
             throw RuntimeException("Failed to create the GLFW window")
         }
@@ -130,17 +130,6 @@ class Window(title: String, var windowOptions: WindowOptions, private val resize
 
     fun update() {
         glfwSwapBuffers(handle)
-
-        // GL.createCapabilities()
-
-        // glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
-
-//        while (!glfwWindowShouldClose(windowHandle)) {
-//            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-//            glfwSwapBuffers(windowHandle)
-//
-//            glfwPollEvents()
-//        }
     }
 
     fun shouldClose(): Boolean {

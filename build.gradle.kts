@@ -4,7 +4,8 @@ val lwjglVersion = "3.3.3"
 val lwjglNatives = "natives-macos-arm64"
 
 plugins {
-    kotlin("jvm") version "1.8.21"
+    kotlin("jvm") version "1.9.22"
+    kotlin("plugin.serialization") version "1.9.22"
     application
 }
 
@@ -112,6 +113,8 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-zstd::$lwjglNatives")
 
     implementation("org.joml:joml:1.10.5")
+    // runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
 
 kotlin {

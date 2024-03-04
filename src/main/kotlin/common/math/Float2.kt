@@ -1,9 +1,10 @@
 package common.math
 
 import org.joml.Vector2f
+import java.io.Serializable
 import java.lang.Float.floatToIntBits
 
-data class Float2(var x: Float, var y: Float) {
+data class Float2(var x: Float, var y: Float) : Serializable {
     operator fun plus(other: Float2): Float2 = Float2(x + other.x, y + other.y)
 
     operator fun minus(other: Float2): Float2 = Float2(x - other.x, y - other.y)

@@ -1,6 +1,9 @@
 package client.graphics
 
+import client.Client
 import common.Config
+import common.GameEngineProvider
+import common.event.serverevents.UpdatePositionRequestEvent
 import common.math.Float2
 import common.math.Float3
 import org.joml.Matrix4f
@@ -31,28 +34,28 @@ class Camera {
         addRotation(rotation.x, rotation.y)
     }
 
-    fun moveBackwards(inc: Float) {
+    private fun moveBackwards(inc: Float) {
         position += viewMatrix.positiveZ(lookVector.toVector3f()).mul(inc)
     }
 
-    fun moveDown(inc: Float) {
+    private fun moveDown(inc: Float) {
         viewMatrix.positiveY(upVector.toVector3f()).mul(inc)
         position -= Float3(0f, inc, 0f)
     }
 
-    fun moveForward(inc: Float) {
+    private fun moveForward(inc: Float) {
         position -= viewMatrix.positiveZ(lookVector.toVector3f()).mul(inc)
     }
 
-    fun moveLeft(inc: Float) {
+    private fun moveLeft(inc: Float) {
         position -= viewMatrix.positiveX(rightVector.toVector3f()).mul(inc)
     }
 
-    fun moveRight(inc: Float) {
+    private fun moveRight(inc: Float) {
         position += viewMatrix.positiveX(rightVector.toVector3f()).mul(inc)
     }
 
-    fun moveUp(inc: Float) {
+    private fun moveUp(inc: Float) {
         viewMatrix.positiveY(upVector.toVector3f()).mul(inc)
         position += Float3(0f, inc, 0f)
     }
@@ -61,5 +64,9 @@ class Camera {
         moveForward(inc.z)
         moveUp(inc.y)
         moveLeft(inc.x)
+
+        val updatePositionRequestEvent = UpdatePositionRequestEvent(position)
+        val client = GameEngineProvider.getGameEngine() as Client
+        client.socketHandler.sendEvent(updatePositionRequestEvent)
     }
 }

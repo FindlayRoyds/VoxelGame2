@@ -13,7 +13,7 @@ import java.net.Socket
 
 class Client(serverAddress: String, serverPort: Int): GameEngine() {
     var window = Window(
-        "Test",
+        "VoxelGame2",
         Window.WindowOptions(false, 120, 600, 800)
     ) { resize() }
     var socketHandler: SocketHandler
