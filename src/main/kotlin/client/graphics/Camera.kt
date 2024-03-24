@@ -13,7 +13,7 @@ class Camera {
     var lookVector = Double3(0, 0, 0)
     var upVector = Double3(0, 0, 0)
     var rightVector = Double3(0, 0, 0)
-    val position = Double3(0, 0, 0)
+    val position = Double3(0.5, 0.5, 0.5)
     val rotation = Double3(0, 0, 0)
     var viewMatrix = Matrix4d()
         get() {

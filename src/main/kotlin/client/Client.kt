@@ -27,14 +27,17 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
         socketHandler.sendEvent(ConnectionRequestEvent("MineOrienteer69"))
 
-        for (x in -4..4) {
-            for (z in -4..4) {
-                for (y in -4..4) {
+        val range = 10
+        for (x in -range..range) {
+            for (z in -range..range) {
+                for (y in -2..3) {
                     world.chunkManager.generateChunk(Int3(x, y, z))
                 }
             }
         }
-//        world.chunkManager.generateChunk(Int3(0, 0, 0))
+        for (chunk in world.chunkManager.getLoadedChunks()) {
+            chunk.buildMesh()
+        }
 
         main()
     }
@@ -55,26 +58,24 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun main() {
-        val wantedFps = window.windowOptions.fps
-        var initialTime = System.currentTimeMillis()
-        val timeR = if (wantedFps > 0) 1000.0 / wantedFps else 0.0
-        var deltaFps = 0.0
-        var deltaTimeMillis = 0.0
+        val targetFps = 60
+        var startTime = System.currentTimeMillis()
+        val targetFrameTime = 1000.0 / targetFps
 
         while (running && !window.shouldClose()) {
-            val now = System.currentTimeMillis()
+            val currentTime = System.currentTimeMillis()
+            val deltaTimeMillis = currentTime - startTime
 
-            deltaTimeMillis += (now - initialTime).toDouble()
-            deltaFps += (now - initialTime) / timeR
-            if (wantedFps <= 0 || deltaFps >= 1) {
-                pollEvents()
-                runEvents(deltaTimeMillis / 1000)
-                runGraphics()
+            pollEvents()
+            runEvents(deltaTimeMillis / 1000.toDouble())
+            runGraphics()
 
-                deltaFps--
-                deltaTimeMillis = 0.0
+            startTime = currentTime
+
+            val sleepTime = (targetFrameTime - deltaTimeMillis).coerceAtLeast(0.0)
+            if (sleepTime > 0.0) {
+                Thread.sleep(sleepTime.toLong())
             }
-            initialTime = now
         }
 
         cleanup()

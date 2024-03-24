@@ -19,4 +19,16 @@ class ChunkManager {
     fun worldPositionToChunkPosition(position: Double3): Int3 {
         return (position / Config.chunkSize).toInt3()
     }
+
+    fun worldPositionToChunkPosition(position: Int3): Int3 {
+        return position / Config.chunkSize
+    }
+
+    fun getChunk(position: Int3): Chunk? {
+        return chunks[position]
+    }
+
+    fun isChunkLoaded(position: Int3): Boolean {
+        return chunks.containsKey(position)
+    }
 }

@@ -16,8 +16,8 @@ data class Int3(var x: Int, var y: Int, var z: Int) : Serializable {
     operator fun times(other: Int3): Int3 = Int3(x * other.x, y * other.y, z * other.z)
     operator fun times(other: Int): Int3 = Int3(x * other, y * other, z * other)
 
-    operator fun div(other: Int3): Int3 = Int3(x / other.x, y / other.y, z / other.z)
-    operator fun div(other: Int): Int3 = Int3(x / other, y / other, z / other)
+    operator fun div(other: Int3): Int3 = Int3(x.floorDiv(other.x), y.floorDiv(other.y), z.floorDiv(other.z))
+    operator fun div(other: Int): Int3 = Int3(x.floorDiv(other), y.floorDiv(other), z.floorDiv(other))
     // operator fun div(other: Float): Int3 = Int3(x / other, y / other, z / other)
 
     operator fun plusAssign(other: Int3) {

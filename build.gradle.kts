@@ -115,6 +115,7 @@ dependencies {
     implementation("org.joml:joml:1.10.5")
     // runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    // implementation("io.github.spair:imgui-java-app:1.86.11")
 }
 
 kotlin {

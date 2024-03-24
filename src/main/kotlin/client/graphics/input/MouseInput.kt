@@ -12,7 +12,7 @@ class MouseInput(private val window: Window) {
     val currentPos = Double2(0, 0)
     val previousPos = Double2(0, 0)
     val displacement = Double2(0, 0)
-    var windowFocused = false // glfwGetWindowAttrib(window.handle, GLFW_FOCUSED) == GLFW_TRUE
+    var windowFocused = true // glfwGetWindowAttrib(window.handle, GLFW_FOCUSED) == GLFW_TRUE
     var leftButtonPressed = false
     var rightButtonPressed = false
 
