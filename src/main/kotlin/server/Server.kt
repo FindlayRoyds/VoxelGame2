@@ -33,7 +33,8 @@ class Server(port: Int) : GameEngine() {
             eventQueue.runEvents(delayTime.toDouble())
 
             delayTime = Config.tickTime - (System.currentTimeMillis() - startTime)
-            Thread.sleep(delayTime)
+            if (delayTime > 0)
+                Thread.sleep(delayTime)
             startTime = System.currentTimeMillis()
         }
     }

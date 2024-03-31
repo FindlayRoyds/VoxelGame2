@@ -81,6 +81,8 @@ class Renderer(width: Int, height: Int) {
     }
 
     fun render(window: Window, world: World) {
+        glFinish()
+
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         glViewport(0, 0, window.width, window.height)
 
@@ -89,6 +91,7 @@ class Renderer(width: Int, height: Int) {
         uniformsMap.setUniform("projectionMatrix", projection.matrix)
         uniformsMap.setUniform("viewMatrix", camera.viewMatrix)
 
+        // world.chunkManager.chunksLock.lock()
         world.chunkManager.getLoadedChunks().forEach { chunk ->
             val chunkMesh = chunk.mesh
             uniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
@@ -97,6 +100,7 @@ class Renderer(width: Int, height: Int) {
                 glDrawArrays(GL_TRIANGLES, 0, chunkMesh.numVertices)
             }
         }
+        // world.chunkManager.chunksLock.unlock()
 
         glBindVertexArray(0);
 

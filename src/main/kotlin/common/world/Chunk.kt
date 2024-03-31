@@ -2,17 +2,21 @@ package common.world
 
 import client.Client
 import client.graphics.Mesh
+import client.graphics.MeshData
 import common.Config
 import common.GameEngineProvider
 import common.math.Int3
+import kotlin.math.floor
 import kotlin.math.sin
 
 
 class Chunk(val chunkPosition: Int3) {
     var mesh: Mesh? = null
+    var meshData: MeshData? = null
     var blockData = BooleanArray(Config.chunkSize * Config.chunkSize * Config.chunkSize)
     var heightmapCache = HashMap<Int3, Int>()
-    var blockNeighbors = ArrayList<Int3>(26)
+    var blockNeighbors = ArrayList<Int3>(6)
+    val gameEngine = GameEngineProvider.getGameEngine() as Client
 
     init {
         calculateBlockNeighborValues()
@@ -28,6 +32,15 @@ class Chunk(val chunkPosition: Int3) {
     }
 
     fun buildMesh() {
+        for (neighborOffset in blockNeighbors) {
+            val neighborPosition = chunkPosition + neighborOffset
+            if (gameEngine.world.chunkManager.getChunk(neighborPosition) == null)
+                return
+        }
+
+        mesh = null
+        meshData = null
+
         val blockVertexIds = intArrayOf(
             1, 0, 2, 4, 3, 5,
             6, 7, 8, 9, 10, 11,
@@ -44,18 +57,26 @@ class Chunk(val chunkPosition: Int3) {
             if (!blockData[blockIndex])
                 continue
             val blockPosition = blockIndexToBlockPos(blockIndex)
+//            if (!isBlockVisible(blockPosition))
+//                continue
 
             for (faceIndex in 0..5) {
-                if (isFaceVisible(blockPosition, faceIndex)) {
+                 if (isFaceVisible(blockPosition, faceIndex)) {
                     for (vertexIndex in faceIndex * 6..(faceIndex * 6+5)) {
                         vertexIds.add(blockVertexIds[vertexIndex])
                         blockPositions.add(blockIndex)
                     }
-                }
+                 }
             }
         }
 
-        mesh = Mesh(vertexIds.toIntArray(), blockPositions.toIntArray())
+        meshData = MeshData(vertexIds.toIntArray(), blockPositions.toIntArray())
+        gameEngine.world.chunkManager.uploadChunkToGPU(this)
+    }
+
+    fun uploadToGPU() {
+        if (meshData != null)
+            mesh = Mesh(meshData!!)
     }
 
     private fun isFaceVisible(blockPosition: Int3, faceIndex: Int): Boolean {
@@ -63,7 +84,7 @@ class Chunk(val chunkPosition: Int3) {
         val neighborPosition = blockPosition + neighbor
         if (!isBlockPositionInChunk(neighborPosition)) {
 
-            val chunkManager = (GameEngineProvider.getGameEngine() as Client).world.chunkManager
+            val chunkManager = gameEngine.world.chunkManager
             val neighborWorldPosition = blockPositionToWorldPosition(neighborPosition)
             val neighborChunkPosition = chunkManager.worldPositionToChunkPosition(neighborWorldPosition)
             if (!chunkManager.isChunkLoaded(neighborChunkPosition))
@@ -76,6 +97,15 @@ class Chunk(val chunkPosition: Int3) {
         }
     }
 
+    private fun isBlockVisible(blockPosition: Int3): Boolean {
+        for (faceIndex in 0..5) {
+            if (isFaceVisible(blockPosition, faceIndex)) {
+                return true
+            }
+        }
+        return false
+    }
+
     fun generate() {
         for (blockIndex in blockData.indices) {
             val blockPosition = blockIndexToBlockPos(blockIndex)
@@ -84,11 +114,12 @@ class Chunk(val chunkPosition: Int3) {
             if (heightmapCache.contains(blockPosition * Int3(1, 0, 1))) {
                 height = heightmapCache.get(blockPosition * Int3(1, 0, 1))!!
             } else {
-                height = (sin(worldPosition.x.toDouble() / 47 - worldPosition.z.toDouble() / 53) * 37
-                        + sin(worldPosition.x.toDouble() / 5 + worldPosition.z.toDouble() / 3) * 2
-                        + sin(worldPosition.x.toDouble() / 10) * 6
-                        + sin(worldPosition.z.toDouble() / 7) * 3
-                        ).toInt()
+                height = floor(
+                    sin(worldPosition.x.toDouble() / 47.0 - worldPosition.z.toDouble() / 53.0) * 23
+                            + sin(worldPosition.x.toDouble() / 5.0 + worldPosition.z.toDouble() / 3.0) * 2
+                            + sin(worldPosition.x.toDouble() / 10.0) * 6
+                            + sin(worldPosition.z.toDouble() / 7.0) * 3
+                ).toInt()
                 heightmapCache[blockPosition * Int3(1, 0, 1)] = height
             }
             if (height + worldPosition.y - 18 < 0) {
@@ -96,6 +127,14 @@ class Chunk(val chunkPosition: Int3) {
             } else {
                 blockData[blockIndex] = false
             }
+        }
+    }
+
+    fun doThing() {
+        // buildMesh()
+        for (neighborOffset in blockNeighbors) {
+            val neighborPosition = chunkPosition + neighborOffset
+            gameEngine.world.chunkManager.getChunk(neighborPosition)?.buildMesh()
         }
     }
 

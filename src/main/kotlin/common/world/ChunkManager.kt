@@ -3,13 +3,24 @@ package common.world
 import common.Config
 import common.math.Double3
 import common.math.Int3
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class ChunkManager {
-    private val chunks = HashMap<Int3, Chunk>()
+    private val chunks = ConcurrentHashMap<Int3, Chunk>()
+    private val chunksToUploadToGPU = ConcurrentLinkedQueue<Chunk>()
+    val chunkGenerationExecutor = ChunkGenerationExecutor(16)
 
     fun generateChunk(position: Int3) {
+        /** Loads the chunk into the generation queue, call this 👍 */
+        chunkGenerationExecutor.generateChunk(position)
+    }
+
+    fun buildChunk(position: Int3) {
+        /** Actually creates the chunk, do not call lol the chunk generation executor calls this */
         val newChunk = Chunk(position)
         chunks[newChunk.chunkPosition] = newChunk
+        newChunk.doThing()
     }
 
     fun getLoadedChunks(): MutableCollection<Chunk> {
@@ -30,5 +41,16 @@ class ChunkManager {
 
     fun isChunkLoaded(position: Int3): Boolean {
         return chunks.containsKey(position)
+    }
+
+    fun sendChunksToGPU() {
+        while (!chunksToUploadToGPU.isEmpty()) {
+            val chunk = chunksToUploadToGPU.poll()!!
+            chunk.uploadToGPU()
+        }
+    }
+
+    fun uploadChunkToGPU(chunk: Chunk) {
+        chunksToUploadToGPU.add(chunk)
     }
 }

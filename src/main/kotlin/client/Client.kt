@@ -27,16 +27,17 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
         socketHandler.sendEvent(ConnectionRequestEvent("MineOrienteer69"))
 
-        val range = 10
+        world.chunkManager.chunkGenerationExecutor.run()
+        val range = 28
         for (x in -range..range) {
+            // thread {
+            //     GameEngineProvider.setGameEngine(this)
             for (z in -range..range) {
-                for (y in -2..3) {
+                for (y in -4..4) {
                     world.chunkManager.generateChunk(Int3(x, y, z))
                 }
             }
-        }
-        for (chunk in world.chunkManager.getLoadedChunks()) {
-            chunk.buildMesh()
+            // }
         }
 
         main()
@@ -62,6 +63,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         var startTime = System.currentTimeMillis()
         val targetFrameTime = 1000.0 / targetFps
 
+        var frameCount = 0
+        val frameCountStartTime = System.currentTimeMillis()
         while (running && !window.shouldClose()) {
             val currentTime = System.currentTimeMillis()
             val deltaTimeMillis = currentTime - startTime
@@ -72,11 +75,16 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
 
             startTime = currentTime
 
+            frameCount++
+
             val sleepTime = (targetFrameTime - deltaTimeMillis).coerceAtLeast(0.0)
             if (sleepTime > 0.0) {
                 Thread.sleep(sleepTime.toLong())
             }
         }
+
+        val averageFps = frameCount / ((System.currentTimeMillis() - frameCountStartTime).toDouble()) * 1000
+        println("Average FPS: $averageFps")
 
         cleanup()
     }
@@ -94,6 +102,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     private fun runGraphics() {
         renderer.render(window, world)
         window.update()
+        world.chunkManager.sendChunksToGPU()
     }
 
     private fun cleanup() {

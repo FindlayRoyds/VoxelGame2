@@ -20,5 +20,9 @@ void main()
     vec3 offset = vec3(int(blockPosition / (CHUNK_SIZE * CHUNK_SIZE)), int((blockPosition / CHUNK_SIZE)) % CHUNK_SIZE, blockPosition % CHUNK_SIZE);
 
     gl_Position = projectionMatrix * viewMatrix * vec4(pos + offset + WORLD_OFFSET + chunkPosition * 32, 1.0);
-    outColor = vec3(float(int(blockVertexID / 6) % 6) / 6, float(int((blockVertexID) / 6 + 2) % 6)  / 6, float(int((blockVertexID) / 6 + 4) % 6) / 6);
+    outColor = vec3(0.6, 0.23, 0.05);
+    if (int(blockVertexID / 6) % 6 == 4 || int(blockVertexID / 6) % 6 == 5) {
+        outColor = vec3(0.1, 0.75, 0.1);
+    }
+    // outColor = vec3(float(int(blockVertexID / 6) % 6) / 6, float(int((blockVertexID) / 6 + 2) % 6)  / 6, float(int((blockVertexID) / 6 + 4) % 6) / 6);
 }

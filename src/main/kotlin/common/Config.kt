@@ -8,7 +8,7 @@ object Config {
     const val chunkSize = 32
 
     const val mouseSensitivity = 0.005
-    const val characterFlySpeed = 4.5
+    const val characterFlySpeed = 20
 
     // AUTOMATIC CONFIG
     private const val MILLISECONDS_PER_SECOND = 1000
