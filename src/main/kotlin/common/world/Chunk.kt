@@ -15,12 +15,10 @@ class Chunk(val chunkPosition: Int3) {
     var meshData: MeshData? = null
     var blockData = BooleanArray(Config.chunkSize * Config.chunkSize * Config.chunkSize)
     var heightmapCache = HashMap<Int3, Int>()
-    var blockNeighbors = ArrayList<Int3>(6)
     val gameEngine = GameEngineProvider.getGameEngine() as Client
+    var blockNeighbors = arrayListOf(Int3(0, 0, -1), Int3(0, 0, 1), Int3(-1, 0, 0), Int3(1, 0, 0), Int3(0, -1, 0), Int3(0, 1, 0))
 
     init {
-        calculateBlockNeighborValues()
-
         generate()
     }
 
@@ -115,7 +113,7 @@ class Chunk(val chunkPosition: Int3) {
                 height = heightmapCache.get(blockPosition * Int3(1, 0, 1))!!
             } else {
                 height = floor(
-                    sin(worldPosition.x.toDouble() / 47.0 - worldPosition.z.toDouble() / 53.0) * 23
+                    sin(worldPosition.x.toDouble() / 27.0 - worldPosition.z.toDouble() / 33.0) * 23
                             + sin(worldPosition.x.toDouble() / 5.0 + worldPosition.z.toDouble() / 3.0) * 2
                             + sin(worldPosition.x.toDouble() / 10.0) * 6
                             + sin(worldPosition.z.toDouble() / 7.0) * 3
@@ -162,13 +160,5 @@ class Chunk(val chunkPosition: Int3) {
         if (blockPosition.z !in 0 until Config.chunkSize)
             return false
         return true
-    }
-
-    fun calculateBlockNeighborValues() {
-        blockNeighbors = arrayListOf(
-            Int3(0, 0, -1), Int3(0, 0, 1),
-            Int3(-1, 0, 0), Int3(1, 0, 0),
-            Int3(0, -1, 0), Int3(0, 1, 0),
-        )
     }
 }

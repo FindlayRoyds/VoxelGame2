@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 class ChunkManager {
     private val chunks = ConcurrentHashMap<Int3, Chunk>()
     private val chunksToUploadToGPU = ConcurrentLinkedQueue<Chunk>()
-    val chunkGenerationExecutor = ChunkGenerationExecutor(16)
+    val chunkGenerationExecutor = ChunkGenerationExecutor(10)
 
     fun generateChunk(position: Int3) {
         /** Loads the chunk into the generation queue, call this 👍 */

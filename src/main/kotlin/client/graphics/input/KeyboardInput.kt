@@ -1,42 +1,39 @@
 package client.graphics.input
 
-import client.Client
 import client.graphics.Window
-import common.GameEngineProvider
-import common.event.clientevents.KeyboardInputEvent
-import org.lwjgl.glfw.GLFW
+import client.graphics.input.action.*
 import org.lwjgl.glfw.GLFW.*
 
 
 class KeyboardInput(private val window: Window) {
-    // val previousKeyPresses =
+    private val keybindings = mutableMapOf(
+        GLFW_KEY_Z to mutableListOf(WireframeAction()),
+        GLFW_KEY_SPACE to mutableListOf(JumpAction()),
+        GLFW_KEY_LEFT_SHIFT to mutableListOf(CrouchAction()),
+        GLFW_KEY_W to mutableListOf(MoveForwardAction()),
+        GLFW_KEY_S to mutableListOf(MoveBackAction()),
+        GLFW_KEY_A to mutableListOf(MoveLeftAction()),
+        GLFW_KEY_D to mutableListOf(MoveRightAction()),
+    )
+    private val pressedKeys = mutableSetOf<Int>()
 
     fun pollInput() {
-        if (isAnyKeyPressed()) {
-            val client = GameEngineProvider.getGameEngine() as Client
-            client.eventQueue.addEvent(KeyboardInputEvent())
-        }
-    }
-
-    fun keyCallBack(key: Int, action: Int) {
-        if (action == GLFW_PRESS) {
-            // println("pressed")
-        } else if (action == GLFW_RELEASE) {
-            // println("released")
-        }
-    }
-
-
-    fun isKeyPressed(keyCode: Int): Boolean {
-        return GLFW.glfwGetKey(window.handle, keyCode) == GLFW.GLFW_PRESS
-    }
-
-    fun isAnyKeyPressed(): Boolean {
-        for (i in GLFW.GLFW_KEY_SPACE..GLFW.GLFW_KEY_LAST) {
-            if (glfwGetKey(window.handle, i) == GLFW_PRESS) {
-                return true
+        for ((key, actions) in keybindings) {
+            if (isKeyPressed(key)) {
+                for (action in actions)
+                    action.run(true)
+                if (!pressedKeys.contains(key)) {
+                    pressedKeys.add(key)
+                    for (action in actions)
+                        action.run(false)
+                }
+            } else if (pressedKeys.contains(key)) {
+                pressedKeys.remove(key)
             }
         }
-        return false
+    }
+
+    fun isKeyPressed(keyCode: Int): Boolean {
+        return glfwGetKey(window.handle, keyCode) == GLFW_PRESS
     }
 }
