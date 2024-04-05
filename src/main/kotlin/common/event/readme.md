@@ -1,1 +1,0 @@
-Client events are run on the client (sent from the server or added to the event queue by the client), and vice versa.
