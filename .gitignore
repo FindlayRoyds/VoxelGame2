@@ -1,0 +1,9 @@
+.gradle/
+.idea/
+build
+gradle/
+gradlew
+gradlew.*
+.DS_Store
+out/
+bin/
