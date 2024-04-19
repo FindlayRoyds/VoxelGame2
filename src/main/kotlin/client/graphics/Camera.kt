@@ -8,13 +8,14 @@ import common.math.Double2
 import common.math.Double3
 import org.joml.Matrix4d
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
 
 
-class Camera {
+class Camera() {
     var upVector = Double3(0, 0, 0)
     var rightVector = Double3(0, 0, 0)
-    val position = Double3(0, 50, 0)
+    val position = Double3(0.5, 100.0, 0.5)
     val rotation = Double3(0, 0, 0)
     var viewMatrix = Matrix4d()
         get() {
@@ -30,6 +31,15 @@ class Camera {
                 sin(-rotation.x),
                 cos(-rotation.x) * -cos(rotation.y)
             )
+        }
+    var fallSpeed = 0.0 // remove this is temporary lol
+
+    private var _client: Client? = null
+    private val client: Client
+        get() {
+            if (_client == null)
+                _client = GameEngineProvider.getGameEngine() as Client
+            return _client!!
         }
 
     fun addRotation(x: Double, y: Double) {
@@ -66,5 +76,23 @@ class Camera {
         val updatePositionRequestEvent = UpdatePositionRequestEvent(position)
         val client = GameEngineProvider.getGameEngine() as Client
         client.socketHandler.sendEvent(updatePositionRequestEvent)
+    }
+
+    fun setSelectionBox() {
+        val raycastResult = client.world.raycast(position, lookVector, Config.characterReachDistance)
+        client.renderer.selectionBoxPosition = raycastResult?.first
+    }
+
+    fun pollEvents() {
+        setSelectionBox()
+
+        val raycastResult = client.world.raycast(position, Double3(0, -1, 0), 1.6)
+        if (raycastResult == null || fallSpeed < 0.0) {
+            fallSpeed = min(fallSpeed + 0.01, 0.6)
+            position.y -= fallSpeed
+        } else {
+            fallSpeed = 0.0
+            position.y = raycastResult.first.y.toDouble() + 2.55
+        }
     }
 }

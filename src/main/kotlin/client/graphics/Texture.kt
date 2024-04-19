@@ -47,7 +47,7 @@ class Texture {
 //            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT)
 
             // Allocate storage for the texture array
-            glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB, firstWidth, firstHeight, filenames.size, 0, GL_RGB, GL_UNSIGNED_BYTE, null as ByteBuffer?)
+            glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, firstWidth, firstHeight, filenames.size, 0, GL_RGBA, GL_UNSIGNED_BYTE, null as ByteBuffer?)
 
             // Load image data into the texture array
             for ((index, filename) in filenames.withIndex()) {
@@ -56,7 +56,7 @@ class Texture {
                     throw RuntimeException("Failed to load image: $filename")
                 }
 
-                glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, index, firstWidth, firstHeight, 1, GL_RGB, GL_UNSIGNED_BYTE, image)
+                glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, index, firstWidth, firstHeight, 1, GL_RGBA, GL_UNSIGNED_BYTE, image)
                 stbi_image_free(image)
             }
 

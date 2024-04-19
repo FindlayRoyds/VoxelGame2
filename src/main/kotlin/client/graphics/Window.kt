@@ -8,7 +8,7 @@ import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.system.MemoryUtil
 
 
-class Window(title: String, var windowOptions: WindowOptions, private val resizeFunction: () -> Unit) {
+class Window(title: String, windowOptions: WindowOptions, private val resizeFunction: () -> Unit) {
     val mouseInput: MouseInput
     val keyboardInput: KeyboardInput
     val handle: Long

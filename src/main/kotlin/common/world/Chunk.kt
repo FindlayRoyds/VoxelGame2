@@ -35,8 +35,7 @@ class Chunk(val chunkPosition: Int3) {
             if (gameEngine.world.chunkManager.getChunk(neighborPosition) == null)
                 return
         }
-
-        mesh = null
+        
         meshData = null
 
         val blockVertexIds = intArrayOf(
@@ -172,5 +171,30 @@ class Chunk(val chunkPosition: Int3) {
             return
         blockData[blockIndex] = value
         buildMesh()
+
+        for (neighborDirection in chunksNeighboringBlock(blockPosition)) {
+            val neighborPosition = chunkPosition + neighborDirection
+            val neighborChunk = gameEngine.world.chunkManager.getChunk(neighborPosition)
+            neighborChunk?.buildMesh()
+        }
+    }
+
+    fun chunksNeighboringBlock(blockPosition: Int3): List<Int3> {
+        val result = mutableListOf<Int3>()
+
+        if (blockPosition.x == 0)
+            result.add(Int3(-1, 0, 0))
+        else if (blockPosition.x == 31)
+            result.add(Int3(1, 0, 0))
+        if (blockPosition.y == 0)
+            result.add(Int3(0, -1, 0))
+        else if (blockPosition.y == 31)
+            result.add(Int3(0, 1, 0))
+        if (blockPosition.z == 0)
+            result.add(Int3(0, 0, -1))
+        else if (blockPosition.z == 31)
+            result.add(Int3(0, 0, 1))
+
+        return result
     }
 }

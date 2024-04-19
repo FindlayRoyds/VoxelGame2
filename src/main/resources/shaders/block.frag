@@ -14,4 +14,7 @@ void main()
     int texIndex = int(texIndexFloat);
     vec3 texCoord3D = vec3(texCoord, texIndex);
     fragColor = texture(textureArray, texCoord3D);
+
+    if (fragColor.a == 0.0)
+        discard;
 }

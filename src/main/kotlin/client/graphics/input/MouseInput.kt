@@ -64,10 +64,10 @@ class MouseInput(private val window: Window) {
     }
 
     fun unFocusWindow() {
-        // glfwSetCursorPos(window.handle, window.width / 2.0, window.height / 2.0)
         glfwSetInputMode(window.handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
         // resetCursorTracking()
         windowFocused = false
+        glfwSetCursorPos(window.handle, window.width / 2.0, window.height / 2.0)
     }
 
     private fun resetCursorTracking() {

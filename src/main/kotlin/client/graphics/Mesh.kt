@@ -1,13 +1,29 @@
 package client.graphics
 
 import org.lwjgl.opengl.GL30
-import org.lwjgl.opengl.GL30.*
+import org.lwjgl.opengl.GL42.*
 
 
 class Mesh(meshData: MeshData) {
     val vaoId: Int
     val vboIdList: MutableList<Int>
     val numVertices = meshData.vertexIds.size
+    private var fence: Long? = null
+    private var _isTransferred: Boolean = false
+    val isTransferred: Boolean
+        get() {
+            if (_isTransferred) {
+                return true
+            } else if (fence != null) {
+                val result = glClientWaitSync(fence!!, GL_SYNC_FLUSH_COMMANDS_BIT, 0)
+                if (result == GL_ALREADY_SIGNALED || result == GL_CONDITION_SATISFIED) {
+                    _isTransferred = true
+                    glDeleteSync(fence!!)
+                    fence = null
+                }
+            }
+            return _isTransferred
+        }
 
     init {
         vboIdList = ArrayList()
@@ -47,6 +63,8 @@ class Mesh(meshData: MeshData) {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
+
+        fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0)
     }
 
     fun cleanup() {

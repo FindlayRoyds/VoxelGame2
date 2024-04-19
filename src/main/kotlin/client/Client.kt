@@ -14,7 +14,7 @@ import java.net.Socket
 class Client(serverAddress: String, serverPort: Int): GameEngine() {
     var window = Window(
         "VoxelGame2",
-        Window.WindowOptions(false, 120, 600, 800)
+        Window.WindowOptions(false, 120, 800, 1000)
     ) { resize() }
     var socketHandler: SocketHandler
     var running = false
@@ -93,6 +93,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         window.mouseInput.pollInput()
         window.keyboardInput.pollInput()
         window.pollEvents()
+        renderer.camera.pollEvents()
     }
 
     private fun runEvents(deltaTimeS: Double) {
