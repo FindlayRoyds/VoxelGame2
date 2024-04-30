@@ -7,8 +7,9 @@ import server.Server
 import java.util.*
 
 class Players {
-    private var playersMap: MutableMap<Int, Player> = Collections.synchronizedMap(HashMap<Int, Player>())
+    private var playersMap: MutableMap<Int, Player> = Collections.synchronizedMap(HashMap())
     private var nextAvailableUserID = 0
+    var localPlayer: Player? = null
 
     fun addPlayer(player: Player) {
         val gameEngine = GameEngineProvider.getGameEngine()

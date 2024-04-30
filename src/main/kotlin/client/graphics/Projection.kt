@@ -3,7 +3,7 @@ package client.graphics
 import org.joml.Matrix4d
 
 class Projection(width: Int, height: Int) {
-    var fov = Math.toRadians(60.0)
+    var fov = Math.toRadians(75.0)
     var zFar = 2000.0
     var zNear = 0.2
     val matrix = Matrix4d()

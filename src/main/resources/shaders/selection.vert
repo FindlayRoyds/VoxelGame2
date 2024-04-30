@@ -2,7 +2,7 @@
 
 layout (location = 0) in vec3 aPos;
 
-uniform ivec3 selectionBoxPosition;
+uniform vec3 selectionBoxPosition;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 

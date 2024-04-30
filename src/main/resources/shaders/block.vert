@@ -11,22 +11,32 @@ layout (location=2) in int blockType;
 // out vec3 outColor;
 out vec2 texCoord;
 out float texIndexFloat;
+out vec3 normal;
+out vec3 viewDir;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
+
 uniform vec3 vertexDataArray[108];
 uniform vec2 textureDataArray[108];
 uniform int textureIndexArray[108];
+uniform vec3 normalDataArray[108];
+
 uniform ivec3 chunkPosition;
+
+vec3 sunDirection = normalize(vec3(1, 3, 2));
 
 void main()
 {
     int vertexDataIndex = blockType * 36 + blockVertexID;
     vec3 pos = vertexDataArray[vertexDataIndex];
     texCoord = textureDataArray[vertexDataIndex];
+    normal = normalDataArray[vertexDataIndex];
     texIndexFloat = float(textureIndexArray[vertexDataIndex]);
     vec3 offset = vec3(int(blockPosition / (CHUNK_SIZE * CHUNK_SIZE)), int((blockPosition / CHUNK_SIZE)) % CHUNK_SIZE, blockPosition % CHUNK_SIZE);
     vec3 worldPos = pos + offset + WORLD_OFFSET + chunkPosition * 32;
+    vec4 viewPos = viewMatrix * vec4(worldPos, 1.0);
+    viewDir = -viewPos.xyz;
     gl_Position = projectionMatrix * viewMatrix * vec4(worldPos, 1.0);
 //    outColor = vec3(0.6, 0.23, 0.05);
 //    if (int(blockVertexID / 6) % 6 == 4 || int(blockVertexID / 6) % 6 == 5) {

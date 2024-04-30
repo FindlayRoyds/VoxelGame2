@@ -1,6 +1,7 @@
 package common.math
 
 import org.joml.Vector3d
+import org.joml.Vector3f
 import java.io.Serializable
 import java.lang.Double.doubleToLongBits
 import kotlin.math.*
@@ -91,6 +92,9 @@ data class Double3(var x: Double, var y: Double, var z: Double) : Serializable {
 
     fun toVector3d(): Vector3d {
         return Vector3d(x, y, z)
+    }
+    fun toVector3f(): Vector3f {
+        return Vector3f(x.toFloat(), y.toFloat(), z.toFloat())
     }
     fun toInt3(): Int3 {
         return Int3(floor(x).toInt(), floor(y).toInt(), floor(z).toInt())

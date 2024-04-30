@@ -14,7 +14,7 @@ import java.net.Socket
 class Client(serverAddress: String, serverPort: Int): GameEngine() {
     var window = Window(
         "VoxelGame2",
-        Window.WindowOptions(false, 120, 800, 1000)
+        Window.WindowOptions(false, 120, 550, 800)
     ) { resize() }
     var socketHandler: SocketHandler
     var running = false
@@ -33,7 +33,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
             // thread {
             //     GameEngineProvider.setGameEngine(this)
             for (z in -range..range) {
-                for (y in -4..4) {
+                for (y in -8..8) {
                     world.chunkManager.generateChunk(Int3(x, y, z))
                 }
             }

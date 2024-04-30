@@ -14,7 +14,7 @@ class JumpAction : Action() {
 
         val raycastResult = client.world.raycast(client.renderer.camera.position, Double3(0, -1, 0), 1.6)
         if (raycastResult != null) {
-            client.renderer.camera.fallSpeed = -0.17
+            client.renderer.camera.fallSpeed = -0.20
         }
     }
 }

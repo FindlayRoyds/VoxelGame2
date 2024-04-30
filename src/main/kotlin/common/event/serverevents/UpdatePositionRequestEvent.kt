@@ -2,6 +2,7 @@ package common.event.serverevents
 
 import common.Config
 import common.event.ServerEvent
+import common.event.clientevents.UpdatePlayerPositionEvent
 import common.math.Double3
 
 class UpdatePositionRequestEvent(position: Double3): ServerEvent() {
@@ -16,5 +17,8 @@ class UpdatePositionRequestEvent(position: Double3): ServerEvent() {
         val chunkPosition = (position / Config.chunkSize).toInt3()
         // println(chunkPosition)
         player!!.position = position
+
+        val updatePlayerPositionEvent = UpdatePlayerPositionEvent(player!!.userID, position)
+        server!!.serverNetwork.sendEventToEveryone(updatePlayerPositionEvent)
     }
 }

@@ -114,7 +114,8 @@ class Chunk(val chunkPosition: Int3) {
                 height = heightmapCache.get(blockPosition.x * 33 + blockPosition.z)!!
             } else {
                 height = floor(
-                    sin(worldPosition.x.toDouble() / 27.0 - worldPosition.z.toDouble() / 33.0) * 23
+                    (sin(worldPosition.x.toDouble() / 53.0) - sin(worldPosition.z.toDouble() / -59.0)) * 53
+                            + sin(worldPosition.x.toDouble() / 27.0 - worldPosition.z.toDouble() / 33.0) * 19
                             + sin(worldPosition.x.toDouble() / 5.0 + worldPosition.z.toDouble() / 3.0) * 2
                             + sin(worldPosition.x.toDouble() / 10.0) * 6
                             + sin(worldPosition.z.toDouble() / 7.0) * 3

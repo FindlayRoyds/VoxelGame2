@@ -12,7 +12,7 @@ class ConnectionRequestEvent(private val username: String) : ServerEvent() {
 
         // val responseEvent = ConnectionResponseEvent(true)
         // server!!.serverNetwork.sendEventToUserID(responseEvent, newPlayerUserID)
-        val setupGameEvent = SetupGameEvent(server!!.players)
+        val setupGameEvent = SetupGameEvent(server!!.players, newPlayerUserID)
         server!!.serverNetwork.sendEventToPlayer(setupGameEvent, newPlayer)
     }
 }

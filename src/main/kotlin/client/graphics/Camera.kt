@@ -15,7 +15,7 @@ import kotlin.math.sin
 class Camera() {
     var upVector = Double3(0, 0, 0)
     var rightVector = Double3(0, 0, 0)
-    val position = Double3(0.5, 100.0, 0.5)
+    val position = Double3(-24.5, 100.0, 25.5)
     val rotation = Double3(0, 0, 0)
     var viewMatrix = Matrix4d()
         get() {
@@ -46,7 +46,7 @@ class Camera() {
         rotation += Double3(x, y, 0.0)
 
         // Limit rotation around X-axis to prevent camera from going upside down
-        rotation.x = rotation.x.coerceIn(Math.toRadians(-Config.cameraVerticalLimit.toDouble()), Math.toRadians(Config.cameraVerticalLimit.toDouble()))
+        rotation.x = rotation.x.coerceIn(Math.toRadians(-Config.cameraVerticalAngleLimit.toDouble()), Math.toRadians(Config.cameraVerticalAngleLimit.toDouble()))
     }
 
     fun addRotation(rotation: Double2) {
@@ -72,10 +72,6 @@ class Camera() {
         moveForward(inc.z)
         moveUp(inc.y)
         moveLeft(inc.x)
-
-        val updatePositionRequestEvent = UpdatePositionRequestEvent(position)
-        val client = GameEngineProvider.getGameEngine() as Client
-        client.socketHandler.sendEvent(updatePositionRequestEvent)
     }
 
     fun setSelectionBox() {
@@ -86,13 +82,21 @@ class Camera() {
     fun pollEvents() {
         setSelectionBox()
 
+        val oldPosition = position.copy()
         val raycastResult = client.world.raycast(position, Double3(0, -1, 0), 1.6)
         if (raycastResult == null || fallSpeed < 0.0) {
-            fallSpeed = min(fallSpeed + 0.01, 0.6)
+            fallSpeed = min(fallSpeed + 0.015, 1.2)
             position.y -= fallSpeed
         } else {
             fallSpeed = 0.0
             position.y = raycastResult.first.y.toDouble() + 2.55
         }
+
+        // if (oldPosition != position) {
+            // println("sending")
+        val updatePositionRequestEvent = UpdatePositionRequestEvent(position)
+        val client = GameEngineProvider.getGameEngine() as Client
+        client.socketHandler.sendEvent(updatePositionRequestEvent)
+        // }
     }
 }

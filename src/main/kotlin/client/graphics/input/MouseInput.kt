@@ -12,17 +12,21 @@ class MouseInput(private val window: Window) {
     val currentPos = Double2(0, 0)
     val previousPos = Double2(0, 0)
     val displacement = Double2(0, 0)
-    var windowFocused = true // glfwGetWindowAttrib(window.handle, GLFW_FOCUSED) == GLFW_TRUE
+    var windowFocused = false // glfwGetWindowAttrib(window.handle, GLFW_FOCUSED) == GLFW_TRUE
     var leftButtonPressed = false
     var rightButtonPressed = false
 
     init {
-        glfwSetCursorPos(window.handle, window.width / 2.0, window.height / 2.0)
-        glfwSetInputMode(window.handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED)
-        resetCursorTracking()
+        // glfwSetCursorPos(window.handle, window.width / 2.0, window.height / 2.0)
+        // glfwSetInputMode(window.handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED)
+        // resetCursorTracking()
+        var windowStartupDebounce = true
 
         glfwSetWindowFocusCallback(window.handle) { _: Long, focused: Boolean ->
-            windowFocused = focused
+            if (!windowStartupDebounce) {
+                windowFocused = focused
+            }
+            windowStartupDebounce = false
             resetCursorTracking()
         }
 

@@ -1,5 +1,8 @@
 package client.graphics
 
+import client.Client
+import common.GameEngineProvider
+import common.math.Double3
 import common.math.Int3
 import common.world.World
 import org.joml.Vector2f
@@ -19,6 +22,14 @@ class Renderer(width: Int, height: Int) {
     private val selectionBoxVaoId: Int
     private val selectionBoxVboId: Int
     var selectionBoxPosition: Int3? = null
+
+    private var _client: Client? = null
+    private val client: Client
+        get() {
+            if (_client == null)
+                _client = GameEngineProvider.getGameEngine() as Client
+            return _client!!
+        }
 
     init {
         GL.createCapabilities()
@@ -44,6 +55,7 @@ class Renderer(width: Int, height: Int) {
         blockUniformsMap.createUniform("vertexDataArray")
         blockUniformsMap.createUniform("textureDataArray")
         blockUniformsMap.createUniform("textureIndexArray")
+        blockUniformsMap.createUniform("normalDataArray")
         blockUniformsMap.createUniform("chunkPosition")
 
         selectionBoxUniformsMap = UniformsMap(selectionBoxShaderProgram.programId)
@@ -435,6 +447,37 @@ class Renderer(width: Int, height: Int) {
             Vector2f(0.0f, 1.0f),
         )
 
+        val normalDataArray = arrayOf(
+            Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f),Vector3f(0f, 0f, -1f),
+            Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f),
+            Vector3f(-1f, 0f, 0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f),
+            Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f),
+            Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f),
+            Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f),
+
+            Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f),Vector3f(0f, 0f, -1f),
+            Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f),
+            Vector3f(-1f, 0f, 0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f),
+            Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f),
+            Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f),
+            Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f),
+
+            Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f),Vector3f(0f, 0f, -1f),
+            Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f),
+            Vector3f(-1f, 0f, 0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f),
+            Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f),
+            Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f),
+            Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f),
+
+            Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f), Vector3f(0f, 0f, -1f),Vector3f(0f, 0f, -1f),
+            Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f), Vector3f(0f, 0f, 1f),
+            Vector3f(-1f, 0f, 0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f), Vector3f(-1f, 0f, -0f),
+            Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f), Vector3f(1f, 0f, 0f),
+            Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f), Vector3f(0f, -1f, 0f),
+            Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f), Vector3f(0f, 1f, 0f),
+
+            )
+
         val textureIndexArray = arrayOf(
             0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0,
@@ -468,6 +511,7 @@ class Renderer(width: Int, height: Int) {
         blockUniformsMap.setUniform("vertexDataArray", vertexDataArray)
         blockUniformsMap.setUniform("textureDataArray", textureDataArray)
         blockUniformsMap.setUniform("textureIndexArray", textureIndexArray)
+        blockUniformsMap.setUniform("normalDataArray", normalDataArray)
 
         val textureArrayId = Texture.loadTextures(
             listOf(
@@ -476,7 +520,7 @@ class Renderer(width: Int, height: Int) {
                 "src/main/resources/textures/blocks/oak-side-shaded.png",
                 "src/main/resources/textures/blocks/Dirt.png",
                 "src/main/resources/textures/blocks/Dirt.png",
-                "src/main/resources/textures/blocks/transparency-test.png"
+                "src/main/resources/textures/blocks/spruce_log_top.png"
             )
         )
         glActiveTexture(GL_TEXTURE0)
@@ -558,7 +602,7 @@ class Renderer(width: Int, height: Int) {
 
             selectionBoxUniformsMap.setUniform("projectionMatrix", projection.matrix)
             selectionBoxUniformsMap.setUniform("viewMatrix", camera.viewMatrix)
-            selectionBoxUniformsMap.setUniform("selectionBoxPosition", selectionBoxPosition!!)
+            selectionBoxUniformsMap.setUniform("selectionBoxPosition", selectionBoxPosition!!.toDouble3().toVector3f())
 
             glEnable(GL_POLYGON_OFFSET_LINE)
             glPolygonOffset(-10.0f, -10.0f)
@@ -571,6 +615,19 @@ class Renderer(width: Int, height: Int) {
 
             selectionBoxShaderProgram.unbind()
         }
+
+        selectionBoxShaderProgram.bind()
+        selectionBoxUniformsMap.setUniform("projectionMatrix", projection.matrix)
+        selectionBoxUniformsMap.setUniform("viewMatrix", camera.viewMatrix)
+        for (player in client.players.getPlayerList()) {
+            if (player == client.players.localPlayer)
+                continue
+            selectionBoxUniformsMap.setUniform("selectionBoxPosition", (player.position - Double3(0.5, 0.5, 0.5)).toVector3f())
+            glBindVertexArray(selectionBoxVaoId)
+            glDrawArrays(GL_LINES, 0, 24)
+            glBindVertexArray(0)
+        }
+        selectionBoxShaderProgram.unbind()
     }
 
     fun resize(width: Int, height: Int) {
