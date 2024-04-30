@@ -1,8 +1,8 @@
 package common.player
 
 import common.GameEngineProvider
-import common.event.clientevents.PlayerJoinedEvent
-import common.event.clientevents.PlayerLeftEvent
+import common.event.clientevents.PlayerJoinedClientEvent
+import common.event.clientevents.PlayerLeftClientEvent
 import server.Server
 import java.util.*
 
@@ -15,7 +15,7 @@ class Players {
         val gameEngine = GameEngineProvider.getGameEngine()
         if (gameEngine.isServer()) {
             val server = gameEngine as Server
-            val playerJoinedEvent = PlayerJoinedEvent(player)
+            val playerJoinedEvent = PlayerJoinedClientEvent(player)
             server.serverNetwork.sendEventToEveryone(playerJoinedEvent)
         }
 
@@ -41,7 +41,7 @@ class Players {
         val gameEngine = GameEngineProvider.getGameEngine()
         if (gameEngine.isServer()) {
             val server = gameEngine as Server
-            val playerLeftEvent = PlayerLeftEvent(player.userID)
+            val playerLeftEvent = PlayerLeftClientEvent(player.userID)
             server.serverNetwork.sendEventToEveryone(playerLeftEvent)
         }
     }

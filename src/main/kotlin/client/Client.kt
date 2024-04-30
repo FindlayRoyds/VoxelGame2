@@ -4,8 +4,9 @@ import client.graphics.Renderer
 import client.graphics.Window
 import common.GameEngine
 import common.GameEngineProvider
-import common.event.commonevents.DisconnectEvent
-import common.event.serverevents.ConnectionRequestEvent
+import common.event.commonevents.DisconnectClientEvent
+import common.event.commonevents.DisconnectServerEvent
+import common.event.serverevents.ConnectionRequestServerEvent
 import common.math.Int3
 import common.networking.SocketHandler
 import java.net.Socket
@@ -25,7 +26,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         GameEngineProvider.setGameEngine(this)
 
         socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
-        socketHandler.sendEvent(ConnectionRequestEvent("MineOrienteer69"))
+        socketHandler.sendEvent(ConnectionRequestServerEvent("MineOrienteer69"))
 
         world.chunkManager.chunkGenerationExecutor.run()
         val range = 16
@@ -45,9 +46,10 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
 
     fun stop() {
         running = false
-        val disconnectEvent = DisconnectEvent()
+        val disconnectEvent = DisconnectServerEvent()
         socketHandler.sendEvent(disconnectEvent)
-        disconnectEvent.run()
+        val disconnectClientEvent = DisconnectClientEvent()
+        disconnectClientEvent.run()
     }
 
     override fun isServer(): Boolean {

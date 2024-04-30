@@ -3,7 +3,7 @@ package client.graphics
 import client.Client
 import common.Config
 import common.GameEngineProvider
-import common.event.serverevents.UpdatePositionRequestEvent
+import common.event.serverevents.UpdatePositionServerEvent
 import common.math.Double2
 import common.math.Double3
 import org.joml.Matrix4d
@@ -94,7 +94,7 @@ class Camera() {
 
         // if (oldPosition != position) {
             // println("sending")
-        val updatePositionRequestEvent = UpdatePositionRequestEvent(position)
+        val updatePositionRequestEvent = UpdatePositionServerEvent(position)
         val client = GameEngineProvider.getGameEngine() as Client
         client.socketHandler.sendEvent(updatePositionRequestEvent)
         // }

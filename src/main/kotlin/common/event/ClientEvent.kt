@@ -4,14 +4,15 @@ import client.Client
 import common.GameEngineProvider
 
 abstract class ClientEvent : Event() {
-    protected var client: Client? = null
+    private var _client: Client? = null
+    protected val client: Client
+        get() {
+            if (_client == null)
+                _client = GameEngineProvider.getGameEngine() as Client
+            return _client!!
+        }
 
     override fun run() {
-        val gameEngine = GameEngineProvider.getGameEngine()
-        if (gameEngine.isServer())
-            throw Exception("Client event attempting to run on a server!")
-        client = gameEngine as Client
-
         event()
     }
 }

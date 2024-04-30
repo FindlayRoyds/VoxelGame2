@@ -3,7 +3,7 @@ package client.graphics.input.action
 import client.Client
 import common.Config
 import common.GameEngineProvider
-import common.event.commonevents.SetBlockEvent
+import common.event.commonevents.SetBlockServerEvent
 
 class PlaceAction: Action() {
     override val onHold = false
@@ -21,7 +21,7 @@ class PlaceAction: Action() {
 
             client.world.chunkManager.setBlock(placePosition, 2.toByte())
 
-            val setBlockEvent = SetBlockEvent(placePosition, 2.toByte())
+            val setBlockEvent = SetBlockServerEvent(placePosition, 2.toByte())
             client.socketHandler.sendEvent(setBlockEvent)
         }
     }

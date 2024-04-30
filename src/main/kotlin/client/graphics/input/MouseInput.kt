@@ -2,8 +2,8 @@ package client.graphics.input
 
 import client.Client
 import client.graphics.Window
+import common.Config
 import common.GameEngineProvider
-import common.event.clientevents.MouseMovedEvent
 import common.math.Double2
 import org.lwjgl.glfw.GLFW.*
 
@@ -15,6 +15,14 @@ class MouseInput(private val window: Window) {
     var windowFocused = false // glfwGetWindowAttrib(window.handle, GLFW_FOCUSED) == GLFW_TRUE
     var leftButtonPressed = false
     var rightButtonPressed = false
+
+    private var _client: Client? = null
+    private val client: Client
+        get() {
+            if (_client == null)
+                _client = GameEngineProvider.getGameEngine() as Client
+            return _client!!
+        }
 
     init {
         // glfwSetCursorPos(window.handle, window.width / 2.0, window.height / 2.0)
@@ -51,9 +59,11 @@ class MouseInput(private val window: Window) {
             displacement.x = currentPos.y - previousPos.y
 
             if (displacement.x != 0.0 || displacement.y != 0.0) {
-                val mouseMovedEvent = MouseMovedEvent(displacement)
-                val client = GameEngineProvider.getGameEngine() as Client
-                client.eventQueue.addEvent(mouseMovedEvent)
+//                val mouseMovedEvent = MouseMovedEvent(displacement)
+//                val client = GameEngineProvider.getGameEngine() as Client
+//                client.eventQueue.addEvent(mouseMovedEvent)
+
+                client.renderer.camera.addRotation(displacement * Config.mouseSensitivity)
             }
 
             previousPos.set(currentPos)

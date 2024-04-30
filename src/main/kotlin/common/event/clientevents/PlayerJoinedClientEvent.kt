@@ -4,7 +4,7 @@ import common.event.ClientEvent
 import common.networking.transferobjects.PlayerTransferObject
 import common.player.Player
 
-class PlayerJoinedEvent(player: Player) : ClientEvent() {
+class PlayerJoinedClientEvent(player: Player) : ClientEvent() {
     private val playerData = PlayerTransferObject(player, false)
 
     override fun event() {

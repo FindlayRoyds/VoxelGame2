@@ -3,17 +3,20 @@ package common.event
 import common.GameEngineProvider
 import common.player.Player
 import server.Server
+import java.net.Socket
 
 abstract class ServerEvent : Event() {
     protected var player: Player? = null
-    protected var server: Server? = null
+    var socket: Socket? = null
+    private var _server: Server? = null
+    protected val server: Server
+        get() {
+            if (_server == null)
+                _server = GameEngineProvider.getGameEngine() as Server
+            return _server!!
+        }
 
     override fun run() {
-        val gameEngine = GameEngineProvider.getGameEngine()
-        if (gameEngine.isClient())
-            throw Exception("Server event attempting to run on a client!")
-        server = gameEngine as Server
-
         if (socket != null) {
             val server = GameEngineProvider.getGameEngine() as Server
             val userID = server.serverNetwork.getUserIDFromSocket(socket!!)

@@ -3,7 +3,8 @@ package common.networking
 import common.EventQueue
 import common.GameEngineProvider
 import common.event.Event
-import common.event.commonevents.DisconnectEvent
+import common.event.ServerEvent
+import common.event.commonevents.DisconnectClientEvent
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.Socket
@@ -31,14 +32,14 @@ class SocketHandler(private val socket: Socket, private val eventQueue: EventQue
         try {
             while (true) {
                 val event = reader.readObject()
-                if (event is Event) {
+                if (event is ServerEvent) {
                     event.socket = socket
                     eventQueue.addEvent(event)
                 }
             }
         } catch (exception: Exception) {
-            val disconnectEvent = DisconnectEvent()
-            disconnectEvent.socket = socket
+            val disconnectEvent = DisconnectClientEvent()
+            // disconnectEvent.socket = socket
             eventQueue.addEvent(disconnectEvent)
         } finally {
             socket.close()

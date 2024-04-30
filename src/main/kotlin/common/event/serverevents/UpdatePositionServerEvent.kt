@@ -2,10 +2,10 @@ package common.event.serverevents
 
 import common.Config
 import common.event.ServerEvent
-import common.event.clientevents.UpdatePlayerPositionEvent
+import common.event.clientevents.UpdatePlayerPositionClientEvent
 import common.math.Double3
 
-class UpdatePositionRequestEvent(position: Double3): ServerEvent() {
+class UpdatePositionServerEvent(position: Double3): ServerEvent() {
     // Because Float3 wasn't serialising properly :(
     val x = position.x
     val y = position.y
@@ -18,7 +18,7 @@ class UpdatePositionRequestEvent(position: Double3): ServerEvent() {
         // println(chunkPosition)
         player!!.position = position
 
-        val updatePlayerPositionEvent = UpdatePlayerPositionEvent(player!!.userID, position)
+        val updatePlayerPositionEvent = UpdatePlayerPositionClientEvent(player!!.userID, position)
         server!!.serverNetwork.sendEventToEveryone(updatePlayerPositionEvent)
     }
 }

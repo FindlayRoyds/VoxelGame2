@@ -2,8 +2,8 @@
 .idea/
 build
 gradle/
-gradlew
-gradlew.*
+# gradlew
+# gradlew.*
 .DS_Store
 out/
 bin/
