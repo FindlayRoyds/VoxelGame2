@@ -8,7 +8,9 @@ import common.event.commonevents.DisconnectClientEvent
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.Socket
+import java.net.SocketException
 import kotlin.concurrent.thread
+import kotlin.system.exitProcess
 
 class SocketHandler(private val socket: Socket, private val eventQueue: EventQueue) {
     private val writer = ObjectOutputStream(socket.getOutputStream())
@@ -23,7 +25,12 @@ class SocketHandler(private val socket: Socket, private val eventQueue: EventQue
     }
 
     fun sendEvent(eventObject: Event) {
-        writer.writeObject(eventObject)
+        try {
+            writer.writeObject(eventObject)
+        } catch (exception: SocketException) {
+            println("Disconnected from server")
+            exitProcess(0)
+        }
     }
 
     private fun listener() {
@@ -32,8 +39,10 @@ class SocketHandler(private val socket: Socket, private val eventQueue: EventQue
         try {
             while (true) {
                 val event = reader.readObject()
-                if (event is ServerEvent) {
-                    event.socket = socket
+                if (event is Event) {
+                    if (event is ServerEvent) {
+                        event.socket = socket
+                    }
                     eventQueue.addEvent(event)
                 }
             }

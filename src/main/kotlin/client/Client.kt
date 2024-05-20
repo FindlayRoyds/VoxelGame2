@@ -29,7 +29,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         socketHandler.sendEvent(ConnectionRequestServerEvent("MineOrienteer69"))
 
         world.chunkManager.chunkGenerationExecutor.run()
-        val range = 16
+        val range = 8
         for (x in -range..range) {
             // thread {
             //     GameEngineProvider.setGameEngine(this)

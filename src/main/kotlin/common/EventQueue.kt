@@ -16,7 +16,7 @@ class EventQueue {
     fun runEvents(deltaTimeSIn: Double) {
         deltaTimeS = deltaTimeSIn
         synchronized(lock) {
-        while (arrayDeque.isNotEmpty()) {
+            while (arrayDeque.isNotEmpty()) {
                 val event = arrayDeque.removeFirstOrNull()
                 event!!.run()
             }

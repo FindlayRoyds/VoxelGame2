@@ -6,8 +6,7 @@ import client.graphics.MeshData
 import common.Config
 import common.GameEngineProvider
 import common.math.Int3
-import kotlin.math.floor
-import kotlin.math.sin
+import common.world.noise.FastNoiseLite
 
 
 class Chunk(val chunkPosition: Int3) {
@@ -106,25 +105,42 @@ class Chunk(val chunkPosition: Int3) {
     }
 
     fun generate() {
+        val noise = FastNoiseLite()
+
         for (blockIndex in blockData.indices) {
             val blockPosition = blockIndexToBlockPos(blockIndex)
             val worldPosition = blockPositionToWorldPosition(blockPosition)
-            var height: Int
-            if (heightmapCache.contains(blockPosition.x * 33 + blockPosition.z)) {
-                height = heightmapCache.get(blockPosition.x * 33 + blockPosition.z)!!
-            } else {
-                height = floor(
-                    (sin(worldPosition.x.toDouble() / 53.0) - sin(worldPosition.z.toDouble() / -59.0)) * 53
-                            + sin(worldPosition.x.toDouble() / 27.0 - worldPosition.z.toDouble() / 33.0) * 19
-                            + sin(worldPosition.x.toDouble() / 5.0 + worldPosition.z.toDouble() / 3.0) * 2
-                            + sin(worldPosition.x.toDouble() / 10.0) * 6
-                            + sin(worldPosition.z.toDouble() / 7.0) * 3
-                ).toInt()
-                heightmapCache[blockPosition.x * 33 + blockPosition.z] = height
-            }
-            if (height + worldPosition.y - 18 < 0) {
-                blockData[blockIndex] = 3.toByte()
-            } else if (height + worldPosition.y - 18 == 0) {
+//            var height: Int
+//            if (heightmapCache.contains(blockPosition.x * 33 + blockPosition.z)) {
+//                height = heightmapCache.get(blockPosition.x * 33 + blockPosition.z)!!
+//            } else {
+////                height = floor(
+////                    (sin(worldPosition.x.toDouble() / 53.0) - sin(worldPosition.z.toDouble() / -59.0)) * 53
+////                            + sin(worldPosition.x.toDouble() / 27.0 - worldPosition.z.toDouble() / 33.0) * 19
+////                            + sin(worldPosition.x.toDouble() / 5.0 + worldPosition.z.toDouble() / 3.0) * 2
+////                            + sin(worldPosition.x.toDouble() / 10.0) * 6
+////                            + sin(worldPosition.z.toDouble() / 7.0) * 3
+////                ).toInt()
+//
+//                val x = worldPosition.x.toFloat()
+//                val y = worldPosition.z.toFloat()
+//                noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular)
+//                val cellularNoiseResult = noise.GetNoise(x, y)
+//                noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2)
+//                val simplexNoiseResult = noise.GetNoise(x, y)
+//                height = floor(Math.min(cellularNoiseResult * -70 + simplexNoiseResult * 10, simplexNoiseResult * 7 + 50)).toInt()
+//                heightmapCache[blockPosition.x * 33 + blockPosition.z] = height
+//            }
+//            if (height + worldPosition.y - 18 < 0) {
+//                blockData[blockIndex] = 3.toByte()
+//            } else if (height + worldPosition.y - 18 == 0) {
+//                blockData[blockIndex] = 1.toByte()
+//            } else {
+//                blockData[blockIndex] = 0.toByte()
+//            }
+            noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S)
+            val simplexNoiseResult = noise.GetNoise(worldPosition.x.toFloat(), worldPosition.y.toFloat(), worldPosition.z.toFloat())
+            if (simplexNoiseResult > 0) {
                 blockData[blockIndex] = 1.toByte()
             } else {
                 blockData[blockIndex] = 0.toByte()

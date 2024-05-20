@@ -10,7 +10,7 @@ class UpdatePlayerPositionClientEvent(val playerId: Int, position: Double3): Cli
 
     override fun event() {
         val position = Double3(x, y, z)
-        val player = client!!.players.getPlayer(playerId)
+        val player = client.players.getPlayer(playerId)
         player?.position = position
     }
 }

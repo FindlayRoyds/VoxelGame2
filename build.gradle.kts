@@ -86,8 +86,20 @@ kotlin {
     jvmToolchain(17)
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/resources")
+        }
+    }
+}
+
 tasks.named<JavaExec>("run") {
     standardInput = System.`in`
+}
+
+tasks.withType<Copy> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.jar {
