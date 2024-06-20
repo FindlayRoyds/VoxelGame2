@@ -85,7 +85,7 @@ class Camera() {
         val oldPosition = position.copy()
         val raycastResult = client.world.raycast(position, Double3(0, -1, 0), 1.6)
         if (raycastResult == null || fallSpeed < 0.0) {
-            fallSpeed = min(fallSpeed + 0.015, 1.2)
+            fallSpeed = min(fallSpeed + 0.012, 1.2)
             position.y -= fallSpeed
         } else {
             fallSpeed = 0.0

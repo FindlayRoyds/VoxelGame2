@@ -7,6 +7,7 @@ import common.Config
 import common.GameEngineProvider
 import common.math.Int3
 import common.world.noise.FastNoiseLite
+import kotlin.math.floor
 
 
 class Chunk(val chunkPosition: Int3) {
@@ -50,6 +51,8 @@ class Chunk(val chunkPosition: Int3) {
         val blockPositions = ArrayList<Int>()
         val blockTypes = ArrayList<Int>()
 
+        val packedValues = ArrayList<Int>()
+
         for (blockIndex in blockData.indices) {
             if (blockData[blockIndex] == 0.toByte())
                 continue
@@ -60,15 +63,22 @@ class Chunk(val chunkPosition: Int3) {
             for (faceIndex in 0..5) {
                  if (isFaceVisible(blockPosition, faceIndex)) {
                     for (vertexIndex in faceIndex * 6..(faceIndex * 6+5)) {
-                        vertexIds.add(blockVertexIds[vertexIndex])
-                        blockPositions.add(blockIndex)
-                        blockTypes.add(blockData[blockIndex].toInt() - 1)
+//                        vertexIds.add(blockVertexIds[vertexIndex])
+//                        blockPositions.add(blockIndex)
+//                        blockTypes.add(blockData[blockIndex].toInt() - 1)
+
+                        val blockType = blockData[blockIndex].toInt() - 1
+                        val blockVertexID = blockVertexIds[vertexIndex]
+
+                        val packedData = (blockIndex shl 16) or (blockType shl 8) or blockVertexID
+                        packedValues.add(packedData)
                     }
                  }
             }
         }
 
-        meshData = MeshData(vertexIds.toIntArray(), blockPositions.toIntArray(), blockTypes.toIntArray())
+//        meshData = MeshData(vertexIds.toIntArray(), blockPositions.toIntArray(), blockTypes.toIntArray())
+        meshData = MeshData(packedValues.toIntArray())
         gameEngine.world.chunkManager.uploadChunkToGPU(this)
     }
 
@@ -106,14 +116,15 @@ class Chunk(val chunkPosition: Int3) {
 
     fun generate() {
         val noise = FastNoiseLite()
+        noise.SetSeed(1)
 
         for (blockIndex in blockData.indices) {
             val blockPosition = blockIndexToBlockPos(blockIndex)
             val worldPosition = blockPositionToWorldPosition(blockPosition)
-//            var height: Int
-//            if (heightmapCache.contains(blockPosition.x * 33 + blockPosition.z)) {
-//                height = heightmapCache.get(blockPosition.x * 33 + blockPosition.z)!!
-//            } else {
+            var height: Int
+            if (heightmapCache.contains(blockPosition.x * 33 + blockPosition.z)) {
+                height = heightmapCache.get(blockPosition.x * 33 + blockPosition.z)!!
+            } else {
 ////                height = floor(
 ////                    (sin(worldPosition.x.toDouble() / 53.0) - sin(worldPosition.z.toDouble() / -59.0)) * 53
 ////                            + sin(worldPosition.x.toDouble() / 27.0 - worldPosition.z.toDouble() / 33.0) * 19
@@ -122,30 +133,50 @@ class Chunk(val chunkPosition: Int3) {
 ////                            + sin(worldPosition.z.toDouble() / 7.0) * 3
 ////                ).toInt()
 //
-//                val x = worldPosition.x.toFloat()
-//                val y = worldPosition.z.toFloat()
-//                noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular)
-//                val cellularNoiseResult = noise.GetNoise(x, y)
-//                noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2)
-//                val simplexNoiseResult = noise.GetNoise(x, y)
-//                height = floor(Math.min(cellularNoiseResult * -70 + simplexNoiseResult * 10, simplexNoiseResult * 7 + 50)).toInt()
-//                heightmapCache[blockPosition.x * 33 + blockPosition.z] = height
-//            }
-//            if (height + worldPosition.y - 18 < 0) {
-//                blockData[blockIndex] = 3.toByte()
-//            } else if (height + worldPosition.y - 18 == 0) {
-//                blockData[blockIndex] = 1.toByte()
-//            } else {
-//                blockData[blockIndex] = 0.toByte()
-//            }
-            noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S)
-            val simplexNoiseResult = noise.GetNoise(worldPosition.x.toFloat(), worldPosition.y.toFloat(), worldPosition.z.toFloat())
-            if (simplexNoiseResult > 0) {
+                val x = worldPosition.x.toFloat()
+                val y = worldPosition.z.toFloat()
+                noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular)
+                val cellularNoiseResult = noise.GetNoise(x, y)
+                noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2)
+                val simplexNoiseResult = noise.GetNoise(x, y)
+                height = floor(Math.min(cellularNoiseResult * -70 + simplexNoiseResult * 10, simplexNoiseResult * 7 + 50)).toInt()
+                heightmapCache[blockPosition.x * 33 + blockPosition.z] = height
+            }
+            if (height + worldPosition.y - 18 < -4) {
+                blockData[blockIndex] = 2.toByte()
+            } else if (height + worldPosition.y - 18 < 0) {
+                blockData[blockIndex] = 3.toByte()
+            } else if (height + worldPosition.y - 18 == 0) {
                 blockData[blockIndex] = 1.toByte()
             } else {
                 blockData[blockIndex] = 0.toByte()
             }
+            noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S)
+            val simplexNoiseResult = noise.GetNoise(worldPosition.x.toFloat() * 3, worldPosition.y.toFloat() * 2, worldPosition.z.toFloat() * 3)
+            noise.SetSeed(2)
+            val simplexNoiseResult2 = noise.GetNoise(worldPosition.x.toFloat() * 3, worldPosition.y.toFloat() * 3, worldPosition.z.toFloat() * 3)
+            noise.SetSeed(1)
+            if (simplexNoiseResult in -0.2.. 0.2 && simplexNoiseResult2 > 0.5) {
+                blockData[blockIndex] = 0.toByte()
+            }
         }
+
+//        for (i in 0..1) {
+//            val treePosition = Int2(Random.nextInt(0, Config.chunkSize), Random.nextInt(0, Config.chunkSize))
+//            val height = heightmapCache[treePosition.x * 33 + treePosition.y]
+//            if (height != null) {
+//                val blockPosition = Int3(treePosition.x + chunkPosition.x * Config.chunkSize, -height + 19, treePosition.y + chunkPosition.z * Config.chunkSize)
+//                // if (isBlockPositionInChunk(blockPosition)) {
+////                    val blockIndex = blockPositionToBlockIndex(blockPosition)
+////                    blockData[blockIndex] = 2.toByte()
+//                for (y in 0..4)
+//                    GameEngineProvider.getGameEngine().world.chunkManager.setBlock(blockPosition + Int3(0, y, 0), 2)
+//                // }
+//            } else {
+//                println("null on $treePosition")
+//            }
+//        }
+        // println(heightmapCache[0])
     }
 
     fun doThing() {

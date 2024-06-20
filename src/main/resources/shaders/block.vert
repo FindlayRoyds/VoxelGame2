@@ -4,9 +4,10 @@
 #define CHUNK_SIZE 32
 #define WORLD_OFFSET vec3(0.5, 0.5, 0.5)
 
-layout (location=0) in int blockVertexID;
-layout (location=1) in int blockPosition;
-layout (location=2) in int blockType;
+//layout (location=0) in int blockVertexID;
+//layout (location=1) in int blockPosition;
+//layout (location=2) in int blockType;
+layout (location=0) in int inputData;
 
 // out vec3 outColor;
 out vec2 texCoord;
@@ -28,6 +29,10 @@ vec3 sunDirection = normalize(vec3(1, 3, 2));
 
 void main()
 {
+    int blockVertexID = inputData & 0xFF; // Extract the lowest 8 bits
+    int blockType = (inputData >> 8) & 0xFF; // Extract the next 8 bits
+    int blockPosition = inputData >> 16; // Extract the highest 16 bits
+
     int vertexDataIndex = blockType * 36 + blockVertexID;
     vec3 pos = vertexDataArray[vertexDataIndex];
     texCoord = textureDataArray[vertexDataIndex];

@@ -483,15 +483,22 @@ class Renderer(width: Int, height: Int) {
             0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0,
-            3, 3, 3, 3, 3, 3,
+            4, 4, 4, 4, 4, 4,
             1, 1, 1, 1, 1, 1,
 
-            2, 2, 2, 2, 2, 2,
-            2, 2, 2, 2, 2, 2,
-            2, 2, 2, 2, 2, 2,
-            2, 2, 2, 2, 2, 2,
-            5, 5, 5, 5, 5, 5,
-            5, 5, 5, 5, 5, 5,
+            3, 3, 3, 3, 3, 3,
+            3, 3, 3, 3, 3, 3,
+            3, 3, 3, 3, 3, 3,
+            3, 3, 3, 3, 3, 3,
+            3, 3, 3, 3, 3, 3,
+            3, 3, 3, 3, 3, 3,
+
+//            2, 2, 2, 2, 2, 2,
+//            2, 2, 2, 2, 2, 2,
+//            2, 2, 2, 2, 2, 2,
+//            2, 2, 2, 2, 2, 2,
+//            5, 5, 5, 5, 5, 5,
+//            5, 5, 5, 5, 5, 5,
 
             4, 4, 4, 4, 4, 4,
             4, 4, 4, 4, 4, 4,
@@ -518,8 +525,8 @@ class Renderer(width: Int, height: Int) {
                 "src/main/resources/textures/blocks/PodzolSide.png",
                 "src/main/resources/textures/blocks/Podzol.png",
                 "src/main/resources/textures/blocks/oak-side-shaded.png",
-                "src/main/resources/textures/blocks/Dirt.png",
-                "src/main/resources/textures/blocks/Dirt.png",
+                "src/main/resources/textures/blocks/stone.png",
+                "src/main/resources/textures/blocks/dirt.png",
                 "src/main/resources/textures/blocks/spruce_log_top.png"
             )
         )
@@ -582,8 +589,6 @@ class Renderer(width: Int, height: Int) {
             val chunkMesh = chunk.mesh
             blockUniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
             if (chunkMesh != null) {
-                if (!chunkMesh.isTransferred)
-                    println("Transferring still!")
                 glBindVertexArray(chunkMesh.vaoId)
                 glDrawArrays(GL_TRIANGLES, 0, chunkMesh.numVertices)
                 glBindVertexArray(0)
