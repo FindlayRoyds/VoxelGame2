@@ -8,14 +8,13 @@ import common.math.Double2
 import common.math.Double3
 import org.joml.Matrix4d
 import kotlin.math.cos
-import kotlin.math.min
 import kotlin.math.sin
 
 
 class Camera() {
     var upVector = Double3(0, 0, 0)
     var rightVector = Double3(0, 0, 0)
-    val position = Double3(-24.5, 100.0, 25.5)
+    val position = Double3(-24.5, 0.0, 25.5)
     val rotation = Double3(0, 0, 0)
     var viewMatrix = Matrix4d()
         get() {
@@ -83,14 +82,14 @@ class Camera() {
         setSelectionBox()
 
         val oldPosition = position.copy()
-        val raycastResult = client.world.raycast(position, Double3(0, -1, 0), 1.6)
-        if (raycastResult == null || fallSpeed < 0.0) {
-            fallSpeed = min(fallSpeed + 0.012, 1.2)
-            position.y -= fallSpeed
-        } else {
-            fallSpeed = 0.0
-            position.y = raycastResult.first.y.toDouble() + 2.55
-        }
+//        val raycastResult = client.world.raycast(position, Double3(0, -1, 0), 1.6)
+//        if (raycastResult == null || fallSpeed < 0.0) {
+//            fallSpeed = min(fallSpeed + 0.012, 1.2)
+//            // position.y -= fallSpeed
+//        } else {
+//            fallSpeed = 0.0
+//            position.y = raycastResult.first.y.toDouble() + 2.55
+//        }
 
         // if (oldPosition != position) {
             // println("sending")

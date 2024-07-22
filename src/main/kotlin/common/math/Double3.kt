@@ -117,4 +117,12 @@ data class Double3(var x: Double, var y: Double, var z: Double) : Serializable {
         }
         return Double3(0, 0, 1)
     }
+
+    fun normal(): Double3 {
+        return this / magnitude
+    }
+
+    fun dot(other: Double3): Double {
+        return this.x * other.x + this.y * other.y + this.z * other.z
+    }
 }

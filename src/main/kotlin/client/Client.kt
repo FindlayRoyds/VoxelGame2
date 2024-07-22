@@ -7,7 +7,6 @@ import common.GameEngineProvider
 import common.event.commonevents.DisconnectClientEvent
 import common.event.commonevents.DisconnectServerEvent
 import common.event.serverevents.ConnectionRequestServerEvent
-import common.math.Int3
 import common.networking.SocketHandler
 import java.net.Socket
 
@@ -28,18 +27,18 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
         socketHandler.sendEvent(ConnectionRequestServerEvent("MineOrienteer69"))
 
-        world.chunkManager.chunkGenerationExecutor.run()
-        val range = 8
-        for (x in -range..range) {
-            // thread {
-            //     GameEngineProvider.setGameEngine(this)
-            for (z in -range..range) {
-                for (y in -8..8) {
-                    world.chunkManager.generateChunk(Int3(x, y, z))
-                }
-            }
-            // }
-        }
+//        world.chunkManager.chunkGenerationExecutor.run()
+//        val range = 12
+//        for (x in -range..range) {
+//            // thread {
+//            //     GameEngineProvider.setGameEngine(this)
+//            for (z in -range..range) {
+//                for (y in -3..8) {
+//                    world.chunkManager.generateChunk(Int3(x, y, z))
+//                }
+//            }
+//            // }
+//        }
 
         main()
     }
@@ -61,6 +60,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun main() {
+        world.chunkManager.chunkMeshingExecutor.run()
+
         val targetFps = 60
         var startTime = System.currentTimeMillis()
         val targetFrameTime = 1000.0 / targetFps
@@ -75,14 +76,16 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
             runEvents(deltaTimeMillis / 1000.toDouble())
             runGraphics()
 
+
+
             startTime = currentTime
 
             frameCount++
 
-            val sleepTime = (targetFrameTime - deltaTimeMillis).coerceAtLeast(0.0)
-            if (sleepTime > 0.0) {
-                Thread.sleep(sleepTime.toLong())
-            }
+//            val sleepTime = (targetFrameTime - deltaTimeMillis).coerceAtLeast(0.0)
+//            if (sleepTime > 0.0) {
+//                Thread.sleep(sleepTime.toLong())
+//            }
         }
 
         val averageFps = frameCount / ((System.currentTimeMillis() - frameCountStartTime).toDouble()) * 1000

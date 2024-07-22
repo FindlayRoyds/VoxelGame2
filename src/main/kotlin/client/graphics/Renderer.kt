@@ -1,6 +1,7 @@
 package client.graphics
 
 import client.Client
+import common.Config
 import common.GameEngineProvider
 import common.math.Double3
 import common.math.Int3
@@ -585,13 +586,22 @@ class Renderer(width: Int, height: Int) {
 //        glDepthMask(false)
 
         // world.chunkManager.chunksLock.lock()
+
         world.chunkManager.getLoadedChunks().forEach { chunk ->
-            val chunkMesh = chunk.mesh
-            blockUniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
-            if (chunkMesh != null) {
-                glBindVertexArray(chunkMesh.vaoId)
-                glDrawArrays(GL_TRIANGLES, 0, chunkMesh.numVertices)
-                glBindVertexArray(0)
+            val chunkPosition = (chunk.chunkPosition.toDouble3() + Double3(0.5, 0.5, 0.5)) * Config.chunkSize
+            val camera = client.renderer.camera
+            val chunkDirection = camera.position - chunkPosition
+
+            if (chunkDirection.normal().dot(camera.lookVector.normal()) < -0.5
+                || chunkDirection.magnitude <= Config.chunkSize * 4) {
+                val chunkMesh = chunk.mesh
+                blockUniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
+
+                if (chunkMesh != null && chunkMesh.numVertices > 0) {
+                    glBindVertexArray(chunkMesh.vaoId)
+                    glDrawArrays(GL_TRIANGLES, 0, chunkMesh.numVertices)
+                    glBindVertexArray(0)
+                }
             }
         }
         // world.chunkManager.chunksLock.unlock()

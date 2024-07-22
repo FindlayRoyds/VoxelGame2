@@ -39,7 +39,7 @@ void main()
     normal = normalDataArray[vertexDataIndex];
     texIndexFloat = float(textureIndexArray[vertexDataIndex]);
     vec3 offset = vec3(int(blockPosition / (CHUNK_SIZE * CHUNK_SIZE)), int((blockPosition / CHUNK_SIZE)) % CHUNK_SIZE, blockPosition % CHUNK_SIZE);
-    vec3 worldPos = pos + offset + WORLD_OFFSET + chunkPosition * 32;
+    vec3 worldPos = pos + offset + WORLD_OFFSET + chunkPosition * CHUNK_SIZE;
     vec4 viewPos = viewMatrix * vec4(worldPos, 1.0);
     viewDir = -viewPos.xyz;
     gl_Position = projectionMatrix * viewMatrix * vec4(worldPos, 1.0);

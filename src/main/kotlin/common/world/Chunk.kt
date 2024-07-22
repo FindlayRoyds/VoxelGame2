@@ -1,6 +1,5 @@
 package common.world
 
-import client.Client
 import client.graphics.Mesh
 import client.graphics.MeshData
 import common.Config
@@ -15,11 +14,13 @@ class Chunk(val chunkPosition: Int3) {
     var meshData: MeshData? = null
     var blockData = ByteArray(Config.chunkSize * Config.chunkSize * Config.chunkSize)
     var heightmapCache = HashMap<Int, Int>()
-    val gameEngine = GameEngineProvider.getGameEngine() as Client
+    val gameEngine = GameEngineProvider.getGameEngine()
     var blockNeighbors = arrayListOf(Int3(0, 0, -1), Int3(0, 0, 1), Int3(-1, 0, 0), Int3(1, 0, 0), Int3(0, -1, 0), Int3(0, 1, 0))
 
+    var timesBuilt = 0
+
     init {
-        generate()
+        // generate()
     }
 
     fun getBlock(blockPosition: Int3): Byte {
@@ -30,12 +31,19 @@ class Chunk(val chunkPosition: Int3) {
     }
 
     fun buildMesh() {
+        if (timesBuilt > 0) {
+            // println("$chunkPosition built $timesBuilt")
+            return
+        }
         for (neighborOffset in blockNeighbors) {
             val neighborPosition = chunkPosition + neighborOffset
-            if (gameEngine.world.chunkManager.getChunk(neighborPosition) == null)
+            if (!gameEngine.world.chunkManager.isChunkLoaded(neighborPosition))
                 return
         }
-        
+        this.timesBuilt++
+
+        // println("building $chunkPosition")
+
         meshData = null
 
         val blockVertexIds = intArrayOf(
@@ -116,7 +124,7 @@ class Chunk(val chunkPosition: Int3) {
 
     fun generate() {
         val noise = FastNoiseLite()
-        noise.SetSeed(1)
+        noise.SetSeed(gameEngine.world.seed)
 
         for (blockIndex in blockData.indices) {
             val blockPosition = blockIndexToBlockPos(blockIndex)
@@ -153,11 +161,11 @@ class Chunk(val chunkPosition: Int3) {
             }
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S)
             val simplexNoiseResult = noise.GetNoise(worldPosition.x.toFloat() * 3, worldPosition.y.toFloat() * 2, worldPosition.z.toFloat() * 3)
-            noise.SetSeed(2)
+            noise.SetSeed(gameEngine.world.seed + 1)
             val simplexNoiseResult2 = noise.GetNoise(worldPosition.x.toFloat() * 3, worldPosition.y.toFloat() * 3, worldPosition.z.toFloat() * 3)
-            noise.SetSeed(1)
+            noise.SetSeed(gameEngine.world.seed)
             if (simplexNoiseResult in -0.2.. 0.2 && simplexNoiseResult2 > 0.5) {
-                blockData[blockIndex] = 0.toByte()
+                // blockData[blockIndex] = 0.toByte()
             }
         }
 
@@ -179,11 +187,15 @@ class Chunk(val chunkPosition: Int3) {
         // println(heightmapCache[0])
     }
 
-    fun doThing() {
+    fun buildNeighbouringMeshes() {
         // buildMesh()
         for (neighborOffset in blockNeighbors) {
             val neighborPosition = chunkPosition + neighborOffset
-            gameEngine.world.chunkManager.getChunk(neighborPosition)?.buildMesh()
+            // gameEngine.world.chunkManager.getChunk(neighborPosition)?.buildMesh()
+            val neighbor = gameEngine.world.chunkManager.getChunk(neighborPosition)
+            if (neighbor != null) {
+                gameEngine.world.chunkManager.chunkMeshingExecutor.addChunk(neighbor)
+            }
         }
     }
 
@@ -218,11 +230,14 @@ class Chunk(val chunkPosition: Int3) {
         if (blockData[blockIndex] == value)
             return
         blockData[blockIndex] = value
+        timesBuilt = 0
         buildMesh()
+        // mesh = null
 
         for (neighborDirection in chunksNeighboringBlock(blockPosition)) {
             val neighborPosition = chunkPosition + neighborDirection
             val neighborChunk = gameEngine.world.chunkManager.getChunk(neighborPosition)
+            neighborChunk?.timesBuilt = 0
             neighborChunk?.buildMesh()
         }
     }

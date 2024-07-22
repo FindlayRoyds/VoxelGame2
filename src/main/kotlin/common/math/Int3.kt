@@ -67,4 +67,12 @@ data class Int3(var x: Int, var y: Int, var z: Int) : Serializable {
     fun toDouble3(): Double3 {
         return Double3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
     }
+
+    fun normal(): Double3 {
+        return this.toDouble3() / magnitude
+    }
+
+    fun dot(other: Int3): Int {
+        return this.x * other.x + this.y * other.y + this.z * other.z
+    }
 }

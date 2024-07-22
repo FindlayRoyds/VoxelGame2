@@ -9,7 +9,8 @@ import java.util.concurrent.ConcurrentLinkedQueue
 class ChunkManager {
     private val chunks = ConcurrentHashMap<Int3, Chunk>()
     private val chunksToUploadToGPU = ConcurrentLinkedQueue<Chunk>()
-    val chunkGenerationExecutor = ChunkGenerationExecutor(10)
+    val chunkGenerationExecutor = ChunkGenerationExecutor(5)
+    val chunkMeshingExecutor = ChunkMeshingExecutor(10)
 
     fun generateChunk(position: Int3) {
         /** Loads the chunk into the generation queue, call this 👍 */
@@ -18,9 +19,17 @@ class ChunkManager {
 
     fun buildChunk(position: Int3) {
         /** Actually creates the chunk, do not call lol the chunk generation executor calls this */
+        if (getChunk(position) != null)
+            return
         val newChunk = Chunk(position)
+        newChunk.generate()
         chunks[newChunk.chunkPosition] = newChunk
-        newChunk.doThing()
+        // newChunk.buildNeighbouringMeshes()
+    }
+
+    fun setChunk(chunk: Chunk) {
+        chunks[chunk.chunkPosition] = chunk
+        chunk.buildNeighbouringMeshes()
     }
 
     fun getLoadedChunks(): MutableCollection<Chunk> {
@@ -47,6 +56,7 @@ class ChunkManager {
         while (!chunksToUploadToGPU.isEmpty()) {
             val chunk = chunksToUploadToGPU.poll()!!
             chunk.uploadToGPU()
+            // break
         }
     }
 

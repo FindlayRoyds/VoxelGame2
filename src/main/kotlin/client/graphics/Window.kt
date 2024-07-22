@@ -58,7 +58,7 @@ class Window(title: String, windowOptions: WindowOptions, private val resizeFunc
 
         glfwSetFramebufferSizeCallback(
             handle
-        ) { window: Long, w: Int, h: Int -> resized(w, h) }
+        ) { _: Long, w: Int, h: Int -> resized(w, h) }
 
         glfwSetErrorCallback { errorCode: Int, msgPtr: Long ->
             throw RuntimeException(

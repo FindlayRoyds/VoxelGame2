@@ -3,9 +3,11 @@ package common.world
 import common.math.Double3
 import common.math.Int3
 import kotlin.math.max
+import kotlin.random.Random
 
 class World {
     val chunkManager = ChunkManager()
+    val seed = Random.nextInt()
 
     fun getVoxel(worldPosition: Int3): Boolean {
         val block = chunkManager.getBlock(worldPosition)

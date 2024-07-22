@@ -80,9 +80,6 @@ kotlin {
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
-    // Or shorter:
-    jvmToolchain(17)
-    // For example:
     jvmToolchain(17)
 }
 
