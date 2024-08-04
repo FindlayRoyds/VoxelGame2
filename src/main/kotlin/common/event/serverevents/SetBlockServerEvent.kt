@@ -5,7 +5,7 @@ import common.event.ServerEvent
 import common.math.Int3
 import server.Server
 
-class SetBlockServerEvent(position: Int3, val blockValue: Byte) : ServerEvent() {
+class SetBlockServerEvent(position: Int3, val blockValue: Char) : ServerEvent() {
     val x = position.x
     val y = position.y
     val z = position.z

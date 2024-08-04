@@ -5,7 +5,7 @@ import common.GameEngineProvider
 import common.event.ClientEvent
 import common.math.Int3
 
-class SetBlockClientEvent(position: Int3, val blockValue: Byte) : ClientEvent() {
+class SetBlockClientEvent(position: Int3, val blockValue: Char) : ClientEvent() {
     val x = position.x
     val y = position.y
     val z = position.z

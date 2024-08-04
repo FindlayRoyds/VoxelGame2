@@ -16,12 +16,12 @@ class PlaceAction: Action() {
         if (raycastResult != null) {
             val (_, placePosition) = raycastResult
             val existingBlock = client.world.chunkManager.getBlock(placePosition)
-            if (existingBlock != 0.toByte())
+            if (existingBlock != 0.toChar())
                 return
 
-            client.world.chunkManager.setBlock(placePosition, 2.toByte())
+            client.world.chunkManager.setBlock(placePosition, 2.toChar())
 
-            val setBlockEvent = SetBlockServerEvent(placePosition, 2.toByte())
+            val setBlockEvent = SetBlockServerEvent(placePosition, 2.toChar())
             client.socketHandler.sendEvent(setBlockEvent)
         }
     }

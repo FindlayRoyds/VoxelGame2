@@ -11,7 +11,7 @@ class World {
 
     fun getVoxel(worldPosition: Int3): Boolean {
         val block = chunkManager.getBlock(worldPosition)
-        return block != 0.toByte()
+        return block != 0.toChar()
     }
 
     fun raycast(origin: Double3, direction: Double3, maxDistance: Double): Pair<Int3, Int3>? {

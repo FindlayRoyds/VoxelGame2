@@ -11,7 +11,7 @@ import server.networking.ServerNetwork
 
 class Server(port: Int) : GameEngine() {
     var serverNetwork: ServerNetwork
-    val pointsInCircle: List<Int3> = pointsInCircle(16)
+    val pointsInCircle: List<Int3> = pointsInCircle(Config.renderDistance)
 
     init {
         GameEngineProvider.setGameEngine(this)
@@ -51,13 +51,11 @@ class Server(port: Int) : GameEngine() {
     }
 
     private fun updateChunks() {
-
-
         for (player in players.getPlayerList()) {
             val playerChunkPosition = world.chunkManager.worldPositionToChunkPosition(player.position)
             var count = 0
             for (chunkOffset in pointsInCircle) {
-                // if (count >= 20) return
+//                if (count >= 20) return
 
                 val chunkPosition = playerChunkPosition + chunkOffset + Int3(0, -1, 0)
                 if (world.chunkManager.isChunkLoaded(chunkPosition)) {
@@ -74,6 +72,9 @@ class Server(port: Int) : GameEngine() {
                 }
             }
         }
+
+//        world.chunkManager.unloadChunks()
+//        println(world.chunkManager.getLoadedChunks().size)
     }
 
     private fun main() {

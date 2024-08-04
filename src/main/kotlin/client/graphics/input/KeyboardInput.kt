@@ -17,6 +17,7 @@ class KeyboardInput(private val window: Window) {
         GLFW_KEY_ESCAPE to mutableListOf(EscapeAction()),
         GLFW_KEY_E to mutableListOf(PlaceAction()),
         GLFW_KEY_Q to mutableListOf(BreakAction()),
+        GLFW_KEY_R to mutableListOf(RunAction()),
     )
     private val pressedKeys = mutableSetOf<Int>()
 

@@ -18,7 +18,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     ) { resize() }
     var socketHandler: SocketHandler
     var running = false
-    var renderer = Renderer(window.width, window.height)
+    var renderer = Renderer(window, window.width, window.height)
 
     init {
         running = true
@@ -60,7 +60,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun main() {
-        world.chunkManager.chunkMeshingExecutor.run()
+        world.chunkManager.createChunkMeshingExecutor()
+        world.chunkManager.chunkMeshingExecutor!!.run()
 
         val targetFps = 60
         var startTime = System.currentTimeMillis()
@@ -72,11 +73,18 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
             val currentTime = System.currentTimeMillis()
             val deltaTimeMillis = currentTime - startTime
 
+
             pollEvents()
             runEvents(deltaTimeMillis / 1000.toDouble())
+            val start = System.currentTimeMillis()
             runGraphics()
+            val end = System.currentTimeMillis()
 
+            if (end - start > 100) {
+                println(end - start)
+            }
 
+//            world.chunkManager.unloadChunks()
 
             startTime = currentTime
 

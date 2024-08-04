@@ -15,9 +15,9 @@ class BreakAction: Action() {
 
         if (raycastResult != null) {
             val (breakPosition, _) = raycastResult
-            client.world.chunkManager.setBlock(breakPosition, 0.toByte())
+            client.world.chunkManager.setBlock(breakPosition, 0.toChar())
 
-            val setBlockEvent = SetBlockServerEvent(breakPosition, 0.toByte())
+            val setBlockEvent = SetBlockServerEvent(breakPosition, 0.toChar())
             client.socketHandler.sendEvent(setBlockEvent)
         }
     }

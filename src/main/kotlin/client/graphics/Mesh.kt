@@ -8,8 +8,8 @@ class Mesh(meshData: MeshData) {
     val vaoId: Int
     val vboIdList: MutableList<Int>
     val numVertices = meshData.packedData.size
-    private var fence: Long? = null
-    private var _isTransferred: Boolean = false
+//    private var fence: Long? = null
+//    private var _isTransferred: Boolean = false
 //    val isTransferred: Boolean
 //        get() {
 //            if (_isTransferred) {
@@ -74,7 +74,7 @@ class Mesh(meshData: MeshData) {
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
 
-        fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0)
+//        fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0)
     }
 
     fun cleanup() {

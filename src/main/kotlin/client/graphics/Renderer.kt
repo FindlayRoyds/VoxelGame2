@@ -11,7 +11,7 @@ import org.joml.Vector3f
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL41.*
 
-class Renderer(width: Int, height: Int) {
+class Renderer(window: Window, width: Int, height: Int) {
     private val blockShaderProgram: ShaderProgram
     private val selectionBoxShaderProgram: ShaderProgram
     private val blockUniformsMap: UniformsMap
@@ -58,6 +58,7 @@ class Renderer(width: Int, height: Int) {
         blockUniformsMap.createUniform("textureIndexArray")
         blockUniformsMap.createUniform("normalDataArray")
         blockUniformsMap.createUniform("chunkPosition")
+        blockUniformsMap.createUniform("chunkVisibility")
 
         selectionBoxUniformsMap = UniformsMap(selectionBoxShaderProgram.programId)
         selectionBoxUniformsMap.createUniform("projectionMatrix");
@@ -587,14 +588,17 @@ class Renderer(width: Int, height: Int) {
 
         // world.chunkManager.chunksLock.lock()
 
+        val currentTime = System.currentTimeMillis()
         world.chunkManager.getLoadedChunks().forEach { chunk ->
-            val chunkPosition = (chunk.chunkPosition.toDouble3() + Double3(0.5, 0.5, 0.5)) * Config.chunkSize
             val camera = client.renderer.camera
-            val chunkDirection = camera.position - chunkPosition
+            val chunkDirection = camera.position - chunk.getWorldPosition()
 
             if (chunkDirection.normal().dot(camera.lookVector.normal()) < -0.5
                 || chunkDirection.magnitude <= Config.chunkSize * 4) {
                 val chunkMesh = chunk.mesh
+
+                val chunkVisibility = ((currentTime - chunk.creationTime) / (chunkDirection.magnitude * 10 - 400).coerceIn(0.0, 3000.0))
+                blockUniformsMap.setUniform("chunkVisibility", chunkVisibility.toFloat().coerceIn(0f, 1f))
                 blockUniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
 
                 if (chunkMesh != null && chunkMesh.numVertices > 0) {

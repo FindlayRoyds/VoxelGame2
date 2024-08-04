@@ -9,7 +9,8 @@ class chunkTransferObject(chunk: Chunk) : Serializable {
 
     fun getChunk(): Chunk {
         val newChunk = Chunk(position)
-        newChunk.blockData = blockData
+        if (blockData != null)
+            newChunk.loadFromBlockData(blockData)
         return newChunk
     }
 }

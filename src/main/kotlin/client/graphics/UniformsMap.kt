@@ -55,6 +55,15 @@ class UniformsMap(private val programId: Int) {
         }
     }
 
+    fun setUniform(uniformName: String, value: Float) {
+        val location = uniforms[uniformName]
+            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+
+        MemoryStack.stackPush().use { stack ->
+            glUniform1f(location, value)
+        }
+    }
+
     fun setUniform(uniformName: String, value: Vector3f) {
         val location = uniforms[uniformName]
             ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")

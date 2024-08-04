@@ -4,6 +4,7 @@ import client.graphics.Mesh
 import client.graphics.MeshData
 import common.Config
 import common.GameEngineProvider
+import common.math.Double3
 import common.math.Int3
 import common.world.noise.FastNoiseLite
 import kotlin.math.floor
@@ -12,27 +13,36 @@ import kotlin.math.floor
 class Chunk(val chunkPosition: Int3) {
     var mesh: Mesh? = null
     var meshData: MeshData? = null
-    var blockData = ByteArray(Config.chunkSize * Config.chunkSize * Config.chunkSize)
+    var isAllAir = true
+    var blockData: CharArray? = null
     var heightmapCache = HashMap<Int, Int>()
     val gameEngine = GameEngineProvider.getGameEngine()
     var blockNeighbors = arrayListOf(Int3(0, 0, -1), Int3(0, 0, 1), Int3(-1, 0, 0), Int3(1, 0, 0), Int3(0, -1, 0), Int3(0, 1, 0))
 
     var timesBuilt = 0
 
+    var creationTime: Long = 0
+    var firstMesh = true
+
     init {
         // generate()
+
     }
 
-    fun getBlock(blockPosition: Int3): Byte {
+    fun getBlock(blockPosition: Int3): Char {
+        if (isAllAir)
+            return Char(0)
         if (!isBlockPositionInChunk(blockPosition))
-            return 0
+            return Char(0)
+
         val blockIndex = blockPositionToBlockIndex(blockPosition)
-        return blockData[blockIndex]
+        return blockData!![blockIndex]
     }
 
     fun buildMesh() {
         if (timesBuilt > 0) {
             // println("$chunkPosition built $timesBuilt")
+            this.timesBuilt++
             return
         }
         for (neighborOffset in blockNeighbors) {
@@ -41,6 +51,10 @@ class Chunk(val chunkPosition: Int3) {
                 return
         }
         this.timesBuilt++
+        if (firstMesh) {
+            creationTime = System.currentTimeMillis()
+            firstMesh = false
+        }
 
         // println("building $chunkPosition")
 
@@ -61,27 +75,29 @@ class Chunk(val chunkPosition: Int3) {
 
         val packedValues = ArrayList<Int>()
 
-        for (blockIndex in blockData.indices) {
-            if (blockData[blockIndex] == 0.toByte())
-                continue
-            val blockPosition = blockIndexToBlockPos(blockIndex)
-//            if (!isBlockVisible(blockPosition))
-//                continue
+        if (!isAllAir) {
+            for (blockIndex in blockData!!.indices) {
+                if (blockData!![blockIndex] == Char(0))
+                    continue
+                val blockPosition = blockIndexToBlockPos(blockIndex)
+                //            if (!isBlockVisible(blockPosition))
+                //                continue
 
-            for (faceIndex in 0..5) {
-                 if (isFaceVisible(blockPosition, faceIndex)) {
-                    for (vertexIndex in faceIndex * 6..(faceIndex * 6+5)) {
-//                        vertexIds.add(blockVertexIds[vertexIndex])
-//                        blockPositions.add(blockIndex)
-//                        blockTypes.add(blockData[blockIndex].toInt() - 1)
+                for (faceIndex in 0..5) {
+                    if (isFaceVisible(blockPosition, faceIndex)) {
+                        for (vertexIndex in faceIndex * 6..(faceIndex * 6 + 5)) {
+                            //                        vertexIds.add(blockVertexIds[vertexIndex])
+                            //                        blockPositions.add(blockIndex)
+                            //                        blockTypes.add(blockData[blockIndex].toInt() - 1)
 
-                        val blockType = blockData[blockIndex].toInt() - 1
-                        val blockVertexID = blockVertexIds[vertexIndex]
+                            val blockType = blockData!![blockIndex].toInt() - 1
+                            val blockVertexID = blockVertexIds[vertexIndex]
 
-                        val packedData = (blockIndex shl 16) or (blockType shl 8) or blockVertexID
-                        packedValues.add(packedData)
+                            val packedData = (blockIndex shl 16) or (blockType shl 8) or blockVertexID
+                            packedValues.add(packedData)
+                        }
                     }
-                 }
+                }
             }
         }
 
@@ -91,8 +107,9 @@ class Chunk(val chunkPosition: Int3) {
     }
 
     fun uploadToGPU() {
-        if (meshData != null)
+        if (meshData != null) {
             mesh = Mesh(meshData!!)
+        }
     }
 
     private fun isFaceVisible(blockPosition: Int3, faceIndex: Int): Boolean {
@@ -107,9 +124,9 @@ class Chunk(val chunkPosition: Int3) {
                 return false
             val neighborChunk = chunkManager.getChunk(neighborChunkPosition)!!
             val neighborChunkBlockPosition = neighborChunk.worldPositionToBlockPosition(neighborWorldPosition)
-            return neighborChunk.getBlock(neighborChunkBlockPosition) == 0.toByte()
+            return neighborChunk.getBlock(neighborChunkBlockPosition) == Char(0)
         } else {
-            return getBlock(neighborPosition) == 0.toByte()
+            return getBlock(neighborPosition) == Char(0)
         }
     }
 
@@ -126,7 +143,9 @@ class Chunk(val chunkPosition: Int3) {
         val noise = FastNoiseLite()
         noise.SetSeed(gameEngine.world.seed)
 
-        for (blockIndex in blockData.indices) {
+        blockData = CharArray(Config.chunkSize * Config.chunkSize * Config.chunkSize)
+
+        for (blockIndex in blockData!!.indices) {
             val blockPosition = blockIndexToBlockPos(blockIndex)
             val worldPosition = blockPositionToWorldPosition(blockPosition)
             var height: Int
@@ -151,13 +170,13 @@ class Chunk(val chunkPosition: Int3) {
                 heightmapCache[blockPosition.x * 33 + blockPosition.z] = height
             }
             if (height + worldPosition.y - 18 < -4) {
-                blockData[blockIndex] = 2.toByte()
+                blockData!![blockIndex] = Char(2)
             } else if (height + worldPosition.y - 18 < 0) {
-                blockData[blockIndex] = 3.toByte()
+                blockData!![blockIndex] = Char(3)
             } else if (height + worldPosition.y - 18 == 0) {
-                blockData[blockIndex] = 1.toByte()
+                blockData!![blockIndex] = Char(1)
             } else {
-                blockData[blockIndex] = 0.toByte()
+                blockData!![blockIndex] = Char(0)
             }
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S)
             val simplexNoiseResult = noise.GetNoise(worldPosition.x.toFloat() * 3, worldPosition.y.toFloat() * 2, worldPosition.z.toFloat() * 3)
@@ -165,7 +184,7 @@ class Chunk(val chunkPosition: Int3) {
             val simplexNoiseResult2 = noise.GetNoise(worldPosition.x.toFloat() * 3, worldPosition.y.toFloat() * 3, worldPosition.z.toFloat() * 3)
             noise.SetSeed(gameEngine.world.seed)
             if (simplexNoiseResult in -0.2.. 0.2 && simplexNoiseResult2 > 0.5) {
-                // blockData[blockIndex] = 0.toByte()
+                // blockData[blockIndex] = 0.toChar()
             }
         }
 
@@ -176,7 +195,7 @@ class Chunk(val chunkPosition: Int3) {
 //                val blockPosition = Int3(treePosition.x + chunkPosition.x * Config.chunkSize, -height + 19, treePosition.y + chunkPosition.z * Config.chunkSize)
 //                // if (isBlockPositionInChunk(blockPosition)) {
 ////                    val blockIndex = blockPositionToBlockIndex(blockPosition)
-////                    blockData[blockIndex] = 2.toByte()
+////                    blockData[blockIndex] = 2.toChar()
 //                for (y in 0..4)
 //                    GameEngineProvider.getGameEngine().world.chunkManager.setBlock(blockPosition + Int3(0, y, 0), 2)
 //                // }
@@ -185,6 +204,21 @@ class Chunk(val chunkPosition: Int3) {
 //            }
 //        }
         // println(heightmapCache[0])
+
+        updateIsAllAir()
+    }
+
+    fun loadFromBlockData(data: CharArray) {
+        blockData = data
+        updateIsAllAir()
+    }
+
+    private fun updateIsAllAir() {
+        isAllAir = blockData!!.all { it == Char(0) }
+
+        if (isAllAir) {
+            blockData = null
+        }
     }
 
     fun buildNeighbouringMeshes() {
@@ -194,7 +228,7 @@ class Chunk(val chunkPosition: Int3) {
             // gameEngine.world.chunkManager.getChunk(neighborPosition)?.buildMesh()
             val neighbor = gameEngine.world.chunkManager.getChunk(neighborPosition)
             if (neighbor != null) {
-                gameEngine.world.chunkManager.chunkMeshingExecutor.addChunk(neighbor)
+                gameEngine.world.chunkManager.chunkMeshingExecutor!!.addChunk(neighbor)
             }
         }
     }
@@ -225,11 +259,14 @@ class Chunk(val chunkPosition: Int3) {
         return true
     }
 
-    fun setBlock(blockPosition: Int3, value: Byte) {
+    fun setBlock(blockPosition: Int3, value: Char) {
+        if (isAllAir)
+            blockData = CharArray(Config.chunkSize * Config.chunkSize * Config.chunkSize)
+
         val blockIndex = blockPositionToBlockIndex(blockPosition)
-        if (blockData[blockIndex] == value)
+        if (blockData!![blockIndex] == value)
             return
-        blockData[blockIndex] = value
+        blockData!![blockIndex] = value
         timesBuilt = 0
         buildMesh()
         // mesh = null
@@ -259,5 +296,13 @@ class Chunk(val chunkPosition: Int3) {
             result.add(Int3(0, 0, 1))
 
         return result
+    }
+
+    fun getWorldPosition(): Double3 {
+        return (chunkPosition.toDouble3() + Double3(0.5, 0.5, 0.5)) * Config.chunkSize
+    }
+
+    fun cleanup() {
+        mesh?.cleanup()
     }
 }

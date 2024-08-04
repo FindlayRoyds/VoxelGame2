@@ -10,6 +10,7 @@ in vec3 normal;
 in vec3 viewDir;
 
 uniform sampler2DArray textureArray;
+uniform float chunkVisibility;
 
 vec3 shadowValue = vec3(0.65, 0.65, 0.75);
 vec3 lightValue = vec3(1.1, 1.1, 1.0);
@@ -36,6 +37,8 @@ void main()
 
     vec4 modifiedColor = vec4(originalColor.rgb * scaledBrightness, originalColor.a);// + specularColor;
     fragColor = modifiedColor;
+
+    fragColor = mix(vec4(0.5, 0.7, 1.0, 1.0), fragColor, chunkVisibility);
 
     if (fragColor.a == 0.0)
         discard;

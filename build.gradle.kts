@@ -39,6 +39,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 
@@ -49,7 +50,7 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("MainKt")
-    applicationDefaultJvmArgs = listOf("-XstartOnFirstThread")
+    applicationDefaultJvmArgs = listOf("-XstartOnFirstThread -Xmx12g")
 }
 
 dependencies {
@@ -73,7 +74,8 @@ dependencies {
     implementation("org.joml:joml:1.10.5")
     // runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    // implementation("io.github.spair:imgui-java-app:1.86.11")
+//    implementation("io.github.spair:imgui-java-app:1.86.11")
+    implementation("com.github.koxx12-dev:ImGui-Java-Lwjgl2:1.0.0")
 }
 
 kotlin {

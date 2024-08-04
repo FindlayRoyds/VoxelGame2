@@ -1,6 +1,8 @@
 package common.world
 
+import client.Client
 import common.Config
+import common.GameEngineProvider
 import common.math.Double3
 import common.math.Int3
 import java.util.concurrent.ConcurrentHashMap
@@ -10,7 +12,11 @@ class ChunkManager {
     private val chunks = ConcurrentHashMap<Int3, Chunk>()
     private val chunksToUploadToGPU = ConcurrentLinkedQueue<Chunk>()
     val chunkGenerationExecutor = ChunkGenerationExecutor(5)
-    val chunkMeshingExecutor = ChunkMeshingExecutor(10)
+    var chunkMeshingExecutor: ChunkMeshingExecutor? = null
+
+    fun createChunkMeshingExecutor() {
+        chunkMeshingExecutor = ChunkMeshingExecutor(4)
+    }
 
     fun generateChunk(position: Int3) {
         /** Loads the chunk into the generation queue, call this 👍 */
@@ -60,11 +66,9 @@ class ChunkManager {
         }
     }
 
-    fun setBlock(worldPosition: Int3, value: Byte) {
+    fun setBlock(worldPosition: Int3, value: Char) {
         val chunkPosition = worldPositionToChunkPosition(worldPosition)
-        val chunk = getChunk(chunkPosition)
-        if (chunk == null)
-            return
+        val chunk = getChunk(chunkPosition) ?: return
         val blockPosition = chunk.worldPositionToBlockPosition(worldPosition)
         chunk.setBlock(blockPosition, value)
     }
@@ -73,12 +77,47 @@ class ChunkManager {
         chunksToUploadToGPU.add(chunk)
     }
 
-    fun getBlock(worldPosition: Int3): Byte {
+    fun getBlock(worldPosition: Int3): Char {
         val chunkPosition = worldPositionToChunkPosition(worldPosition)
-        val chunk = getChunk(chunkPosition)
-        if (chunk == null)
-            return 0.toByte()
+        val chunk = getChunk(chunkPosition) ?: return 0.toChar()
+
         val blockPosition = chunk.worldPositionToBlockPosition(worldPosition)
         return chunk.getBlock(blockPosition)
+    }
+
+    fun unloadChunks() {
+        val gameEngine = GameEngineProvider.getGameEngine()
+        var playerList = gameEngine.players.getPlayerList()
+        if (gameEngine.isClient()) {
+            val client = gameEngine as Client
+            client.players.localPlayer ?: return
+
+            playerList = mutableListOf(client.players.localPlayer!!)
+        }
+
+        val chunksToKeepLoaded = HashSet<Chunk>()
+
+        for (chunk in getLoadedChunks()) {
+            for (player in playerList) {
+                val distance = (player.position - chunk.getWorldPosition()).magnitude
+                if (distance <= (Config.renderDistance + Config.unloadDistance + if (gameEngine.isClient()) 0 else 1) * Config.chunkSize) {
+                    chunksToKeepLoaded.add(chunk)
+                }
+            }
+        }
+
+        for (chunk in getLoadedChunks()) {
+            if (!chunksToKeepLoaded.contains(chunk)) {
+                removeChunk(chunk.chunkPosition)
+            }
+        }
+    }
+
+    private fun removeChunk(position: Int3) {
+        val chunk = getChunk(position)
+        if (chunk != null) {
+            chunk.cleanup()
+            chunks.remove(position)
+        }
     }
 }

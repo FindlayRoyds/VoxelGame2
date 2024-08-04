@@ -7,8 +7,11 @@ object Config {
     const val tickRate = 2
     const val chunkSize = 32
 
+    const val renderDistance = 24
+    const val unloadDistance = 2
+
     const val mouseSensitivity = 0.005
-    const val characterFlySpeed = 5.0
+    const val characterFlySpeed = 8.0
     const val characterReachDistance = 5.0
 
     // AUTOMATIC CONFIG
