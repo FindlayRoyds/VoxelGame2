@@ -4,12 +4,14 @@ import client.Client
 import common.Config
 import common.GameEngineProvider
 import common.math.Double3
+import common.math.Int2
 import common.math.Int3
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class ChunkManager {
     private val chunks = ConcurrentHashMap<Int3, Chunk>()
+    private val heightmapChunks = ConcurrentHashMap<Int2, HeightmapChunk>()
     private val chunksToUploadToGPU = ConcurrentLinkedQueue<Chunk>()
     val chunkGenerationExecutor = ChunkGenerationExecutor(5)
     var chunkMeshingExecutor: ChunkMeshingExecutor? = null
@@ -45,17 +47,44 @@ class ChunkManager {
     fun worldPositionToChunkPosition(position: Double3): Int3 {
         return (position / Config.chunkSize).toInt3()
     }
-
     fun worldPositionToChunkPosition(position: Int3): Int3 {
         return position / Config.chunkSize
     }
-
-    fun getChunk(position: Int3): Chunk? {
-        return chunks[position]
+    fun worldPositionToChunkPosition(position: Int2): Int2 {
+        return position / Config.chunkSize
     }
 
-    fun isChunkLoaded(position: Int3): Boolean {
-        return chunks.containsKey(position)
+    fun getChunk(chunkPosition: Int3): Chunk? {
+        return chunks[chunkPosition]
+    }
+
+    fun isChunkLoaded(chunkPosition: Int3): Boolean {
+        return chunks.containsKey(chunkPosition)
+    }
+
+    fun getHeightmapChunk(chunkPosition: Int2): HeightmapChunk? {
+        return heightmapChunks[chunkPosition]
+    }
+
+    fun isHeightmapChunkLoaded(chunkPosition: Int2): Boolean {
+        return heightmapChunks.contains(chunkPosition)
+    }
+
+    fun getHeight(worldPosition: Int2): Int? {
+        val chunkPosition = worldPositionToChunkPosition(worldPosition)
+        if (!isHeightmapChunkLoaded(chunkPosition))
+            return null
+        val blockPosition = worldPosition - (chunkPosition * Config.chunkSize)
+        return getHeightmapChunk(chunkPosition)?.getHeight(blockPosition)
+    }
+
+    fun setHeight(worldPosition: Int2, height: Int) {
+        val chunkPosition = worldPositionToChunkPosition(worldPosition)
+        var heightmapChunk = getHeightmapChunk(worldPosition)
+        if (heightmapChunk == null)
+            heightmapChunk = HeightmapChunk(worldPosition)
+        val blockPosition = worldPosition - (chunkPosition * Config.chunkSize)
+        heightmapChunk.setHeight(blockPosition, height)
     }
 
     fun sendChunksToGPU() {

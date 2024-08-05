@@ -1,10 +1,10 @@
 package common
 
 import common.player.Players
-import common.world.World
+import common.world.WorldProvider
 
 abstract class GameEngine {
-    val world = World()
+    val world = WorldProvider.world
     val players = Players()
     val eventQueue = EventQueue()
 

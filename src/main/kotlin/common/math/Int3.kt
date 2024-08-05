@@ -13,6 +13,10 @@ data class Int3(var x: Int, var y: Int, var z: Int) : Serializable {
         get() {
             return Int3(sign(x.toDouble()).toInt(), sign(y.toDouble()).toInt(), sign(z.toDouble()).toInt())
         }
+    val xz: Int2
+        get() {
+            return Int2(x, z)
+        }
 
     operator fun plus(other: Int3): Int3 = Int3(x + other.x, y + other.y, z + other.z)
 

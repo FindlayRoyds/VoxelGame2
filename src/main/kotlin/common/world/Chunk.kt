@@ -4,6 +4,8 @@ import client.graphics.Mesh
 import client.graphics.MeshData
 import common.Config
 import common.GameEngineProvider
+import common.block.blocks.Air
+import common.block.blocks.Dirt
 import common.math.Double3
 import common.math.Int3
 import common.world.noise.FastNoiseLite
@@ -15,8 +17,8 @@ class Chunk(val chunkPosition: Int3) {
     var meshData: MeshData? = null
     var isAllAir = true
     var blockData: CharArray? = null
-    var heightmapCache = HashMap<Int, Int>()
     val gameEngine = GameEngineProvider.getGameEngine()
+    val chunkManager = gameEngine.world.chunkManager
     var blockNeighbors = arrayListOf(Int3(0, 0, -1), Int3(0, 0, 1), Int3(-1, 0, 0), Int3(1, 0, 0), Int3(0, -1, 0), Int3(0, 1, 0))
 
     var timesBuilt = 0
@@ -55,8 +57,6 @@ class Chunk(val chunkPosition: Int3) {
             creationTime = System.currentTimeMillis()
             firstMesh = false
         }
-
-        // println("building $chunkPosition")
 
         meshData = null
 
@@ -148,10 +148,8 @@ class Chunk(val chunkPosition: Int3) {
         for (blockIndex in blockData!!.indices) {
             val blockPosition = blockIndexToBlockPos(blockIndex)
             val worldPosition = blockPositionToWorldPosition(blockPosition)
-            var height: Int
-            if (heightmapCache.contains(blockPosition.x * 33 + blockPosition.z)) {
-                height = heightmapCache.get(blockPosition.x * 33 + blockPosition.z)!!
-            } else {
+            var height = chunkManager.getHeight(worldPosition.xz)
+            if (height == null) {
 ////                height = floor(
 ////                    (sin(worldPosition.x.toDouble() / 53.0) - sin(worldPosition.z.toDouble() / -59.0)) * 53
 ////                            + sin(worldPosition.x.toDouble() / 27.0 - worldPosition.z.toDouble() / 33.0) * 19
@@ -163,29 +161,35 @@ class Chunk(val chunkPosition: Int3) {
                 val x = worldPosition.x.toFloat()
                 val y = worldPosition.z.toFloat()
                 noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular)
-                val cellularNoiseResult = noise.GetNoise(x, y)
+                val cellularNoiseResult = noise.GetNoise(x * 2, y * 2)
                 noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2)
-                val simplexNoiseResult = noise.GetNoise(x, y)
-                height = floor(Math.min(cellularNoiseResult * -70 + simplexNoiseResult * 10, simplexNoiseResult * 7 + 50)).toInt()
-                heightmapCache[blockPosition.x * 33 + blockPosition.z] = height
+                val simplexNoiseResult1 = noise.GetNoise(x, y)
+                noise.SetSeed(gameEngine.world.seed + 2)
+                val simplexNoiseResult2 = noise.GetNoise(x / 4, y / 4)
+                height = floor(Math.min(cellularNoiseResult * -50 * (-0.5f * simplexNoiseResult2 + 0.5f) + 20 + simplexNoiseResult1 * 10, simplexNoiseResult1 * 7 + 50) + simplexNoiseResult2 * 40).toInt()
+                var heightmapChunk = chunkManager.getHeightmapChunk(chunkPosition.xz)
+                if (heightmapChunk == null)
+                    heightmapChunk = HeightmapChunk(chunkPosition.xz)
+                heightmapChunk.setHeight(worldPosition.xz, height)
             }
             if (height + worldPosition.y - 18 < -4) {
                 blockData!![blockIndex] = Char(2)
             } else if (height + worldPosition.y - 18 < 0) {
                 blockData!![blockIndex] = Char(3)
             } else if (height + worldPosition.y - 18 == 0) {
-                blockData!![blockIndex] = Char(1)
+                blockData!![blockIndex] = Dirt().representation
             } else {
-                blockData!![blockIndex] = Char(0)
+                blockData!![blockIndex] = Air().representation
             }
+            noise.SetSeed(gameEngine.world.seed)
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S)
             val simplexNoiseResult = noise.GetNoise(worldPosition.x.toFloat() * 3, worldPosition.y.toFloat() * 2, worldPosition.z.toFloat() * 3)
             noise.SetSeed(gameEngine.world.seed + 1)
             val simplexNoiseResult2 = noise.GetNoise(worldPosition.x.toFloat() * 3, worldPosition.y.toFloat() * 3, worldPosition.z.toFloat() * 3)
             noise.SetSeed(gameEngine.world.seed)
-            if (simplexNoiseResult in -0.2.. 0.2 && simplexNoiseResult2 > 0.5) {
-                // blockData[blockIndex] = 0.toChar()
-            }
+//            if (simplexNoiseResult in -0.2.. 0.2 && simplexNoiseResult2 > 0.5) {
+//                 blockData[blockIndex] = 0.toChar()
+//            }
         }
 
 //        for (i in 0..1) {

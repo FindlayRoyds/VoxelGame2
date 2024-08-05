@@ -1,11 +1,7 @@
 package common.block.blocks
 
-import kotlin.random.Random
-
 class Dirt : Block() {
-    override val id: Byte
-        get() {
-            return Random.nextInt().toByte()
-        }
+    override val id: Byte = 1
+    override val data: Byte = 0
     override val name = "Dirt"
 }
