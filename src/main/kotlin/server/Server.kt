@@ -86,8 +86,6 @@ class Server(port: Int) : GameEngine() {
             updateChunks()
             eventQueue.runEvents(delayTime.toDouble())
 
-            // println(delayTime)
-
             delayTime = Config.tickTime - (System.currentTimeMillis() - startTime)
             if (delayTime > 0)
                 Thread.sleep(delayTime)

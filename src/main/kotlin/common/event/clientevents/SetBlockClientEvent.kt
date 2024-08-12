@@ -1,4 +1,4 @@
-package common.event.commonevents
+package common.event.clientevents
 
 import client.Client
 import common.GameEngineProvider

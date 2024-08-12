@@ -4,7 +4,8 @@ import client.Client
 import common.Config
 import common.GameEngineProvider
 import common.block.Block
-import common.event.commonevents.SetBlockClientEvent
+import common.event.clientevents.SetBlockClientEvent
+import common.event.localevents.BlockUpdateEvent
 import common.math.Double3
 import common.math.Int2
 import common.math.Int3
@@ -109,6 +110,8 @@ class ChunkManager {
         if (gameEngine.isServer()) {
             val server = gameEngine as Server
 
+            val blockUpdateEvent = BlockUpdateEvent(worldPosition)
+            gameEngine.eventQueue.addEvent(blockUpdateEvent)
             updateBlockNeighbors(worldPosition)
 
             val event = SetBlockClientEvent(worldPosition, block)
@@ -118,8 +121,11 @@ class ChunkManager {
 
     private fun updateBlockNeighbors(worldPosition: Int3) {
         for (neighborOffset in Utils.blockNeighbors) {
-            val neighbor = getBlock(worldPosition + neighborOffset) ?: continue
-            neighbor.update(worldPosition + neighborOffset)
+            if (getBlock(worldPosition + neighborOffset) == null)
+                continue
+
+            val gameEngine = GameEngineProvider.getGameEngine()
+            gameEngine.eventQueue.addEvent(BlockUpdateEvent(worldPosition + neighborOffset))
         }
     }
 

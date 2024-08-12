@@ -4,7 +4,7 @@ import client.Client
 import common.Config
 import common.GameEngineProvider
 import common.block.blocks.Air
-import common.event.commonevents.SetBlockServerEvent
+import common.event.servernetworkevents.SetBlockServerEvent
 
 class BreakAction: Action() {
     override val onHold = false

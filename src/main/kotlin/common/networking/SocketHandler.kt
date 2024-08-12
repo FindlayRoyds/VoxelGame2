@@ -4,7 +4,7 @@ import common.EventQueue
 import common.GameEngineProvider
 import common.event.Event
 import common.event.ServerEvent
-import common.event.commonevents.DisconnectClientEvent
+import common.event.clientevents.DisconnectClientEvent
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.Socket

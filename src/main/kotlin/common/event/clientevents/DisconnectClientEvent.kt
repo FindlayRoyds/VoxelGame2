@@ -1,4 +1,4 @@
-package common.event.commonevents
+package common.event.clientevents
 
 import common.event.ClientEvent
 import kotlin.system.exitProcess

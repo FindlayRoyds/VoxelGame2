@@ -3,9 +3,10 @@ package common.event
 import common.GameEngineProvider
 import common.player.Player
 import server.Server
+import java.io.Serializable
 import java.net.Socket
 
-abstract class ServerEvent : Event() {
+abstract class ServerEvent : Event(), Serializable {
     protected var player: Player? = null
     var socket: Socket? = null
     private var _server: Server? = null

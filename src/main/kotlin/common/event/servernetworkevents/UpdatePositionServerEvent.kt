@@ -1,4 +1,4 @@
-package common.event.serverevents
+package common.event.servernetworkevents
 
 import common.Config
 import common.event.ServerEvent
@@ -19,6 +19,6 @@ class UpdatePositionServerEvent(position: Double3): ServerEvent() {
         player!!.position = position
 
         val updatePlayerPositionEvent = UpdatePlayerPositionClientEvent(player!!.userID, position)
-        server!!.serverNetwork.sendEventToEveryone(updatePlayerPositionEvent)
+        server.serverNetwork.sendEventToEveryone(updatePlayerPositionEvent)
     }
 }

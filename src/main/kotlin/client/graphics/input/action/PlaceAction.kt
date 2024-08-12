@@ -5,7 +5,7 @@ import common.Config
 import common.GameEngineProvider
 import common.block.blocks.Air
 import common.block.blocks.Stone
-import common.event.commonevents.SetBlockServerEvent
+import common.event.servernetworkevents.SetBlockServerEvent
 
 class PlaceAction: Action() {
     override val onHold = false

@@ -4,9 +4,9 @@ import client.graphics.Renderer
 import client.graphics.Window
 import common.GameEngine
 import common.GameEngineProvider
-import common.event.commonevents.DisconnectClientEvent
-import common.event.commonevents.DisconnectServerEvent
-import common.event.serverevents.ConnectionRequestServerEvent
+import common.event.clientevents.DisconnectClientEvent
+import common.event.servernetworkevents.ConnectionRequestServerEvent
+import common.event.servernetworkevents.DisconnectServerEvent
 import common.networking.SocketHandler
 import java.net.Socket
 

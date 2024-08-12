@@ -1,4 +1,4 @@
-package common.event.serverevents
+package common.event.servernetworkevents
 
 import common.event.ServerEvent
 import common.event.clientevents.ReceiveChatClientEvent

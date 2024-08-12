@@ -1,8 +1,6 @@
 package common.event
 
-import java.io.Serializable
-
-abstract class Event : Serializable {
+abstract class Event {
     open fun run() {
         event()
     }

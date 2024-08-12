@@ -1,7 +1,8 @@
-package common.event.commonevents
+package common.event.servernetworkevents
 
 import common.GameEngineProvider
 import common.event.ServerEvent
+import common.event.clientevents.DisconnectClientEvent
 import server.Server
 
 class DisconnectServerEvent : ServerEvent() {

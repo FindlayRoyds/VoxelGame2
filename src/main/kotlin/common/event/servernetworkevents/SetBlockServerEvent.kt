@@ -1,4 +1,4 @@
-package common.event.commonevents
+package common.event.servernetworkevents
 
 import common.GameEngineProvider
 import common.block.Block

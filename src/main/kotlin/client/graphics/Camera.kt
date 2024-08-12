@@ -3,7 +3,7 @@ package client.graphics
 import client.Client
 import common.Config
 import common.GameEngineProvider
-import common.event.serverevents.UpdatePositionServerEvent
+import common.event.servernetworkevents.UpdatePositionServerEvent
 import common.math.Double2
 import common.math.Double3
 import org.joml.Matrix4d
