@@ -3,6 +3,7 @@ package client.graphics.input.action
 import client.Client
 import common.Config
 import common.GameEngineProvider
+import common.block.blocks.Air
 import common.event.commonevents.SetBlockServerEvent
 
 class BreakAction: Action() {
@@ -15,9 +16,9 @@ class BreakAction: Action() {
 
         if (raycastResult != null) {
             val (breakPosition, _) = raycastResult
-            client.world.chunkManager.setBlock(breakPosition, 0.toChar())
+            client.world.chunkManager.setBlock(breakPosition, Air())
 
-            val setBlockEvent = SetBlockServerEvent(breakPosition, 0.toChar())
+            val setBlockEvent = SetBlockServerEvent(breakPosition, Air())
             client.socketHandler.sendEvent(setBlockEvent)
         }
     }

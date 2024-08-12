@@ -597,7 +597,7 @@ class Renderer(window: Window, width: Int, height: Int) {
                 || chunkDirection.magnitude <= Config.chunkSize * 4) {
                 val chunkMesh = chunk.mesh
 
-                val chunkVisibility = ((currentTime - chunk.creationTime) / (chunkDirection.magnitude * 10 - 400).coerceIn(0.0, 3000.0))
+                val chunkVisibility = ((currentTime - chunk.creationTime) / (chunkDirection.magnitude * 5 - 400).coerceIn(0.0, 3000.0))
                 blockUniformsMap.setUniform("chunkVisibility", chunkVisibility.toFloat().coerceIn(0f, 1f))
                 blockUniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
 

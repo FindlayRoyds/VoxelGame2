@@ -1,5 +1,6 @@
 package common.world
 
+import common.block.blocks.Air
 import common.math.Double3
 import common.math.Int3
 import kotlin.math.max
@@ -11,7 +12,7 @@ class World {
 
     fun getVoxel(worldPosition: Int3): Boolean {
         val block = chunkManager.getBlock(worldPosition)
-        return block != 0.toChar()
+        return block !is Air
     }
 
     fun raycast(origin: Double3, direction: Double3, maxDistance: Double): Pair<Int3, Int3>? {

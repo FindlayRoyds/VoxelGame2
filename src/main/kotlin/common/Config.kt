@@ -1,10 +1,11 @@
 package common
 
 object Config {
+    const val initialBlockPalletePackedArrayElementSizeInBits = 2
     const val cameraVerticalAngleLimit = 88
 
     // How many times per second a game tick occurs (when all the events in the queue are run)
-    const val tickRate = 2
+    const val tickRate = 20
     const val chunkSize = 32
 
     const val renderDistance = 24

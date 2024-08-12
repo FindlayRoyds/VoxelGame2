@@ -1,15 +1,15 @@
 package common.event.clientevents
 
 import common.event.ClientEvent
-import common.networking.transferobjects.PlayerTransferObject
+import common.player.Player
 import common.player.Players
 
 class SetupGameClientEvent(players: Players, sendingToUserId: Int) : ClientEvent() {
-    private val playerTransferObjects = mutableListOf<PlayerTransferObject>()
+    private val playerTransferObjects = mutableListOf<Player.PlayerTransferObject>()
 
     init {
         for (player in players.getPlayerList())
-            playerTransferObjects.add(PlayerTransferObject(player, player.userID == sendingToUserId))
+            playerTransferObjects.add(player.getTransferObject(player.userID == sendingToUserId))
     }
 
     override fun event() {

@@ -5,7 +5,6 @@ import common.GameEngine
 import common.GameEngineProvider
 import common.event.clientevents.ReceiveChunkClientEvent
 import common.math.Int3
-import common.networking.transferobjects.chunkTransferObject
 import server.networking.ServerNetwork
 
 
@@ -61,7 +60,7 @@ class Server(port: Int) : GameEngine() {
                 if (world.chunkManager.isChunkLoaded(chunkPosition)) {
                     val chunk = world.chunkManager.getChunk(chunkPosition)!!
                     if (!player.loadedChunks.contains(chunkPosition)) {
-                        val event = ReceiveChunkClientEvent(chunkTransferObject(chunk))
+                        val event = ReceiveChunkClientEvent(chunk.getTransferObject())
                         serverNetwork.sendEventToPlayer(event, player)
                         player.loadedChunks.add(chunkPosition)
                         count++

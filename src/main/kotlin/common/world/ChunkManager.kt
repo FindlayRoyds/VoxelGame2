@@ -3,9 +3,13 @@ package common.world
 import client.Client
 import common.Config
 import common.GameEngineProvider
+import common.block.Block
+import common.event.commonevents.SetBlockClientEvent
 import common.math.Double3
 import common.math.Int2
 import common.math.Int3
+import common.utils.Utils
+import server.Server
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -13,7 +17,7 @@ class ChunkManager {
     private val chunks = ConcurrentHashMap<Int3, Chunk>()
     private val heightmapChunks = ConcurrentHashMap<Int2, HeightmapChunk>()
     private val chunksToUploadToGPU = ConcurrentLinkedQueue<Chunk>()
-    val chunkGenerationExecutor = ChunkGenerationExecutor(5)
+    val chunkGenerationExecutor = ChunkGenerationExecutor(2)
     var chunkMeshingExecutor: ChunkMeshingExecutor? = null
 
     fun createChunkMeshingExecutor() {
@@ -37,7 +41,7 @@ class ChunkManager {
 
     fun setChunk(chunk: Chunk) {
         chunks[chunk.chunkPosition] = chunk
-        chunk.buildNeighbouringMeshes()
+        chunk.buildNeighboringMeshes()
     }
 
     fun getLoadedChunks(): MutableCollection<Chunk> {
@@ -95,23 +99,39 @@ class ChunkManager {
         }
     }
 
-    fun setBlock(worldPosition: Int3, value: Char) {
+    fun setBlock(worldPosition: Int3, block: Block) {
         val chunkPosition = worldPositionToChunkPosition(worldPosition)
         val chunk = getChunk(chunkPosition) ?: return
         val blockPosition = chunk.worldPositionToBlockPosition(worldPosition)
-        chunk.setBlock(blockPosition, value)
+        chunk.setBlock(blockPosition, block)
+
+        val gameEngine = GameEngineProvider.getGameEngine()
+        if (gameEngine.isServer()) {
+            val server = gameEngine as Server
+
+            updateBlockNeighbors(worldPosition)
+
+            val event = SetBlockClientEvent(worldPosition, block)
+            server.serverNetwork.sendEventToEveryone(event)
+        }
+    }
+
+    private fun updateBlockNeighbors(worldPosition: Int3) {
+        for (neighborOffset in Utils.blockNeighbors) {
+            val neighbor = getBlock(worldPosition + neighborOffset) ?: continue
+            neighbor.update(worldPosition + neighborOffset)
+        }
     }
 
     fun uploadChunkToGPU(chunk: Chunk) {
         chunksToUploadToGPU.add(chunk)
     }
 
-    fun getBlock(worldPosition: Int3): Char {
+    fun getBlock(worldPosition: Int3): Block? {
         val chunkPosition = worldPositionToChunkPosition(worldPosition)
-        val chunk = getChunk(chunkPosition) ?: return 0.toChar()
+        val chunk = getChunk(chunkPosition) ?: return null
 
-        val blockPosition = chunk.worldPositionToBlockPosition(worldPosition)
-        return chunk.getBlock(blockPosition)
+        return chunk.getBlock(chunk.worldPositionToBlockPosition(worldPosition))
     }
 
     fun unloadChunks() {

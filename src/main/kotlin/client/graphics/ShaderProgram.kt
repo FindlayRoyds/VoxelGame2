@@ -15,7 +15,7 @@ class ShaderProgram(shaderModuleDataList: MutableList<ShaderModuleData>) {
 
         val shaderModules: MutableList<Int> = ArrayList()
         for ((shaderFile, shaderType) in shaderModuleDataList) {
-            val shader = createShader(Utils().readFile(shaderFile), shaderType)
+            val shader = createShader(Utils.readFile(shaderFile), shaderType)
             shaderModules.add(shader)
         }
 

@@ -1,15 +1,14 @@
 package common.event.clientevents
 
 import common.event.ClientEvent
-import common.networking.transferobjects.PlayerTransferObject
 import common.player.Player
 
 class PlayerJoinedClientEvent(player: Player) : ClientEvent() {
-    private val playerData = PlayerTransferObject(player, false)
+    private val playerData = player.getTransferObject(false)
 
     override fun event() {
         val newPlayer = Player(playerData.userID, playerData.username)
-        client!!.players.addPlayer(newPlayer)
+        client.players.addPlayer(newPlayer)
         println("${newPlayer.username} has joined the game")
     }
 }

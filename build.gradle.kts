@@ -50,11 +50,12 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("MainKt")
-    applicationDefaultJvmArgs = listOf("-XstartOnFirstThread -Xmx12g")
+    applicationDefaultJvmArgs = listOf("-XstartOnFirstThread")
 }
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
 
@@ -75,7 +76,7 @@ dependencies {
     // runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 //    implementation("io.github.spair:imgui-java-app:1.86.11")
-    implementation("com.github.koxx12-dev:ImGui-Java-Lwjgl2:1.0.0")
+//    implementation("com.github.koxx12-dev:ImGui-Java-Lwjgl2:1.0.0")
 }
 
 kotlin {

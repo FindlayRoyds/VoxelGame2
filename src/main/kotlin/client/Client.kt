@@ -27,19 +27,6 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
         socketHandler.sendEvent(ConnectionRequestServerEvent("MineOrienteer69"))
 
-//        world.chunkManager.chunkGenerationExecutor.run()
-//        val range = 12
-//        for (x in -range..range) {
-//            // thread {
-//            //     GameEngineProvider.setGameEngine(this)
-//            for (z in -range..range) {
-//                for (y in -3..8) {
-//                    world.chunkManager.generateChunk(Int3(x, y, z))
-//                }
-//            }
-//            // }
-//        }
-
         main()
     }
 
@@ -77,11 +64,12 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
             pollEvents()
             runEvents(deltaTimeMillis / 1000.toDouble())
             val start = System.currentTimeMillis()
+            updateChunkMeshes()
             runGraphics()
             val end = System.currentTimeMillis()
 
             if (end - start > 100) {
-                println(end - start)
+                println("Frame took a long time: ${end - start}")
             }
 
 //            world.chunkManager.unloadChunks()
@@ -117,6 +105,15 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         renderer.render(window, world)
         window.update()
         world.chunkManager.sendChunksToGPU()
+    }
+
+    private fun updateChunkMeshes() {
+        for (chunk in world.chunkManager.getLoadedChunks()) {
+            if (chunk.changed) {
+                chunk.changed = false
+                chunk.buildMesh()
+            }
+        }
     }
 
     private fun cleanup() {
