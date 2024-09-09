@@ -8,13 +8,13 @@ class WireframeAction: Action() {
 
     override fun execute() {
         val client = GameEngineProvider.getGameEngine() as Client
-        client.renderer.toggleWireframe()
+        client.mainRenderer.toggleWireframe()
 
         // print whatever debugging stuff
-        val camera = client.renderer.camera
+        val camera = client.mainRenderer.camera
         println("camera position: ${camera.position}")
         println("block: ${camera.position.toInt3()}")
         println("camera look: ${camera.lookVector}")
-        println("selection box position: ${client.renderer.selectionBoxPosition}")
+        println("selection box position: ${client.mainRenderer.selectionBoxPosition}")
     }
 }

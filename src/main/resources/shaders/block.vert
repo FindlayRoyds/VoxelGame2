@@ -1,6 +1,7 @@
 #version 410
 
-#define ARRAY_SIZE 4
+#define BLOCK_DATA_SIZE 42
+#define ARRAY_SIZE 5
 #define CHUNK_SIZE 32
 #define WORLD_OFFSET vec3(0.5, 0.5, 0.5)
 
@@ -18,10 +19,10 @@ out vec3 viewDir;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
-uniform vec3 vertexDataArray[108];
-uniform vec2 textureDataArray[108];
-uniform int textureIndexArray[108];
-uniform vec3 normalDataArray[108];
+uniform vec3 vertexPositionArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+uniform vec2 textureCoordArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+uniform int textureIndexArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+uniform vec3 normalVectorArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
 
 uniform ivec3 chunkPosition;
 uniform float chunkVisibility;
@@ -34,10 +35,10 @@ void main()
     int blockType = (inputData >> 8) & 0xFF; // Extract the next 8 bits
     int blockPosition = inputData >> 16; // Extract the highest 16 bits
 
-    int vertexDataIndex = blockType * 36 + blockVertexID;
-    vec3 pos = vertexDataArray[vertexDataIndex];
-    texCoord = textureDataArray[vertexDataIndex];
-    normal = normalDataArray[vertexDataIndex];
+    int vertexDataIndex = blockType * BLOCK_DATA_SIZE + blockVertexID;
+    vec3 pos = vertexPositionArray[vertexDataIndex];
+    texCoord = textureCoordArray[vertexDataIndex];
+    normal = normalVectorArray[vertexDataIndex];
     texIndexFloat = float(textureIndexArray[vertexDataIndex]);
     vec3 offset = vec3(int(blockPosition / (CHUNK_SIZE * CHUNK_SIZE)), int((blockPosition / CHUNK_SIZE)) % CHUNK_SIZE, blockPosition % CHUNK_SIZE);
     vec3 worldPos = pos + offset + WORLD_OFFSET + chunkPosition * CHUNK_SIZE;

@@ -4,10 +4,9 @@ import client.graphics.Mesh
 import client.graphics.MeshData
 import common.Config
 import common.GameEngineProvider
-import common.block.Block
 import common.block.blocks.Air
-import common.block.blocks.Dirt
-import common.block.blocks.Stone
+import common.block.blocks.Block
+import common.block.faces.ModelFace
 import common.math.Double3
 import common.math.Int3
 import common.utils.Utils
@@ -77,15 +76,6 @@ class Chunk(val chunkPosition: Int3) {
 
         meshData = null
 
-        val blockVertexIds = intArrayOf(
-            1, 0, 2, 4, 3, 5,
-            6, 7, 8, 9, 10, 11,
-            12, 13, 14, 15, 16, 17,
-            19, 18, 20, 22, 21, 23,
-            24, 25, 26, 27, 28, 29, // top
-            31, 30, 32, 34, 33, 35 // bottom
-        )
-
         val packedValues = ArrayList<Int>()
 
         if (blockPalette.singleBlockType == null) {
@@ -93,17 +83,42 @@ class Chunk(val chunkPosition: Int3) {
                 if (block is Air)
                     continue
 
-                for (faceIndex in 0..5) {
-                    if (isFaceVisible(blockPosition, faceIndex)) {
-                        for (vertexIndex in faceIndex * 6..(faceIndex * 6 + 5)) {
-                            val blockType = getBlock(blockPosition).id.toInt() - 1
-                            val blockVertexID = blockVertexIds[vertexIndex]
+//                // TODO remove this is temp
+//                var isOnSurface = false
+//                for (faceDirection in Config.faceDirections) {
+//                    if (isFaceVisible(blockPosition, faceDirection)) {
+//                        isOnSurface = true
+//                        break
+//                    }
+//                }
+//
+//                if (!isOnSurface)
+//                    continue
 
-                            val blockIndex = blockPositionToBlockIndex(blockPosition)
-                            val packedData = (blockIndex shl 16) or (blockType shl 8) or blockVertexID
-                            packedValues.add(packedData)
-                        }
+                val model = block.getModel()
+                val blockType = model.id
+                require(blockType != null) {"BlockType hasn't been assigned to ${block.name}!"}
+                var vertexIndex = 0
+                for ((direction, face) in model.faces) {
+                    if (isFaceCulled(blockPosition, face, direction)) {
+                        vertexIndex += face.getVertices().size
+                        continue
                     }
+                    for (vertex in face.getVertices()) {
+                        val blockVertexID = vertexIndex
+
+                        val blockIndex = blockPositionToBlockIndex(blockPosition)
+                        packedValues.add((blockIndex shl 16) or (blockType shl 8) or blockVertexID)
+                        vertexIndex += 1
+                    }
+                }
+                // center model
+                for (vertex in model.centerModel.getVertices()) {
+                    val blockVertexID = vertexIndex
+
+                    val blockIndex = blockPositionToBlockIndex(blockPosition)
+                    packedValues.add((blockIndex shl 16) or (blockType shl 8) or blockVertexID)
+                    vertexIndex += 1
                 }
             }
         }
@@ -118,32 +133,27 @@ class Chunk(val chunkPosition: Int3) {
         }
     }
 
-    private fun isFaceVisible(blockPosition: Int3, faceIndex: Int): Boolean {
-        val neighbor = Utils.blockNeighbors[faceIndex]
-        val neighborPosition = blockPosition + neighbor
-        if (!isBlockPositionInChunk(neighborPosition)) {
-
+    private fun isFaceCulled(blockPosition: Int3, face: ModelFace, faceDirection: Int3): Boolean {
+        val neighborPosition = blockPosition + faceDirection
+        val neighborBlock = if (isBlockPositionInChunk(neighborPosition)) {
+            getBlock(neighborPosition)
+        } else {
             val chunkManager = gameEngine.world.chunkManager
             val neighborWorldPosition = blockPositionToWorldPosition(neighborPosition)
-            val neighborChunkPosition = chunkManager.worldPositionToChunkPosition(neighborWorldPosition)
-            if (!chunkManager.isChunkLoaded(neighborChunkPosition))
-                return false
-            val neighborChunk = chunkManager.getChunk(neighborChunkPosition)!!
-            val neighborChunkBlockPosition = neighborChunk.worldPositionToBlockPosition(neighborWorldPosition)
-            return neighborChunk.getBlock(neighborChunkBlockPosition) is Air
-        } else {
-            return getBlock(neighborPosition) is Air
+            chunkManager.getBlock(neighborWorldPosition) ?: return false
         }
+        val neighborFace = neighborBlock.getModel().faces[faceDirection * -1] ?: return true
+        return face.isCulled(neighborFace)
     }
 
-    private fun isBlockVisible(blockPosition: Int3): Boolean {
-        for (faceIndex in 0..5) {
-            if (isFaceVisible(blockPosition, faceIndex)) {
-                return true
-            }
-        }
-        return false
-    }
+//    private fun isBlockVisible(blockPosition: Int3): Boolean {
+//        for (faceDirection in Config.faceDirections) {
+//            if (isFaceVisible(blockPosition, faceDirection)) {
+//                return true
+//            }
+//        }
+//        return false
+//    }
 
     fun generate() {
         val noise = FastNoiseLite()
@@ -170,13 +180,13 @@ class Chunk(val chunkPosition: Int3) {
                 heightmapChunk.setHeight(worldPosition.xz, height)
             }
             if (height + worldPosition.y - 18 < -4) {
-                blockPalette.set(blockPosition, Stone())
+                blockPalette.set(blockPosition, Block.stone)
             } else if (height + worldPosition.y - 18 < 0) {
-                blockPalette.set(blockPosition, Stone())
+                blockPalette.set(blockPosition, Block.dirt)
             } else if (height + worldPosition.y - 18 == 0) {
-                blockPalette.set(blockPosition, Dirt())
+                blockPalette.set(blockPosition, Block.dirt_grassy)
             } else {
-                blockPalette.set(blockPosition, Air())
+                blockPalette.set(blockPosition, Block.air)
             }
             noise.SetSeed(gameEngine.world.seed)
 //            noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S)

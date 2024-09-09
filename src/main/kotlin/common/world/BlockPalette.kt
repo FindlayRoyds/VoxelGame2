@@ -1,8 +1,7 @@
 package common.world
 
 import common.Config
-import common.block.Block
-import common.block.blocks.Air
+import common.block.blocks.Block
 import common.math.Int3
 import common.utils.PackedArray
 import java.io.Serializable
@@ -19,7 +18,7 @@ class BlockPalette: Serializable {
     private val arraySize = Config.chunkSize * Config.chunkSize * Config.chunkSize
     private val palette = ArrayList<Block>()
     private var paletteIndex: PackedArray? = null
-    var singleBlockType: Block? = Air()
+    var singleBlockType: Block? = Block.air
 
     val blocks: List<Block>
         get() = (0..<arraySize).map { get(it) }
@@ -66,6 +65,7 @@ class BlockPalette: Serializable {
         if (paletteIndex == null)
             paletteIndex = PackedArray(arraySize, Config.initialBlockPalletePackedArrayElementSizeInBits)
         if (2.pow(paletteIndex!!.bitsPerElement) < palette.size) {
+            println("Block palette size increased from ${paletteIndex!!.bitsPerElement} to ${paletteIndex!!.bitsPerElement + 1}")
             val newPaletteIndex = PackedArray(arraySize, paletteIndex!!.bitsPerElement + 1)
             for (index in paletteIndex!!.indices) {
                 newPaletteIndex[index] = paletteIndex!![index]

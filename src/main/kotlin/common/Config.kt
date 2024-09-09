@@ -8,7 +8,7 @@ object Config {
     const val tickRate = 20
     const val chunkSize = 32
 
-    const val renderDistance = 24
+    const val renderDistance = 16
     const val unloadDistance = 2
 
     const val mouseSensitivity = 0.005

@@ -79,4 +79,22 @@ data class Int3(var x: Int, var y: Int, var z: Int) : Serializable {
     fun dot(other: Int3): Int {
         return this.x * other.x + this.y * other.y + this.z * other.z
     }
+
+    companion object {
+        val up: Int3
+            get() = Int3(0, 1, 0)
+        val down: Int3
+            get() = Int3(0, -1, 0)
+        val right: Int3
+            get() = Int3(1, 0, 0)
+        val left: Int3
+            get() = Int3(-1, 0, 0)
+        val forwards: Int3
+            get() = Int3(0, 0, 1)
+        val backwards: Int3
+            get() = Int3(0, 0, -1)
+
+        val zero: Int3
+            get() = Int3(0, 0, 0)
+    }
 }

@@ -125,4 +125,26 @@ data class Double3(var x: Double, var y: Double, var z: Double) : Serializable {
     fun dot(other: Double3): Double {
         return this.x * other.x + this.y * other.y + this.z * other.z
     }
+
+    operator fun unaryMinus(): Double3 {
+        return this * -1
+    }
+
+    companion object {
+        val up: Double3
+            get() = Double3(0, 1, 0)
+        val down: Double3
+            get() = Double3(0, -1, 0)
+        val right: Double3
+            get() = Double3(1, 0, 0)
+        val left: Double3
+            get() = Double3(-1, 0, 0)
+        val forwards: Double3
+            get() = Double3(0, 0, 1)
+        val backwards: Double3
+            get() = Double3(0, 0, -1)
+
+        val zero: Double3
+            get() = Double3(0, 0, 0)
+    }
 }

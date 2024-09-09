@@ -3,7 +3,7 @@ package common.world
 import client.Client
 import common.Config
 import common.GameEngineProvider
-import common.block.Block
+import common.block.blocks.Block
 import common.event.clientevents.SetBlockClientEvent
 import common.event.localevents.BlockUpdateEvent
 import common.math.Double3
@@ -119,13 +119,17 @@ class ChunkManager {
         }
     }
 
+    fun sendBlockUpdate(worldPosition: Int3) {
+        if (getBlock(worldPosition) == null)
+            return
+
+        val gameEngine = GameEngineProvider.getGameEngine()
+        gameEngine.eventQueue.addEvent(BlockUpdateEvent(worldPosition))
+    }
+
     private fun updateBlockNeighbors(worldPosition: Int3) {
         for (neighborOffset in Utils.blockNeighbors) {
-            if (getBlock(worldPosition + neighborOffset) == null)
-                continue
-
-            val gameEngine = GameEngineProvider.getGameEngine()
-            gameEngine.eventQueue.addEvent(BlockUpdateEvent(worldPosition + neighborOffset))
+            sendBlockUpdate(worldPosition + neighborOffset)
         }
     }
 

@@ -2,7 +2,7 @@ package common.event.clientevents
 
 import client.Client
 import common.GameEngineProvider
-import common.block.Block
+import common.block.blocks.Block
 import common.event.ClientEvent
 import common.math.Int3
 

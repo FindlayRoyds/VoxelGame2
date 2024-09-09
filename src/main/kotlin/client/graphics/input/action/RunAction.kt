@@ -11,6 +11,6 @@ class RunAction: Action() {
     override fun execute() {
         val client = GameEngineProvider.getGameEngine() as Client
         val speed = Config.characterFlySpeed * client.eventQueue.deltaTimeS * 10
-        client.renderer.camera.addPosition(Double3(0.0, 0.0, speed))
+        client.mainRenderer.camera.addPosition(Double3(0.0, 0.0, speed))
     }
 }

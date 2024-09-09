@@ -1,7 +1,7 @@
 package client
 
-import client.graphics.Renderer
 import client.graphics.Window
+import client.graphics.renderers.MainRenderer
 import common.GameEngine
 import common.GameEngineProvider
 import common.event.clientevents.DisconnectClientEvent
@@ -18,7 +18,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     ) { resize() }
     var socketHandler: SocketHandler
     var running = false
-    var renderer = Renderer(window, window.width, window.height)
+    var mainRenderer = MainRenderer(window, window.width, window.height)
 
     init {
         running = true
@@ -94,7 +94,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         window.mouseInput.pollInput()
         window.keyboardInput.pollInput()
         window.pollEvents()
-        renderer.camera.pollEvents()
+        mainRenderer.camera.pollEvents()
     }
 
     private fun runEvents(deltaTimeS: Double) {
@@ -102,7 +102,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun runGraphics() {
-        renderer.render(window, world)
+        mainRenderer.render(window, world)
         window.update()
         world.chunkManager.sendChunksToGPU()
     }
@@ -122,8 +122,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun resize() {
-        renderer.resize(window.width, window.height)
-        renderer.render(window, world)
+        mainRenderer.resize(window.width, window.height)
+        mainRenderer.render(window, world)
         window.update()
     }
 }

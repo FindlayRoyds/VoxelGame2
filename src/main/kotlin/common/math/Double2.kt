@@ -1,5 +1,6 @@
 package common.math
 
+import org.joml.Vector2d
 import org.joml.Vector2f
 import java.io.Serializable
 import java.lang.Double.doubleToLongBits
@@ -66,6 +67,13 @@ data class Double2(var x: Double, var y: Double) : Serializable {
         return doubleToLongBits(y) == doubleToLongBits(otherCasted.y)
     }
 
+    fun toVector2d(): Vector2d {
+        return Vector2d(x, y)
+    }
+    fun toVector2f(): Vector2f {
+        return Vector2f(x.toFloat(), y.toFloat())
+    }
+
     fun set(x: Double, y: Double) {
         this.x = x
         this.y = y
@@ -74,5 +82,9 @@ data class Double2(var x: Double, var y: Double) : Serializable {
     fun set(other: Double2) {
         x = other.x
         y = other.y
+    }
+
+    companion object {
+        val zero = Double2(0, 0)
     }
 }

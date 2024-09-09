@@ -11,6 +11,6 @@ class MoveLeftAction: Action() {
     override fun execute() {
         val client = GameEngineProvider.getGameEngine() as Client
         val speed = Config.characterFlySpeed * client.eventQueue.deltaTimeS
-        client.renderer.camera.addPosition(Double3(speed, 0.0, 0.0))
+        client.mainRenderer.camera.addPosition(Double3(speed, 0.0, 0.0))
     }
 }

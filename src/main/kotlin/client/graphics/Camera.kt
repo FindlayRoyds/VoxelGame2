@@ -33,13 +33,15 @@ class Camera() {
         }
     var fallSpeed = 0.0 // remove this is temporary lol
 
-    private var _client: Client? = null
-    private val client: Client
-        get() {
-            if (_client == null)
-                _client = GameEngineProvider.getGameEngine() as Client
-            return _client!!
-        }
+//    private var _client: Client? = null
+//    private val client: Client
+//        get() {
+//            if (_client == null)
+//                _client = GameEngineProvider.getGameEngine() as Client
+//            return _client!!
+//        }
+
+    private val client: Client by lazy { GameEngineProvider.getGameEngine() as Client }
 
     fun addRotation(x: Double, y: Double) {
         rotation += Double3(x, y, 0.0)
@@ -75,7 +77,7 @@ class Camera() {
 
     fun setSelectionBox() {
         val raycastResult = client.world.raycast(position, lookVector, Config.characterReachDistance)
-        client.renderer.selectionBoxPosition = raycastResult?.first
+        client.mainRenderer.selectionBoxPosition = raycastResult?.first
     }
 
     fun pollEvents() {
