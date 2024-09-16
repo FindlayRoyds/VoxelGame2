@@ -22,13 +22,11 @@ class BlockPalette: Serializable {
 
     val blocks: List<Block>
         get() = (0..<arraySize).map { get(it) }
-    val positions: List<Int3>
-        get() = (0..<arraySize).map { blockIndexToBlockPos(it) }
     val blocksWithPositions: List<Pair<Block, Int3>>
-        get() = blocks.zip(positions)
+        get() = blocks.zip(Chunk.blockPositions)
 
     fun get(blockPosition: Int3): Block {
-        val blockIndex = blockPositionToBlockIndex(blockPosition)
+        val blockIndex = Chunk.blockPositionToBlockIndex(blockPosition)
         return get(blockIndex)
     }
 
@@ -39,7 +37,7 @@ class BlockPalette: Serializable {
     }
 
     fun set(blockPosition: Int3, block: Block) {
-        val blockIndex = blockPositionToBlockIndex(blockPosition)
+        val blockIndex = Chunk.blockPositionToBlockIndex(blockPosition)
         set(blockIndex, block)
     }
 
@@ -85,14 +83,6 @@ class BlockPalette: Serializable {
 
     fun contains(block: Block): Boolean {
         return block in palette
-    }
-
-    private fun blockPositionToBlockIndex(blockPosition: Int3): Int {
-        return (blockPosition.x *  Config.chunkSize *  Config.chunkSize) + (blockPosition.y *  Config.chunkSize) + blockPosition.z
-    }
-
-    private fun blockIndexToBlockPos(blockIndex: Int): Int3 {
-        return Int3(blockIndex / (Config.chunkSize * Config.chunkSize), (blockIndex / Config.chunkSize) % Config.chunkSize, blockIndex % Config.chunkSize)
     }
 
     fun updateSingleBlockType() {

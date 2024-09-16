@@ -2,18 +2,26 @@ package client.graphics
 
 import client.graphics.input.KeyboardInput
 import client.graphics.input.MouseInput
+import imgui.ImGui
+import imgui.gl3.ImGuiImplGl3
+import imgui.glfw.ImGuiImplGlfw
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
+import org.lwjgl.opengl.GL
 import org.lwjgl.system.MemoryUtil
 
 
 class Window(title: String, windowOptions: WindowOptions, private val resizeFunction: () -> Unit) {
     val mouseInput: MouseInput
     val keyboardInput: KeyboardInput
-    val handle: Long
-    var width: Int
-    var height: Int
+    var handle: Long = -1
+    var width: Int = -1
+    var height: Int = -1
+
+    private lateinit var glslVersion: String
+    private var imGuiGlfw = ImGuiImplGlfw()
+    private var imGuiGl3 = ImGuiImplGl3()
 
     class WindowOptions(
         val compatibleProfile: Boolean,
@@ -23,6 +31,26 @@ class Window(title: String, windowOptions: WindowOptions, private val resizeFunc
     )
 
     init {
+        initGLFW(title, windowOptions)
+
+        mouseInput = MouseInput(this)
+        keyboardInput = KeyboardInput(this)
+
+        initImGui()
+        imGuiGlfw.init(handle, true)
+        imGuiGl3.init()
+    }
+
+    fun initImGui() {
+        ImGui.createContext()
+
+//        val io = ImGui.getIO()
+//        io.fonts.addFontDefault()
+//        io.fonts.build()
+        ImGui.newFrame()
+    }
+
+    fun initGLFW(title: String, windowOptions: WindowOptions) {
         GLFWErrorCallback.createPrint(System.err).set()
         check(glfwInit()) { "Unable to initialize GLFW" }
 
@@ -70,8 +98,9 @@ class Window(title: String, windowOptions: WindowOptions, private val resizeFunc
             windowCloseCallBack() // Doesn't work :(
         }
 
-        println("Making context current")
         glfwMakeContextCurrent(handle);
+        GL.createCapabilities()
+        glfwSwapInterval(GLFW_TRUE);
 
         if (windowOptions.fps > 0) {
             glfwSwapInterval(0)
@@ -86,9 +115,16 @@ class Window(title: String, windowOptions: WindowOptions, private val resizeFunc
         glfwGetFramebufferSize(handle, arrayWidth, arrayHeight)
         width = arrayWidth[0]
         height = arrayHeight[0]
+    }
 
-        mouseInput = MouseInput(this)
-        keyboardInput = KeyboardInput(this)
+    fun newFrame() {
+        imGuiGlfw.newFrame()
+        ImGui.newFrame()
+    }
+
+    fun renderImGui() {
+        ImGui.render()
+        imGuiGl3.renderDrawData(ImGui.getDrawData())
     }
 
     private fun windowCloseCallBack() {
@@ -101,6 +137,10 @@ class Window(title: String, windowOptions: WindowOptions, private val resizeFunc
         glfwDestroyWindow(handle)
         glfwTerminate()
         glfwSetErrorCallback(null)?.free()
+
+//        imGuiGl3.dispose()
+//        imGuiGlfw.dispose()
+//        ImGui.destroyContext()
     }
 
     fun pollEvents() {
@@ -118,6 +158,7 @@ class Window(title: String, windowOptions: WindowOptions, private val resizeFunc
     }
 
     fun update() {
+        renderImGui()
         glfwSwapBuffers(handle)
     }
 

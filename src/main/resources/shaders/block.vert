@@ -27,6 +27,8 @@ uniform vec3 normalVectorArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
 uniform ivec3 chunkPosition;
 uniform float chunkVisibility;
 
+uniform float time;
+
 vec3 sunDirection = normalize(vec3(1, 3, 2));
 
 void main()
@@ -44,7 +46,17 @@ void main()
     vec3 worldPos = pos + offset + WORLD_OFFSET + chunkPosition * CHUNK_SIZE;
     vec4 viewPos = viewMatrix * vec4(worldPos, 1.0);
     viewDir = -viewPos.xyz;
+
+    switch (blockType) {
+        case 3:
+            worldPos += vec3(0, 0.5 * sin(time * 5 + worldPos.x - worldPos.z) - 0.5, 0);
+            break;
+        default:
+            break;
+    }
+
     gl_Position = projectionMatrix * viewMatrix * vec4(worldPos, 1.0);
+
 //    gl_Position = gl_Position - vec4(0, (1 - chunkVisibility) * 32, 0, 0);
 //    outColor = vec3(0.6, 0.23, 0.05);
 //    if (int(blockVertexID / 6) % 6 == 4 || int(blockVertexID / 6) % 6 == 5) {

@@ -2,7 +2,9 @@ package common
 
 object Config {
     const val initialBlockPalletePackedArrayElementSizeInBits = 2
+
     const val cameraVerticalAngleLimit = 88
+    const val useVSync = true
 
     // How many times per second a game tick occurs (when all the events in the queue are run)
     const val tickRate = 20

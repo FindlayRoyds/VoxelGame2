@@ -50,6 +50,8 @@ class Server(port: Int) : GameEngine() {
     }
 
     private fun updateChunks() {
+        world.tick += 1
+
         for (player in players.getPlayerList()) {
             val playerChunkPosition = world.chunkManager.worldPositionToChunkPosition(player.position)
             var count = 0

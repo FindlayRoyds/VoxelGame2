@@ -9,6 +9,7 @@ import kotlin.random.Random
 class World {
     val chunkManager = ChunkManager()
     val seed = Random.nextInt()
+    var tick = 0 // TODO synchronise between client and server when initialised? idk if needed
 
     fun getVoxel(worldPosition: Int3): Boolean {
         val block = chunkManager.getBlock(worldPosition)

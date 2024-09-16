@@ -124,6 +124,7 @@ class Chunk(val chunkPosition: Int3) {
         }
 
         meshData = MeshData(packedValues.toIntArray())
+
         gameEngine.world.chunkManager.uploadChunkToGPU(this)
     }
 
@@ -161,7 +162,7 @@ class Chunk(val chunkPosition: Int3) {
 
         blockPalette = BlockPalette()
 
-        for (blockPosition in blockPalette.positions) {
+        for (blockPosition in blockPositions) {
             val worldPosition = blockPositionToWorldPosition(blockPosition)
             var height = chunkManager.getHeight(worldPosition.xz)
             if (height == null) {
@@ -215,14 +216,6 @@ class Chunk(val chunkPosition: Int3) {
                 gameEngine.world.chunkManager.chunkMeshingExecutor!!.addChunk(neighbor)
             }
         }
-    }
-
-    fun blockPositionToBlockIndex(blockPosition: Int3): Int {
-        return (blockPosition.x *  Config.chunkSize *  Config.chunkSize) + (blockPosition.y *  Config.chunkSize) + blockPosition.z
-    }
-
-    fun blockIndexToBlockPos(blockIndex: Int): Int3 {
-        return Int3(blockIndex / (Config.chunkSize * Config.chunkSize), (blockIndex / Config.chunkSize) % Config.chunkSize, blockIndex % Config.chunkSize)
     }
 
     fun blockPositionToWorldPosition(blockPosition: Int3): Int3 {
@@ -280,6 +273,19 @@ class Chunk(val chunkPosition: Int3) {
 
         fun getChunk(): Chunk {
             return Chunk(position, blockPalette)
+        }
+    }
+
+    companion object {
+        val numberOfBlocks = Config.chunkSize * Config.chunkSize * Config.chunkSize
+        val blockPositions = (0..<numberOfBlocks).map { blockIndexToBlockPos(it) }
+
+        fun blockPositionToBlockIndex(blockPosition: Int3): Int {
+            return (blockPosition.x *  Config.chunkSize *  Config.chunkSize) + (blockPosition.y *  Config.chunkSize) + blockPosition.z
+        }
+
+        fun blockIndexToBlockPos(blockIndex: Int): Int3 {
+            return Int3(blockIndex / (Config.chunkSize * Config.chunkSize), (blockIndex / Config.chunkSize) % Config.chunkSize, blockIndex % Config.chunkSize)
         }
     }
 }

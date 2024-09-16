@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val lwjglVersion = "3.3.3"
+val imguiVersion = "1.87.3"
 
 val lwjglNatives = Pair(
     System.getProperty("os.name")!!,
@@ -39,7 +40,6 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
 }
 
 
@@ -71,6 +71,11 @@ dependencies {
     runtimeOnly("org.lwjgl", "lwjgl-openal", classifier = lwjglNatives)
     runtimeOnly("org.lwjgl", "lwjgl-opengl", classifier = lwjglNatives)
     runtimeOnly("org.lwjgl", "lwjgl-stb", classifier = lwjglNatives)
+
+    implementation("io.github.spair:imgui-java-binding:$imguiVersion")
+    implementation("io.github.spair:imgui-java-lwjgl3:$imguiVersion")
+
+    implementation("io.github.spair:imgui-java-natives-macos:$imguiVersion")
 
     implementation("org.joml:joml:1.10.5")
     // runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.6.3")

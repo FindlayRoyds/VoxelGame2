@@ -96,6 +96,7 @@ class ChunkManager {
         while (!chunksToUploadToGPU.isEmpty()) {
             val chunk = chunksToUploadToGPU.poll()!!
             chunk.uploadToGPU()
+//            chunk.changed = false
             // break
         }
     }
