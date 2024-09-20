@@ -2,12 +2,13 @@ package client.graphics.renderers
 
 import client.Client
 import client.graphics.*
+import common.Config
 import common.GameEngineProvider
 import common.block.blocks.Block
 import common.block.models.Model
+import common.math.Double3
 import common.math.Int3
 import common.world.World
-import imgui.ImGui
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL
@@ -192,87 +193,82 @@ class MainRenderer(window: Window, width: Int, height: Int) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         glViewport(0, 0, window.width, window.height)
 
-        window.newFrame()
+        blockShaderProgram.bind()
 
-        ImGui.begin("Debug")
-        ImGui.textColored(255, 0, 0, 255, "TETSFGYUEWOGFUWOHWUIRGHUOIWRHOHRUW")
-        ImGui.end()
+        blockUniformsMap.setUniform("projectionMatrix", projection.matrix)
+        blockUniformsMap.setUniform("viewMatrix", camera.viewMatrix)
+        val time = (System.nanoTime() - renderStartTime) / 1_000_000_000f
+        blockUniformsMap.setUniform("time", time)
 
-//        blockShaderProgram.bind()
-//
-//        blockUniformsMap.setUniform("projectionMatrix", projection.matrix)
-//        blockUniformsMap.setUniform("viewMatrix", camera.viewMatrix)
-//        val time = (System.nanoTime() - renderStartTime) / 1_000_000_000f
-//        blockUniformsMap.setUniform("time", time)
-//
-//        // Enable blending
+        // Enable blending
 //        glEnable(GL_BLEND)
-//        // Set blending function
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-//
-////        glDepthMask(false)
-//
-//        // world.chunkManager.chunksLock.lock()
-//
-//        val currentTime = System.currentTimeMillis()
-//        world.chunkManager.getLoadedChunks().forEach { chunk ->
-//            val camera = client.mainRenderer.camera
-//            val chunkDirection = camera.position - chunk.getWorldPosition()
-//
-//            if (chunkDirection.normal().dot(camera.lookVector.normal()) < -0.5
-//                || chunkDirection.magnitude <= Config.chunkSize * 4) {
-//                val chunkMesh = chunk.mesh
-//
-//                val chunkVisibility = ((currentTime - chunk.creationTime) / (chunkDirection.magnitude * 5 - 400).coerceIn(0.0, 3000.0))
-//                blockUniformsMap.setUniform("chunkVisibility", chunkVisibility.toFloat().coerceIn(0f, 1f))
-//                blockUniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
-//
-//                if (chunkMesh != null && chunkMesh.numVertices > 0) {
-//                    glBindVertexArray(chunkMesh.vaoId)
-//                    glDrawArrays(GL_TRIANGLES, 0, chunkMesh.numVertices)
-//                    glBindVertexArray(0)
-//                }
-//            }
-//        }
-//        // world.chunkManager.chunksLock.unlock()
-//
-////        glDepthMask(true)
-//
-//        glBindVertexArray(0)
-//
-//        blockShaderProgram.unbind()
-//
-//        if (selectionBoxPosition != null) {
-//            selectionBoxShaderProgram.bind()
-//
-//            selectionBoxUniformsMap.setUniform("projectionMatrix", projection.matrix)
-//            selectionBoxUniformsMap.setUniform("viewMatrix", camera.viewMatrix)
-//            selectionBoxUniformsMap.setUniform("selectionBoxPosition", selectionBoxPosition!!.toDouble3().toVector3f())
-//
-//            glEnable(GL_POLYGON_OFFSET_LINE)
-//            glPolygonOffset(-10.0f, -10.0f)
-//
-//            glBindVertexArray(selectionBoxVaoId)
-//            glDrawArrays(GL_LINES, 0, 24)
-//            glBindVertexArray(0)
-//
-//            glDisable(GL_POLYGON_OFFSET_LINE)
-//
-//            selectionBoxShaderProgram.unbind()
-//        }
-//
-//        selectionBoxShaderProgram.bind()
-//        selectionBoxUniformsMap.setUniform("projectionMatrix", projection.matrix)
-//        selectionBoxUniformsMap.setUniform("viewMatrix", camera.viewMatrix)
-//        for (player in client.players.getPlayerList()) {
-//            if (player == client.players.localPlayer)
-//                continue
-//            selectionBoxUniformsMap.setUniform("selectionBoxPosition", (player.position - Double3(0.5, 0.5, 0.5)).toVector3f())
-//            glBindVertexArray(selectionBoxVaoId)
-//            glDrawArrays(GL_LINES, 0, 24)
-//            glBindVertexArray(0)
-//        }
-//        selectionBoxShaderProgram.unbind()
+        glEnable(GL_DEPTH_TEST)
+        // Set blending function
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+//        glDepthMask(false)
+
+        // world.chunkManager.chunksLock.lock()
+
+        val currentTime = System.currentTimeMillis()
+        world.chunkManager.getLoadedChunks().forEach { chunk ->
+            val camera = client.mainRenderer.camera
+            val chunkDirection = camera.position - chunk.getWorldPosition()
+
+            if (chunkDirection.normal().dot(camera.lookVector.normal()) < -0.5
+                || chunkDirection.magnitude <= Config.chunkSize * 4) {
+                val chunkMesh = chunk.mesh
+
+                val chunkVisibility = ((currentTime - chunk.creationTime) / (chunkDirection.magnitude * 5 - 400).coerceIn(0.0, 3000.0))
+                blockUniformsMap.setUniform("chunkVisibility", chunkVisibility.toFloat().coerceIn(0f, 1f))
+                blockUniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
+
+                if (chunkMesh != null && chunkMesh.numVertices > 0) {
+                    glBindVertexArray(chunkMesh.vaoId)
+                    glDrawArrays(GL_TRIANGLES, 0, chunkMesh.numVertices)
+                    glBindVertexArray(0)
+                }
+            }
+        }
+        // world.chunkManager.chunksLock.unlock()
+
+//        glDepthMask(true)
+
+        glBindVertexArray(0)
+
+        blockShaderProgram.unbind()
+
+        if (selectionBoxPosition != null) {
+            selectionBoxShaderProgram.bind()
+
+            selectionBoxUniformsMap.setUniform("projectionMatrix", projection.matrix)
+            selectionBoxUniformsMap.setUniform("viewMatrix", camera.viewMatrix)
+            selectionBoxUniformsMap.setUniform("selectionBoxPosition", selectionBoxPosition!!.toDouble3().toVector3f())
+
+            glEnable(GL_POLYGON_OFFSET_LINE)
+            glPolygonOffset(-10.0f, -10.0f)
+
+            glBindVertexArray(selectionBoxVaoId)
+            glDrawArrays(GL_LINES, 0, 24)
+            glBindVertexArray(0)
+
+            glDisable(GL_POLYGON_OFFSET_LINE)
+
+            selectionBoxShaderProgram.unbind()
+        }
+
+        selectionBoxShaderProgram.bind()
+        selectionBoxUniformsMap.setUniform("projectionMatrix", projection.matrix)
+        selectionBoxUniformsMap.setUniform("viewMatrix", camera.viewMatrix)
+        for (player in client.players.getPlayerList()) {
+            if (player == client.players.localPlayer)
+                continue
+            selectionBoxUniformsMap.setUniform("selectionBoxPosition", (player.position - Double3(0.5, 0.5, 0.5)).toVector3f())
+            glBindVertexArray(selectionBoxVaoId)
+            glDrawArrays(GL_LINES, 0, 24)
+            glBindVertexArray(0)
+        }
+        selectionBoxShaderProgram.unbind()
     }
 
     fun resize(width: Int, height: Int) {

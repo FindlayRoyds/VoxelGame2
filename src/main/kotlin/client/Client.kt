@@ -8,15 +8,17 @@ import common.event.clientevents.DisconnectClientEvent
 import common.event.servernetworkevents.ConnectionRequestServerEvent
 import common.event.servernetworkevents.DisconnectServerEvent
 import common.networking.SocketHandler
-import imgui.ImGui
 import java.net.Socket
 
 
 class Client(serverAddress: String, serverPort: Int): GameEngine() {
     var window = Window(
-        "VoxelGame2",
-        Window.WindowOptions(false, 120, 550, 800)
+        Window.WindowOptions(false, "Findlaycraft", 120, 550, 800, false)
     ) { resize() }
+//    var window = Window(
+//        "test",
+//        Window.WindowOptions(false, 120, 550, 800)
+//    ) { resize() }
     var socketHandler: SocketHandler
     var running = false
     var mainRenderer = MainRenderer(window, window.width, window.height)
@@ -48,6 +50,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun main() {
+//        launch(Test())
+//        Window2()
         world.chunkManager.createChunkMeshingExecutor()
         world.chunkManager.chunkMeshingExecutor!!.run()
 
@@ -57,7 +61,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
 
         var frameCount = 0
         val frameCountStartTime = System.currentTimeMillis()
-        while (running && !window.shouldClose()) {
+        while (running) {// && !window.shouldClose()) {
             val currentTime = System.currentTimeMillis()
             val deltaTimeMillis = currentTime - startTime
 
@@ -103,9 +107,10 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun runGraphics() {
-        mainRenderer.render(window, world)
         window.update()
+        mainRenderer.render(window, world)
         world.chunkManager.sendChunksToGPU()
+//        GLFW.glfwSwapBuffers(window.handle)
     }
 
     private fun updateChunkMeshes() {
@@ -118,13 +123,13 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun cleanup() {
-        window.cleanup()
+//        window.cleanup()
         stop()
     }
 
     private fun resize() {
-        mainRenderer.resize(window.width, window.height)
-        mainRenderer.render(window, world)
-        window.update()
+//        mainRenderer.resize(window.width, window.height)
+//        mainRenderer.render(window, world)
+//        window.update()
     }
 }

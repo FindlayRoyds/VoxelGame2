@@ -74,6 +74,7 @@ dependencies {
 
     implementation("io.github.spair:imgui-java-binding:$imguiVersion")
     implementation("io.github.spair:imgui-java-lwjgl3:$imguiVersion")
+    implementation("io.github.spair:imgui-java-app:$imguiVersion")
 
     implementation("io.github.spair:imgui-java-natives-macos:$imguiVersion")
 
