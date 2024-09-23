@@ -35,5 +35,7 @@ abstract class Block: Serializable {
         val blockList = listOf(
             air, dirt, stone, stoneSlab
         )
+
+        val blockNeighbors = arrayListOf(Int3(0, 0, -1), Int3(0, 0, 1), Int3(-1, 0, 0), Int3(1, 0, 0), Int3(0, -1, 0), Int3(0, 1, 0))
     }
 }

@@ -4,7 +4,7 @@ import java.io.Serializable
 import kotlin.math.sign
 import kotlin.math.sqrt
 
-data class Int3(var x: Int, var y: Int, var z: Int) : Serializable {
+data class Int3(val x: Int, val y: Int, val z: Int) : Serializable {
     val magnitude: Double
         get() {
             return sqrt((x * x + y * y + z * z).toDouble())
@@ -17,6 +17,8 @@ data class Int3(var x: Int, var y: Int, var z: Int) : Serializable {
         get() {
             return Int2(x, z)
         }
+    val displayString: String
+        get() = "$x, $y, $z"
 
     operator fun plus(other: Int3): Int3 = Int3(x + other.x, y + other.y, z + other.z)
 
@@ -28,27 +30,6 @@ data class Int3(var x: Int, var y: Int, var z: Int) : Serializable {
     operator fun div(other: Int3): Int3 = Int3(x.floorDiv(other.x), y.floorDiv(other.y), z.floorDiv(other.z))
     operator fun div(other: Int): Int3 = Int3(x.floorDiv(other), y.floorDiv(other), z.floorDiv(other))
     // operator fun div(other: Float): Int3 = Int3(x / other, y / other, z / other)
-
-    operator fun plusAssign(other: Int3) {
-        x += other.x
-        y += other.y
-        z += other.z
-    }
-    operator fun minusAssign(other: Int3) {
-        x -= other.x
-        y -= other.y
-        z -= other.z
-    }
-    operator fun timesAssign(other: Int3) {
-        x *= other.x
-        y *= other.y
-        z *= other.z
-    }
-    operator fun divAssign(other: Int3) {
-        x /= other.x
-        y /= other.y
-        z /= other.z
-    }
 
     override fun hashCode(): Int {
         val prime = 31

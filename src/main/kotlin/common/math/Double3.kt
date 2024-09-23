@@ -7,7 +7,7 @@ import java.lang.Double.doubleToLongBits
 import kotlin.math.*
 
 
-data class Double3(var x: Double, var y: Double, var z: Double) : Serializable {
+data class Double3(val x: Double, val y: Double, val z: Double) : Serializable {
     constructor(x: Int, y: Int, z: Int) : this(x.toDouble(), y.toDouble(), z.toDouble())
 
     val magnitude: Double
@@ -18,6 +18,8 @@ data class Double3(var x: Double, var y: Double, var z: Double) : Serializable {
         get() {
             return Double3(sign(x), sign(y), sign(z))
         }
+    val displayString: String
+        get() = "$x, $y, $z"
 
     operator fun plus(other: Double3): Double3 = Double3(x + other.x, y + other.y, z + other.z)
 
@@ -30,47 +32,6 @@ data class Double3(var x: Double, var y: Double, var z: Double) : Serializable {
     operator fun div(other: Double3): Double3 = Double3(x / other.x, y / other.y, z / other.z)
     operator fun div(other: Int): Double3 = Double3(x / other, y / other, z / other)
     operator fun div(other: Double): Double3 = Double3(x / other, y / other, z / other)
-
-    operator fun plusAssign(other: Double3) {
-        x += other.x
-        y += other.y
-        z += other.z
-    }
-    operator fun plusAssign(other: Vector3d) {
-        x += other.x
-        y += other.y
-        z += other.z
-    }
-    operator fun minusAssign(other: Double3) {
-        x -= other.x
-        y -= other.y
-        z -= other.z
-    }
-    operator fun minusAssign(other: Vector3d) {
-        x -= other.x
-        y -= other.y
-        z -= other.z
-    }
-    operator fun timesAssign(other: Double3) {
-        x *= other.x
-        y *= other.y
-        z *= other.z
-    }
-    operator fun timesAssign(other: Vector3d) {
-        x *= other.x
-        y *= other.y
-        z *= other.z
-    }
-    operator fun divAssign(other: Double3) {
-        x /= other.x
-        y /= other.y
-        z /= other.z
-    }
-    operator fun divAssign(other: Vector3d) {
-        x /= other.x
-        y /= other.y
-        z /= other.z
-    }
 
     override fun hashCode(): Int {
         val prime = 31

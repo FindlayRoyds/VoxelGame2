@@ -1,4 +1,4 @@
-package common.utils
+package common
 
 import java.io.Serializable
 import kotlin.math.ceil

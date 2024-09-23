@@ -1,6 +1,5 @@
 package client.graphics
 
-import common.utils.Utils
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30.*
 
@@ -15,7 +14,7 @@ class ShaderProgram(shaderModuleDataList: MutableList<ShaderModuleData>) {
 
         val shaderModules: MutableList<Int> = ArrayList()
         for ((shaderFile, shaderType) in shaderModuleDataList) {
-            val shader = createShader(Utils.readFile(shaderFile), shaderType)
+            val shader = createShader(readFile(shaderFile), shaderType)
             shaderModules.add(shader)
         }
 
@@ -69,6 +68,15 @@ class ShaderProgram(shaderModuleDataList: MutableList<ShaderModuleData>) {
         glValidateProgram(programId)
         if (glGetProgrami(programId, GL_VALIDATE_STATUS) == 0) {
             throw RuntimeException("Error validating shader code: ${GL20.glGetProgramInfoLog(programId, 1024)}")
+        }
+    }
+
+    fun readFile(filePath: String): String {
+        return try {
+            // String(Files.readAllBytes(Paths.get(filePath)))
+            javaClass.getResource(filePath)!!.readText()
+        } catch (exception: NullPointerException) {
+            throw RuntimeException("Error reading file [$filePath]", exception)
         }
     }
 

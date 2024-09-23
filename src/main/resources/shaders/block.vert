@@ -34,8 +34,8 @@ vec3 sunDirection = normalize(vec3(1, 3, 2));
 void main()
 {
     int blockVertexID = inputData & 0xFF; // Extract the lowest 8 bits
-    int blockType = (inputData >> 8) & 0xFF; // Extract the next 8 bits
-    int blockPosition = inputData >> 16; // Extract the highest 16 bits
+    int blockType = (inputData >> 8) & 0xF; // Extract the next 4 bits
+    int blockPosition = inputData >> 12; // Extract the highest 20 bits
 
     int vertexDataIndex = blockType * BLOCK_DATA_SIZE + blockVertexID;
     vec3 pos = vertexPositionArray[vertexDataIndex];

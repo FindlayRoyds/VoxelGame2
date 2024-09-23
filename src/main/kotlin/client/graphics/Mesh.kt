@@ -62,7 +62,7 @@ class Mesh(meshData: MeshData) {
 //        glVertexAttribPointer(2, 1, GL_INT, false, 0, 0)
 
         // Packed vertex Data VBO
-        var vboId = glGenBuffers()
+        val vboId = glGenBuffers()
         vboIdList.add(vboId)
         // val vertexIdsBuffer = stack.calloc(vertexIds.size)
         // vertexIdsBuffer.put(0, vertexIds)

@@ -5,7 +5,7 @@ import org.joml.Vector2f
 import java.io.Serializable
 import java.lang.Double.doubleToLongBits
 
-data class Double2(var x: Double, var y: Double) : Serializable {
+data class Double2(val x: Double, val y: Double) : Serializable {
     constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
 
     operator fun plus(other: Double2): Double2 = Double2(x + other.x, y + other.y)
@@ -17,39 +17,6 @@ data class Double2(var x: Double, var y: Double) : Serializable {
     operator fun times(other: Double): Double2 = Double2(x * other, y * other)
 
     operator fun div(other: Double2): Double2 = Double2(x / other.x, y / other.y)
-
-    operator fun plusAssign(other: Double2) {
-        x += other.x
-        y += other.y
-    }
-    operator fun plusAssign(other: Vector2f) {
-        x += other.x
-        y += other.y
-    }
-    operator fun minusAssign(other: Double2) {
-        x -= other.x
-        y -= other.y
-    }
-    operator fun minusAssign(other: Vector2f) {
-        x -= other.x
-        y -= other.y
-    }
-    operator fun timesAssign(other: Double2) {
-        x *= other.x
-        y *= other.y
-    }
-    operator fun timesAssign(other: Vector2f) {
-        x *= other.x
-        y *= other.y
-    }
-    operator fun divAssign(other: Double2) {
-        x /= other.x
-        y /= other.y
-    }
-    operator fun divAssign(other: Vector2f) {
-        x /= other.x
-        y /= other.y
-    }
 
     override fun hashCode(): Int {
         val prime = 31
@@ -72,16 +39,6 @@ data class Double2(var x: Double, var y: Double) : Serializable {
     }
     fun toVector2f(): Vector2f {
         return Vector2f(x.toFloat(), y.toFloat())
-    }
-
-    fun set(x: Double, y: Double) {
-        this.x = x
-        this.y = y
-    }
-
-    fun set(other: Double2) {
-        x = other.x
-        y = other.y
     }
 
     companion object {

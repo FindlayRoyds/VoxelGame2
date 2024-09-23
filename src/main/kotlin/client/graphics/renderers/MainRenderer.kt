@@ -215,15 +215,22 @@ class MainRenderer(window: Window, width: Int, height: Int) {
             val camera = client.mainRenderer.camera
             val chunkDirection = camera.position - chunk.getWorldPosition()
 
-            if (chunkDirection.normal().dot(camera.lookVector.normal()) < -0.5
-                || chunkDirection.magnitude <= Config.chunkSize * 4) {
-                val chunkMesh = chunk.mesh
+            val chunkMesh = chunk.mesh
+            if (chunkMesh != null && chunkMesh.numVertices > 0) {
+                if (chunkDirection.normal().dot(camera.lookVector.normal()) < -0.5
+                    || chunkDirection.magnitude <= Config.chunkSize * 4
+                ) {
 
-                val chunkVisibility = ((currentTime - chunk.creationTime) / (chunkDirection.magnitude * 5 - 400).coerceIn(0.0, 3000.0))
-                blockUniformsMap.setUniform("chunkVisibility", chunkVisibility.toFloat().coerceIn(0f, 1f))
-                blockUniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
 
-                if (chunkMesh != null && chunkMesh.numVertices > 0) {
+                    val chunkVisibility =
+                        ((currentTime - chunk.creationTime) / (chunkDirection.magnitude * 5 - 400).coerceIn(
+                            0.0,
+                            3000.0
+                        ))
+                    blockUniformsMap.setUniform("chunkVisibility", chunkVisibility.toFloat().coerceIn(0f, 1f))
+                    blockUniformsMap.setUniform("chunkPosition", chunk.chunkPosition)
+
+
                     glBindVertexArray(chunkMesh.vaoId)
                     glDrawArrays(GL_TRIANGLES, 0, chunkMesh.numVertices)
                     glBindVertexArray(0)

@@ -107,8 +107,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun runGraphics() {
-        window.update()
         mainRenderer.render(window, world)
+        window.update()
         world.chunkManager.sendChunksToGPU()
 //        GLFW.glfwSwapBuffers(window.handle)
     }

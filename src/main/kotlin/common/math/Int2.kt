@@ -4,7 +4,7 @@ import java.io.Serializable
 import kotlin.math.sign
 import kotlin.math.sqrt
 
-data class Int2(var x: Int, var y: Int) : Serializable {
+data class Int2(val x: Int, val y: Int) : Serializable {
     val magnitude: Double
         get() {
             return sqrt((x * x + y * y).toDouble())
@@ -24,23 +24,6 @@ data class Int2(var x: Int, var y: Int) : Serializable {
     operator fun div(other: Int2): Int2 = Int2(x.floorDiv(other.x), y.floorDiv(other.y))
     operator fun div(other: Int): Int2 = Int2(x.floorDiv(other), y.floorDiv(other))
     // operator fun div(other: Float): Int3 = Int3(x / other, y / other, z / other)
-
-    operator fun plusAssign(other: Int2) {
-        x += other.x
-        y += other.y
-    }
-    operator fun minusAssign(other: Int2) {
-        x -= other.x
-        y -= other.y
-    }
-    operator fun timesAssign(other: Int2) {
-        x *= other.x
-        y *= other.y
-    }
-    operator fun divAssign(other: Int2) {
-        x /= other.x
-        y /= other.y
-    }
 
     override fun hashCode(): Int {
         val prime = 31

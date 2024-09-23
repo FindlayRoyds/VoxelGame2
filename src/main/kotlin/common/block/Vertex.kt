@@ -10,8 +10,8 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class Vertex(
-    val position: Double3, val normal: Double3,
-    val textureIndex: Int, val textureCoord: Double2
+    var position: Double3, var normal: Double3,
+    val textureIndex: Int, var textureCoord: Double2
 ): VertexCollection(), Serializable {
 
     fun translate(translation: Double3): Vertex {
@@ -50,15 +50,11 @@ class Vertex(
 
         val newPosition = position.toVector3d()
         newPosition.mulPosition(zMatrix).mulPosition(xMatrix).mulPosition(yMatrix)
-        position.x = newPosition.x
-        position.y = newPosition.y
-        position.z = newPosition.z
+        position = Double3(newPosition.x, newPosition.y, newPosition.z)
 
         val newNormal = normal.toVector3d()
         newNormal.mulPosition(zMatrix).mulPosition(xMatrix).mulPosition(yMatrix)
-        normal.x = newNormal.x
-        normal.y = newNormal.y
-        normal.z = newNormal.z
+        normal = Double3(newNormal.x, newNormal.y, newNormal.z)
 
         return this
     }

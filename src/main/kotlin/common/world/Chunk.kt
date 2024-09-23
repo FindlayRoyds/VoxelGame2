@@ -9,7 +9,6 @@ import common.block.blocks.Block
 import common.block.faces.ModelFace
 import common.math.Double3
 import common.math.Int3
-import common.utils.Utils
 import common.world.noise.FastNoiseLite
 import java.io.Serializable
 import kotlin.math.floor
@@ -63,7 +62,7 @@ class Chunk(val chunkPosition: Int3) {
             this.timesBuilt++
             return
         }
-        for (neighborOffset in Utils.blockNeighbors) {
+        for (neighborOffset in Block.blockNeighbors) {
             val neighborPosition = chunkPosition + neighborOffset
             if (!gameEngine.world.chunkManager.isChunkLoaded(neighborPosition))
                 return
@@ -108,7 +107,7 @@ class Chunk(val chunkPosition: Int3) {
                         val blockVertexID = vertexIndex
 
                         val blockIndex = blockPositionToBlockIndex(blockPosition)
-                        packedValues.add((blockIndex shl 16) or (blockType shl 8) or blockVertexID)
+                        packedValues.add((blockIndex shl 12) or (blockType shl 8) or blockVertexID)
                         vertexIndex += 1
                     }
                 }
@@ -117,7 +116,7 @@ class Chunk(val chunkPosition: Int3) {
                     val blockVertexID = vertexIndex
 
                     val blockIndex = blockPositionToBlockIndex(blockPosition)
-                    packedValues.add((blockIndex shl 16) or (blockType shl 8) or blockVertexID)
+                    packedValues.add((blockIndex shl 12) or (blockType shl 8) or blockVertexID)
                     vertexIndex += 1
                 }
             }
@@ -209,7 +208,7 @@ class Chunk(val chunkPosition: Int3) {
     }
 
     fun buildNeighboringMeshes() {
-        for (neighborOffset in Utils.blockNeighbors) {
+        for (neighborOffset in Block.blockNeighbors) {
             val neighborPosition = chunkPosition + neighborOffset
             val neighbor = gameEngine.world.chunkManager.getChunk(neighborPosition)
             if (neighbor != null) {

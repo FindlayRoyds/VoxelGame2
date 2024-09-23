@@ -9,7 +9,7 @@ import org.lwjgl.glfw.GLFW.*
 
 class KeyboardInput(private val window: Window) {
     private val keybindings = mutableMapOf(
-        GLFW_KEY_Z to mutableListOf(WireframeAction()),
+        GLFW_KEY_Z to mutableListOf(DebugAction()),
         GLFW_KEY_SPACE to mutableListOf(JumpAction()),
         GLFW_KEY_LEFT_SHIFT to mutableListOf(CrouchAction()),
         GLFW_KEY_W to mutableListOf(MoveForwardAction()),

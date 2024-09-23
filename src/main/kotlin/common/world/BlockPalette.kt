@@ -3,7 +3,7 @@ package common.world
 import common.Config
 import common.block.blocks.Block
 import common.math.Int3
-import common.utils.PackedArray
+import common.PackedArray
 import java.io.Serializable
 
 infix fun Int.pow(exponent: Int): Int {

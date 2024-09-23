@@ -9,7 +9,6 @@ import common.event.localevents.BlockUpdateEvent
 import common.math.Double3
 import common.math.Int2
 import common.math.Int3
-import common.utils.Utils
 import server.Server
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -129,7 +128,7 @@ class ChunkManager {
     }
 
     private fun updateBlockNeighbors(worldPosition: Int3) {
-        for (neighborOffset in Utils.blockNeighbors) {
+        for (neighborOffset in Block.blockNeighbors) {
             sendBlockUpdate(worldPosition + neighborOffset)
         }
     }

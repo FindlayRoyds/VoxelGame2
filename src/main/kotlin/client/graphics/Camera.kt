@@ -2,6 +2,7 @@ package client.graphics
 
 import client.Client
 import common.Config
+import common.Debugger
 import common.GameEngineProvider
 import common.event.servernetworkevents.UpdatePositionServerEvent
 import common.math.Double2
@@ -14,8 +15,13 @@ import kotlin.math.sin
 class Camera() {
     var upVector = Double3(0, 0, 0)
     var rightVector = Double3(0, 0, 0)
-    val position = Double3(-24.5, 0.0, 25.5)
-    val rotation = Double3(0, 0, 0)
+    var position = Double3(-24.5, 0.0, 25.5)
+        set(value) {
+            Debugger.position = value
+            Debugger.chunk = client.world.chunkManager.worldPositionToChunkPosition(value)
+            field = value
+        }
+    var rotation = Double3(0, 0, 0)
     var viewMatrix = Matrix4d()
         get() {
             return field.identity()
@@ -47,7 +53,8 @@ class Camera() {
         rotation += Double3(x, y, 0.0)
 
         // Limit rotation around X-axis to prevent camera from going upside down
-        rotation.x = rotation.x.coerceIn(Math.toRadians(-Config.cameraVerticalAngleLimit.toDouble()), Math.toRadians(Config.cameraVerticalAngleLimit.toDouble()))
+        val clampedX = rotation.x.coerceIn(Math.toRadians(-Config.cameraVerticalAngleLimit.toDouble()), Math.toRadians(Config.cameraVerticalAngleLimit.toDouble()))
+        rotation = Double3(clampedX, rotation.y, rotation.z)
     }
 
     fun addRotation(rotation: Double2) {
@@ -55,13 +62,11 @@ class Camera() {
     }
 
     private fun moveForward(inc: Double) {
-        position.x += inc * sin(rotation.y)
-        position.z -= inc * cos(rotation.y)
+        position += Double3(inc * sin(rotation.y), 0.0, -inc * cos(rotation.y))
     }
 
     private fun moveLeft(inc: Double) {
-        position.z -= inc * Math.sin(rotation.y)
-        position.x -= inc * Math.cos(rotation.y)
+        position -= Double3(inc * cos(rotation.y), 0.0, inc * sin(rotation.y))
     }
 
     private fun moveUp(inc: Double) {

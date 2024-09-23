@@ -9,9 +9,9 @@ import org.lwjgl.glfw.GLFW.*
 
 
 class MouseInput(private val window: Window) {
-    val currentPos = Double2(0, 0)
-    val previousPos = Double2(0, 0)
-    val displacement = Double2(0, 0)
+    var currentPos = Double2(0, 0)
+    var previousPos = Double2(0, 0)
+    var displacement = Double2(0, 0)
     var windowFocused = false // glfwGetWindowAttrib(window.handle, GLFW_FOCUSED) == GLFW_TRUE
     var leftButtonPressed = false
     var rightButtonPressed = false
@@ -31,16 +31,16 @@ class MouseInput(private val window: Window) {
         var windowStartupDebounce = true
 
         glfwSetWindowFocusCallback(window.handle) { _: Long, focused: Boolean ->
-            if (!windowStartupDebounce) {
-                windowFocused = focused
-            }
+//            if (!windowStartupDebounce) {
+//                windowFocused = focused
+//            }
             windowStartupDebounce = false
             resetCursorTracking()
+//            focusWindow()
         }
 
         glfwSetCursorPosCallback(window.handle) { _: Long, xpos: Double, ypos: Double ->
-            currentPos.x = xpos
-            currentPos.y = ypos
+            currentPos = Double2(xpos, ypos)
         }
 
         glfwSetMouseButtonCallback(window.handle) { _: Long, button: Int, action: Int, _: Int ->
@@ -55,8 +55,7 @@ class MouseInput(private val window: Window) {
 
     fun pollInput() {
         if (windowFocused) {
-            displacement.y = currentPos.x - previousPos.x
-            displacement.x = currentPos.y - previousPos.y
+            displacement = Double2(currentPos.y - previousPos.y, currentPos.x - previousPos.x)
 
             if (displacement.x != 0.0 || displacement.y != 0.0) {
 //                val mouseMovedEvent = MouseMovedEvent(displacement)
@@ -66,7 +65,7 @@ class MouseInput(private val window: Window) {
                 client.mainRenderer.camera.addRotation(displacement * Config.mouseSensitivity)
             }
 
-            previousPos.set(currentPos)
+            previousPos = currentPos
         }
     }
 
@@ -88,8 +87,8 @@ class MouseInput(private val window: Window) {
         val xPos = DoubleArray(1)
         val yPos = DoubleArray(1)
         glfwGetCursorPos(window.handle, xPos, yPos)
-        previousPos.set(xPos[0], yPos[0])
-        currentPos.set(xPos[0], yPos[0])
+        previousPos = Double2(xPos[0], yPos[0])
+        currentPos = Double2(xPos[0], yPos[0])
     }
 
     fun cleanup() {

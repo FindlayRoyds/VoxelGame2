@@ -1,10 +1,10 @@
 package client.graphics
 
+import client.graphics.gui.DebuggerGuiSection
 import client.graphics.input.KeyboardInput
 import client.graphics.input.MouseInput
+import common.Debugger
 import imgui.ImGui
-import imgui.app.Color
-import imgui.app.Configuration
 import imgui.flag.ImGuiConfigFlags
 import imgui.gl3.ImGuiImplGl3
 import imgui.glfw.ImGuiImplGlfw
@@ -25,12 +25,13 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
     var width: Int = -1
     var height: Int = -1
 
-    val colorBg: Color = Color(.5f, .5f, .5f, 1f)
-    var imGuiGlfw = ImGuiImplGlfw()
-    var imGuiGl3 = ImGuiImplGl3()
+    var imGuiGlfw: ImGuiImplGlfw
+    var imGuiGl3: ImGuiImplGl3
     private var glslVersion: String? = null
 
     var handle: Long = 0
+
+    val guiSections = listOf(DebuggerGuiSection())
 
     class WindowOptions(
         val compatibleProfile: Boolean,
@@ -43,39 +44,22 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
 
     init {
         initWindow(windowOptions)
-        initImGui(windowOptions)
-        imGuiGlfw.init(handle, true)
-        imGuiGl3.init(glslVersion)
 
         mouseInput = MouseInput(this)
         keyboardInput = KeyboardInput(this)
 
-        preRun()
-        run()
-//        postRun()
-
-//        dispose()
-
+        initImGui(windowOptions)
+        imGuiGlfw = ImGuiImplGlfw()
+        imGuiGl3 = ImGuiImplGl3()
+        imGuiGlfw.init(handle, true)
+        imGuiGl3.init(glslVersion)
     }
 
-    fun configure(config: Configuration) {
-        config.title = "Dear ImGui is Awesome!";
+    fun declareGui() {
+        for (guiSection in guiSections) {
+            guiSection.declareGui(this)
+        }
     }
-
-    fun preRun() {}
-
-    fun postRun() {}
-
-    fun process() {
-        ImGui.text("Hello, World!");
-    }
-
-//    fun dispose() {
-//        imGuiGl3.shutdown()
-//        imGuiGlfw.shutdown()
-//        disposeImGui()
-//        disposeWindow()
-//    }
 
     fun initWindow(windowOptions: WindowOptions) {
         GLFWErrorCallback.createPrint(System.err).set()
@@ -97,11 +81,11 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
         if (windowOptions.width > 0 && windowOptions.height > 0) {
             width = windowOptions.width
             height = windowOptions.height
-//        } else {
-//            GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_TRUE)
-//            val vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor())!!
-//            width = vidMode.width()
-//            height = vidMode.height()
+        } else {
+            GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_TRUE)
+            val vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor())!!
+            width = vidMode.width()
+            height = vidMode.height()
         }
 
         handle = GLFW.glfwCreateWindow(windowOptions.width, windowOptions.height, windowOptions.title, MemoryUtil.NULL, MemoryUtil.NULL)
@@ -137,10 +121,6 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
         }
 
         GLFW.glfwMakeContextCurrent(handle)
-        val currentThread = Thread.currentThread()
-        println("Current thread: ${currentThread.name}")
-        println("Made context current")
-        println(GLFW.glfwGetCurrentContext())
         GL.createCapabilities()
         GLFW.glfwSwapInterval(GLFW.GLFW_TRUE)
         if (windowOptions.fullscreen) {
@@ -148,13 +128,18 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
         } else {
             GLFW.glfwShowWindow(handle)
         }
-        clearBuffer()
         renderBuffer()
 //        GLFW.glfwSetWindowSizeCallback(handle, object : GLFWWindowSizeCallback() {
 //            override fun invoke(window: Long, width: Int, height: Int) {
 //                runFrame()
 //            }
 //        })
+
+        val arrayWidth = IntArray(1)
+        val arrayHeight = IntArray(1)
+        GLFW.glfwGetFramebufferSize(handle, arrayWidth, arrayHeight)
+        width = arrayWidth[0]
+        height = arrayHeight[0]
     }
 
     private fun decideGlGlslVersions() {
@@ -172,6 +157,13 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
         }
     }
 
+    fun dispose() {
+        imGuiGl3.shutdown()
+        imGuiGlfw.shutdown()
+        disposeImGui()
+        disposeWindow()
+    }
+
     private fun resized(newWidth: Int, newHeight: Int) {
         width = newWidth
         height = newHeight
@@ -183,21 +175,12 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
     }
 
     private fun windowCloseCallBack() {
+        println("closed!")
         GLFW.glfwSetWindowShouldClose(handle, true)
     }
 
     fun initImGui(config: WindowOptions) {
         ImGui.createContext()
-    }
-
-    fun preProcess() {}
-
-    fun postProcess() {}
-
-    fun run() {
-//        while (!GLFW.glfwWindowShouldClose(handle)) {
-//            runFrame()
-//        }
     }
 
     fun pollEvents() {
@@ -206,27 +189,17 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
 
     fun runFrame() {
         startFrame()
-        preProcess()
-        process()
-        postProcess()
+        declareGui()
         endFrame()
     }
 
     fun update() {
-//        update()
-//        renderImGui()
         glDisable(GL_DEPTH_TEST)
         runFrame()
-        GLFW.glfwSwapBuffers(handle)
-    }
-
-    private fun clearBuffer() {
-//        GL32.glClearColor(colorBg.red, colorBg.green, colorBg.blue, colorBg.alpha)
-//        GL32.glClear(GL32.GL_COLOR_BUFFER_BIT or GL32.GL_DEPTH_BUFFER_BIT)
+        Debugger.updateFps()
     }
 
     fun startFrame() {
-        clearBuffer()
         imGuiGl3.newFrame()
         imGuiGlfw.newFrame()
         ImGui.newFrame()
