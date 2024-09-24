@@ -217,7 +217,7 @@ class MainRenderer(window: Window, width: Int, height: Int) {
 
             val chunkMesh = chunk.mesh
             if (chunkMesh != null && chunkMesh.numVertices > 0) {
-                if (chunkDirection.normal().dot(camera.lookVector.normal()) < -0.5
+                if (chunkDirection.normal.dot(camera.lookVector.normal) < -0.5
                     || chunkDirection.magnitude <= Config.chunkSize * 4
                 ) {
 

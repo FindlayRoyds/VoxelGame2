@@ -1,35 +1,39 @@
 package common.math
 
-import java.io.Serializable
+import kotlin.math.abs
 import kotlin.math.sign
-import kotlin.math.sqrt
 
-data class Int3(val x: Int, val y: Int, val z: Int) : Serializable {
-    val magnitude: Double
-        get() {
-            return sqrt((x * x + y * y + z * z).toDouble())
-        }
-    val sign: Int3
+data class Int3(override val x: Int, override val y: Int, override val z: Int) : Vector3<Int>(x, y, z) {
+    override val sign: Int3
         get() {
             return Int3(sign(x.toDouble()).toInt(), sign(y.toDouble()).toInt(), sign(z.toDouble()).toInt())
         }
-    val xz: Int2
+    override val xz: Int2
         get() {
             return Int2(x, z)
         }
-    val displayString: String
+    override val normal: Double3
+        get() = this.toDouble3() / magnitude
+    override val abs: Int3
+        get() = Int3(abs(x), abs(y), abs(z))
+    override val minimumComponent: Int3
+        get() {
+            if (x <= y && x <= z) {
+                return Int3(1, 0, 0)
+            }
+            if (y <= x && y <= z) {
+                return Int3(0, 1, 0)
+            }
+            return Int3(0, 0, 1)
+        }
+    override val displayString: String
         get() = "$x, $y, $z"
 
-    operator fun plus(other: Int3): Int3 = Int3(x + other.x, y + other.y, z + other.z)
+    override operator fun plus(other: Vector3<Int>): Int3 = Int3(x + other.x, y + other.y, z + other.z)
+    override operator fun minus(other: Vector3<Int>): Int3 = Int3(x - other.x, y - other.y, z - other.z)
 
-    operator fun minus(other: Int3): Int3 = Int3(x - other.x, y - other.y, z - other.z)
-
-    operator fun times(other: Int3): Int3 = Int3(x * other.x, y * other.y, z * other.z)
-    operator fun times(other: Int): Int3 = Int3(x * other, y * other, z * other)
-
-    operator fun div(other: Int3): Int3 = Int3(x.floorDiv(other.x), y.floorDiv(other.y), z.floorDiv(other.z))
-    operator fun div(other: Int): Int3 = Int3(x.floorDiv(other), y.floorDiv(other), z.floorDiv(other))
-    // operator fun div(other: Float): Int3 = Int3(x / other, y / other, z / other)
+    override operator fun times(other: Int3): Int3 = Int3(x * other.x, y * other.y, z * other.z)
+    override operator fun times(other: Int): Int3 = Int3(x * other, y * other, z * other)
 
     override fun hashCode(): Int {
         val prime = 31
@@ -49,16 +53,12 @@ data class Int3(val x: Int, val y: Int, val z: Int) : Serializable {
         return z == other.z
     }
 
-    fun toDouble3(): Double3 {
-        return Double3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
-    }
-
-    fun normal(): Double3 {
-        return this.toDouble3() / magnitude
-    }
-
-    fun dot(other: Int3): Int {
+    override fun dot(other: Vector3<Int>): Int {
         return this.x * other.x + this.y * other.y + this.z * other.z
+    }
+
+    override operator fun unaryMinus(): Int3 {
+        return this * -1
     }
 
     companion object {

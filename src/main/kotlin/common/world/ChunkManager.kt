@@ -49,13 +49,19 @@ class ChunkManager {
     }
 
     fun worldPositionToChunkPosition(position: Double3): Int3 {
-        return (position / Config.chunkSize).toInt3()
+        return (position / Config.chunkSize).floor()
     }
     fun worldPositionToChunkPosition(position: Int3): Int3 {
-        return position / Config.chunkSize
+        return (position / Config.chunkSize).floor()
     }
     fun worldPositionToChunkPosition(position: Int2): Int2 {
-        return position / Config.chunkSize
+        return (position / Config.chunkSize).floor()
+    }
+    fun worldPositionToBlockPosition(worldPosition: Int3, chunkPosition: Int3): Int3 {
+        return worldPosition - (chunkPosition * Config.chunkSize)
+    }
+    fun worldPositionToBlockPosition(worldPosition: Int2, chunkPosition: Int2): Int2 {
+        return worldPosition - (chunkPosition * Config.chunkSize)
     }
 
     fun getChunk(chunkPosition: Int3): Chunk? {
@@ -78,7 +84,7 @@ class ChunkManager {
         val chunkPosition = worldPositionToChunkPosition(worldPosition)
         if (!isHeightmapChunkLoaded(chunkPosition))
             return null
-        val blockPosition = worldPosition - (chunkPosition * Config.chunkSize)
+        val blockPosition = worldPositionToBlockPosition(worldPosition, chunkPosition)
         return getHeightmapChunk(chunkPosition)?.getHeight(blockPosition)
     }
 

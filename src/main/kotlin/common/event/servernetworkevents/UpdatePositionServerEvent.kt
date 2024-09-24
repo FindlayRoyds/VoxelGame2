@@ -14,7 +14,7 @@ class UpdatePositionServerEvent(position: Double3): ServerEvent() {
     override fun event() {
         val position = Double3(x, y, z)
 
-        val chunkPosition = (position / Config.chunkSize).toInt3()
+        val chunkPosition = (position / Config.chunkSize).floor()
         // println(chunkPosition)
         player!!.position = position
 

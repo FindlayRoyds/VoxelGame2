@@ -1,29 +1,39 @@
 package common.math
 
-import java.io.Serializable
+import kotlin.math.abs
 import kotlin.math.sign
-import kotlin.math.sqrt
 
-data class Int2(val x: Int, val y: Int) : Serializable {
-    val magnitude: Double
-        get() {
-            return sqrt((x * x + y * y).toDouble())
-        }
-    val sign: Int2
+data class Int2(override val x: Int, override val y: Int) : Vector2<Int>(x, y) {
+    override val sign: Int2
         get() {
             return Int2(sign(x.toDouble()).toInt(), sign(y.toDouble()).toInt())
         }
+    override val normal: Double2
+        get() = this.toDouble2() / magnitude
+    override val abs: Int2
+        get() = Int2(abs(x), abs(y))
+    override val minimumComponent: Int2
+        get() {
+            if (x <= y) {
+                return Int2(1, 0)
+            }
+            return Int2(0, 1)
+        }
+    override val displayString: String
+        get() = "$x, $y"
 
-    operator fun plus(other: Int2): Int2 = Int2(x + other.x, y + other.y)
+    override operator fun plus(other: Vector2<Int>): Int2 = Int2(x + other.x, y + other.y)
+    override operator fun minus(other: Vector2<Int>): Int2 = Int2(x - other.x, y - other.y)
 
-    operator fun minus(other: Int2): Int2 = Int2(x - other.x, y - other.y)
+    override operator fun times(other: Int2): Int2 = Int2(x * other.x, y * other.y)
+    override operator fun times(other: Double2): Double2 = Double2(x * other.x, y * other.y)
+    override operator fun times(other: Int): Int2 = Int2(x * other, y * other)
+    override operator fun times(other: Double): Double2 = Double2(x * other, y * other)
 
-    operator fun times(other: Int2): Int2 = Int2(x * other.x, y * other.y)
-    operator fun times(other: Int): Int2 = Int2(x * other, y * other)
-
-    operator fun div(other: Int2): Int2 = Int2(x.floorDiv(other.x), y.floorDiv(other.y))
-    operator fun div(other: Int): Int2 = Int2(x.floorDiv(other), y.floorDiv(other))
-    // operator fun div(other: Float): Int3 = Int3(x / other, y / other, z / other)
+    override operator fun div(other: Int2): Double2 = Double2(x / other.x, y / other.y)
+    override operator fun div(other: Double2): Double2 = Double2(x / other.x, y / other.y)
+    override operator fun div(other: Int): Double2 = Double2(x.toDouble() / other, y.toDouble() / other)
+    override operator fun div(other: Double): Double2 = Double2(x / other, y / other)
 
     override fun hashCode(): Int {
         val prime = 31
@@ -41,7 +51,25 @@ data class Int2(val x: Int, val y: Int) : Serializable {
         return y == other.y
     }
 
-    fun toDouble2(): Double2 {
-        return Double2(this.x.toDouble(), this.y.toDouble())
+    override fun dot(other: Vector2<Int>): Int {
+        return this.x * other.x + this.y * other.y
+    }
+
+    override operator fun unaryMinus(): Int2 {
+        return this * -1
+    }
+
+    companion object {
+        val up: Int2
+            get() = Int2(0, 1)
+        val down: Int2
+            get() = Int2(0, -1)
+        val right: Int2
+            get() = Int2(1, 0)
+        val left: Int2
+            get() = Int2(-1, 0)
+
+        val zero: Int2
+            get() = Int2(0, 0)
     }
 }

@@ -1,24 +1,18 @@
 package common.math
 
-interface Vector<Type: Number> {
+import java.io.Serializable
+
+interface Vector<Type: Number> : Serializable {
     val magnitude: Double
     val sign: Vector<Int>
-    val normal: Type
+    val abs: Vector<Type>
+    val minimumComponent: Vector<Int>
+    val displayString: String
 
-    operator fun plus(other: Vector<Type>): Vector<Type>
-    operator fun minus(other: Vector<Type>): Vector<Type>
-    operator fun times(other: Vector<Type>): Vector<Type>
-    operator fun times(other: Type): Vector<Type>
-    operator fun div(other: Vector<Type>): Vector<Type>
-    operator fun div(other: Type): Vector<Type>
-
-    operator fun plusAssign(other: Vector<Type>)
-    operator fun minusAssign(other: Vector<Type>)
-    operator fun timesAssign(other: Vector<Type>)
-    operator fun divAssign(other: Vector<Type>)
+    fun ceil(): Vector<Int>
+    fun floor(): Vector<Int>
+    fun round(): Vector<Int>
 
     override fun hashCode(): Int
     override fun equals(other: Any?): Boolean
-    
-    fun dot(other: Vector<Type>): Type
 }
