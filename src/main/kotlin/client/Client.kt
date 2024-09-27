@@ -61,7 +61,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
 
         var frameCount = 0
         val frameCountStartTime = System.currentTimeMillis()
-        while (running) {// && !window.shouldClose()) {
+        while (running && !window.shouldClose) {
             val currentTime = System.currentTimeMillis()
             val deltaTimeMillis = currentTime - startTime
 
@@ -128,8 +128,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
     }
 
     private fun resize() {
-//        mainRenderer.resize(window.width, window.height)
-//        mainRenderer.render(window, world)
-//        window.update()
+        mainRenderer.resize(window.width, window.height)
+        mainRenderer.render(window, world)
+        window.update()
     }
 }

@@ -1,6 +1,5 @@
 package common.block.blocks
 
-import common.GameEngineProvider
 import common.block.models.BlockModel
 import common.math.Int3
 
@@ -36,21 +35,21 @@ class Stone : Block() {
 //            }
 //        }
 
-        val world =  GameEngineProvider.getGameEngine().world
-        val chunkManager = world.chunkManager
-
-        if (world.tick % 4 != 0) {
-            chunkManager.sendBlockUpdate(worldPosition)
-            return
-        }
-
-        val spreadDirections = listOf(Int3(0, -1, 0), Int3(1, 0, 0), Int3(-1, 0, 0), Int3(0, 0, 1), Int3(0, 0, -1))
-        for (spreadDirection in spreadDirections) {
-            val spreadWorldPosition = worldPosition + spreadDirection
-            if (chunkManager.getBlock(spreadWorldPosition) is Air) {
-                chunkManager.setBlock(spreadWorldPosition, Block.stone)
-            }
-        }
+//        val world =  GameEngineProvider.getGameEngine().world
+//        val chunkManager = world.chunkManager
+//
+//        if (world.tick % 4 != 0) {
+//            chunkManager.sendBlockUpdate(worldPosition)
+//            return
+//        }
+//
+//        val spreadDirections = listOf(Int3(0, -1, 0), Int3(1, 0, 0), Int3(-1, 0, 0), Int3(0, 0, 1), Int3(0, 0, -1))
+//        for (spreadDirection in spreadDirections) {
+//            val spreadWorldPosition = worldPosition + spreadDirection
+//            if (chunkManager.getBlock(spreadWorldPosition) is Air) {
+//                chunkManager.setBlock(spreadWorldPosition, Block.stone)
+//            }
+//        }
     }
 
     override fun copy(): Stone {

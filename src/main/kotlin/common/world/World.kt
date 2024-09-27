@@ -21,10 +21,10 @@ class World {
         val steps = (maxDistance * stepsPerVoxel).toInt()
 
         for (step in 0..steps) {
-            val worldPosition = (origin + direction * step / stepsPerVoxel).round()
+            val worldPosition = (origin + direction * step / stepsPerVoxel).floor()
             if (getVoxel(worldPosition)) {
                 val previousBlockStep = max(0, step - 1)
-                val previousBlock = (origin + direction * previousBlockStep / stepsPerVoxel).toInt3()
+                val previousBlock = (origin + direction * previousBlockStep / stepsPerVoxel).floor()
                 return Pair(worldPosition, previousBlock)
             }
         }

@@ -49,7 +49,7 @@ void main()
 
     switch (blockType) {
         case 3:
-            worldPos += vec3(0, 0.5 * sin(time * 5 + worldPos.x - worldPos.z) - 0.5, 0);
+            worldPos += vec3(0, 0 * (0.5 * sin(time * 5 + worldPos.x - worldPos.z) - 0.5), 0);
             break;
         default:
             break;

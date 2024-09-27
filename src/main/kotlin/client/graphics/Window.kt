@@ -1,5 +1,6 @@
 package client.graphics
 
+import client.graphics.gui.CrosshairGuiSection
 import client.graphics.gui.DebuggerGuiSection
 import client.graphics.input.KeyboardInput
 import client.graphics.input.MouseInput
@@ -30,8 +31,10 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
     private var glslVersion: String? = null
 
     var handle: Long = 0
+    val shouldClose: Boolean
+        get() = GLFW.glfwWindowShouldClose(handle)
 
-    val guiSections = listOf(DebuggerGuiSection())
+    val guiSections = listOf(DebuggerGuiSection(), CrosshairGuiSection())
 
     class WindowOptions(
         val compatibleProfile: Boolean,
@@ -57,7 +60,7 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
 
     fun declareGui() {
         for (guiSection in guiSections) {
-            guiSection.declareGui(this)
+            guiSection.display(this)
         }
     }
 
@@ -175,7 +178,6 @@ class Window(windowOptions: Window.WindowOptions, private val resizeFunction: ()
     }
 
     private fun windowCloseCallBack() {
-        println("closed!")
         GLFW.glfwSetWindowShouldClose(handle, true)
     }
 
