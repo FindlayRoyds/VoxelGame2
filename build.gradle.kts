@@ -50,7 +50,12 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("MainKt")
-    applicationDefaultJvmArgs = listOf("-XstartOnFirstThread")
+
+    applicationDefaultJvmArgs = if (System.getProperty("os.name").startsWith("Mac OS X") || System.getProperty("os.name").startsWith("Darwin")) {
+        listOf("-XstartOnFirstThread")
+    } else {
+        emptyList()
+    }
 }
 
 dependencies {
