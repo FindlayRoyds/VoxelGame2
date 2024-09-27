@@ -20,8 +20,10 @@ class DebuggerGuiSection : GuiSection {
         ImGui.begin("HUD", windowFlags)
 
         ImGui.text("fps: ${Debugger.fps}")
-        ImGui.text("position: ${Debugger.position}")
-        ImGui.text("chunk: ${Debugger.chunk}")
+        ImGui.text("position: ${Debugger.position.displayString}")
+        ImGui.text("chunk: ${Debugger.chunk.displayString}")
+        ImGui.text("average chunk meshing time: ${"%.${2}f".format(Debugger.averageChunkMeshingTimeNano / 1_000_000.0)}ms")
+        ImGui.text("average chunk generation time: ${"%.${2}f".format(Debugger.averageChunkGenerationTimeNano / 1_000_000.0)}ms")
 
         if (ImGui.button("Toggle wireframe")) {
             val client = GameEngineProvider.getGameEngine() as Client

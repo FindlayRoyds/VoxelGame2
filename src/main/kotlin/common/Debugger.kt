@@ -11,6 +11,14 @@ object Debugger {
     var position = Double3(0, 0, 0)
     var chunk = Int3(0, 0, 0)
 
+    var totalChunkMeshingTimeNano = 0L
+    var chunkMeshingCount = 0L
+    var averageChunkMeshingTimeNano = 0.0
+
+    var totalChunkGenerationTimeNano = 0L
+    var chunkGenerationCount = 0L
+    var averageChunkGenerationTimeNano = 0.0
+
     var menuVisible = false
 
     fun updateFps() {
@@ -18,5 +26,19 @@ object Debugger {
         val currentFps = 1_000_000_000 / (currentTime - previousRenderTime)
         fps = (fps * (1 - fpsFrameInfluence) + currentFps * fpsFrameInfluence).toInt()
         previousRenderTime = currentTime
+    }
+
+    fun logChunkMeshingTime(timeNano: Long) {
+        totalChunkMeshingTimeNano += timeNano
+        chunkMeshingCount += 1
+
+        averageChunkMeshingTimeNano = totalChunkMeshingTimeNano / chunkMeshingCount.toDouble()
+    }
+
+    fun logChunkGenerationTime(timeNano: Long) {
+        totalChunkGenerationTimeNano += timeNano
+        chunkGenerationCount += 1
+
+        averageChunkGenerationTimeNano = totalChunkGenerationTimeNano / chunkGenerationCount.toDouble()
     }
 }

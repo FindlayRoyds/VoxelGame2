@@ -21,7 +21,7 @@ class ChunkManager {
     var chunkMeshingExecutor: ChunkMeshingExecutor? = null
 
     fun createChunkMeshingExecutor() {
-        chunkMeshingExecutor = ChunkMeshingExecutor(4)
+        chunkMeshingExecutor = ChunkMeshingExecutor(1)
     }
 
     fun generateChunk(position: Int3) {

@@ -28,7 +28,7 @@ data class Double3(override val x: Double, override val y: Double, override val 
             return Int3(0, 0, 1)
         }
     override val displayString: String
-        get() = "$x, $y, $z"
+        get() = "%.${3}f, %.${3}f, %.${3}f".format(x, y, z)
 
     override operator fun plus(other: Vector3<Double>): Double3 = Double3(x + other.x, y + other.y, z + other.z)
     override operator fun minus(other: Vector3<Double>): Double3 = Double3(x - other.x, y - other.y, z - other.z)

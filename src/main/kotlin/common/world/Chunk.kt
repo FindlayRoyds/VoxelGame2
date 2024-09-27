@@ -3,6 +3,7 @@ package common.world
 import client.graphics.Mesh
 import client.graphics.MeshData
 import common.Config
+import common.Debugger
 import common.GameEngineProvider
 import common.block.blocks.Air
 import common.block.blocks.Block
@@ -56,6 +57,8 @@ class Chunk(val chunkPosition: Int3) {
     }
 
     fun buildMesh() {
+        val startTimeNano = System.nanoTime()
+
         if (GameEngineProvider.getGameEngine().isServer())
             return
         if (timesBuilt > 0) {
@@ -125,6 +128,9 @@ class Chunk(val chunkPosition: Int3) {
         meshData = MeshData(packedValues.toIntArray())
 
         gameEngine.world.chunkManager.uploadChunkToGPU(this)
+
+        val elapsedTime = System.nanoTime() - startTimeNano
+        Debugger.logChunkMeshingTime(elapsedTime)
     }
 
     fun uploadToGPU() {
@@ -156,6 +162,8 @@ class Chunk(val chunkPosition: Int3) {
 //    }
 
     fun generate() {
+        val startTimeNano = System.nanoTime()
+
         val noise = FastNoiseLite()
         noise.SetSeed(gameEngine.world.seed)
 
@@ -195,11 +203,14 @@ class Chunk(val chunkPosition: Int3) {
 //            val simplexNoiseResult2 = noise.GetNoise(worldPosition.x.toFloat() * 3, worldPosition.y.toFloat() * 3, worldPosition.z.toFloat() * 3)
 //            noise.SetSeed(gameEngine.world.seed)
 //            if (simplexNoiseResult in -0.2.. 0.2 && simplexNoiseResult2 > 0.5) {
-//                 blockData[blockIndex] = 0.toChar()
+//                 blockPalette.set(blockPosition, Block.air)
 //            }
         }
 
         blockPalette.updateSingleBlockType()
+
+        val elapsedTime = System.nanoTime() - startTimeNano
+        Debugger.logChunkGenerationTime(elapsedTime)
     }
 
     fun loadFromBlockPalette(newPalette: BlockPalette) {

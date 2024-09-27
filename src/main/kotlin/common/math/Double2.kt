@@ -22,7 +22,7 @@ data class Double2(override val x: Double, override val y: Double) : Vector2<Dou
             return Int2(0, 1)
         }
     override val displayString: String
-        get() = "$x, $y"
+        get() = "%.${3}f, %.${3}f".format(x, y)
 
 
 
