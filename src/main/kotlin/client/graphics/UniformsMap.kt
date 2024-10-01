@@ -12,17 +12,30 @@ import org.lwjgl.system.MemoryStack
 class UniformsMap(private val programId: Int) {
     private val uniforms = HashMap<String, Int>()
 
+    private val warnings = HashSet<String>()
+    private fun printWarning(warning: String) {
+        if (warning in warnings)
+            return
+
+        println("UNIFORM MAP WARNING: $warning")
+        warnings.add(warning)
+    }
+
     fun createUniform(uniformName: String) {
         val uniformLocation = glGetUniformLocation(programId, uniformName)
         if (uniformLocation < 0) {
-            throw RuntimeException("Could not find uniform [$uniformName] in shader program [$programId]")
+            printWarning("Could not find uniform [$uniformName] in shader program [$programId]")
+            return
         }
         uniforms.put(uniformName, uniformLocation)
     }
 
     fun setUniform(uniformName: String, value: Matrix4d) {
         val location = uniforms[uniformName]
-            ?: throw RuntimeException("Could not find uniform [$uniformName]")
+        if (location == null) {
+            printWarning("Could not find uniform [$uniformName]")
+            return
+        }
 
         val buffer = BufferUtils.createFloatBuffer(16)
         value.get(buffer)
@@ -32,7 +45,10 @@ class UniformsMap(private val programId: Int) {
 
     fun setUniform(uniformName: String, value: Array<Vector3f>) {
         val location = uniforms[uniformName]
-            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+        if (location == null) {
+            printWarning("Could not find uniform [$uniformName]")
+            return
+        }
 
         val bufferSize = value.size *  3
         MemoryStack.stackPush().use { stack ->
@@ -48,7 +64,10 @@ class UniformsMap(private val programId: Int) {
 
     fun setUniform(uniformName: String, value: Int3) {
         val location = uniforms[uniformName]
-            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+        if (location == null) {
+            printWarning("Could not find uniform [$uniformName]")
+            return
+        }
 
         MemoryStack.stackPush().use { stack ->
             glUniform3i(location, value.x, value.y, value.z)
@@ -57,7 +76,10 @@ class UniformsMap(private val programId: Int) {
 
     fun setUniform(uniformName: String, value: Float) {
         val location = uniforms[uniformName]
-            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+        if (location == null) {
+            printWarning("Could not find uniform [$uniformName]")
+            return
+        }
 
         MemoryStack.stackPush().use { stack ->
             glUniform1f(location, value)
@@ -66,7 +88,10 @@ class UniformsMap(private val programId: Int) {
 
     fun setUniform(uniformName: String, value: Vector3f) {
         val location = uniforms[uniformName]
-            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+        if (location == null) {
+            printWarning("Could not find uniform [$uniformName]")
+            return
+        }
 
         MemoryStack.stackPush().use { stack ->
             glUniform3f(location, value.x, value.y, value.z)
@@ -75,7 +100,10 @@ class UniformsMap(private val programId: Int) {
 
     fun setUniform(uniformName: String, value: Array<Vector2f>) {
         val location = uniforms[uniformName]
-            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+        if (location == null) {
+            printWarning("Could not find uniform [$uniformName]")
+            return
+        }
 
         val bufferSize = value.size *  2
         MemoryStack.stackPush().use { stack ->
@@ -91,7 +119,10 @@ class UniformsMap(private val programId: Int) {
 
     fun setUniform(uniformName: String, value: Array<Int>) {
         val location = uniforms[uniformName]
-            ?: throw java.lang.RuntimeException("Could not find uniform [$uniformName]")
+        if (location == null) {
+            printWarning("Could not find uniform [$uniformName]")
+            return
+        }
 
         val bufferSize = value.size * 1
         MemoryStack.stackPush().use { stack ->

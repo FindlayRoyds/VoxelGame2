@@ -5,7 +5,7 @@
 out vec4 fragColor;
 
 in vec2 texCoord;
-in float texIndex;
+in float texIndexFloat;
 in vec3 normal;
 in vec3 viewDir;
 
@@ -19,6 +19,7 @@ float shininess = 32.0;
 
 void main()
 {
+    int texIndex = int(texIndexFloat);
     vec3 texCoord3D = vec3(texCoord, texIndex);
     vec4 originalColor = texture(textureArray, texCoord3D);
 

@@ -49,17 +49,9 @@ void main()
 
     switch (blockType) {
         default:
-            worldPos += vec3(0, 2 * (3 * sin(time * 0.2 + (worldPos.x - worldPos.z + worldPos.y) * 0.04) - 0.5), 0);
+//            worldPos += vec3(0, 2 * (3 * sin(time * 0.2 + (worldPos.x - worldPos.z + worldPos.y) * 0.04) - 0.5), 0);
             break;
     }
 
     gl_Position = projectionMatrix * viewMatrix * vec4(worldPos, 1.0);
-
-//    gl_Position = gl_Position - vec4(0, (1 - chunkVisibility) * 32, 0, 0);
-//    outColor = vec3(0.6, 0.23, 0.05);
-//    if (int(blockVertexID / 6) % 6 == 4 || int(blockVertexID / 6) % 6 == 5) {
-//        outColor = vec3(0.1, 0.75, 0.1);
-//    }
-
-    // outColor = vec3(float(int(blockVertexID / 6) % 6) / 6, float(int((blockVertexID) / 6 + 2) % 6)  / 6, float(int((blockVertexID) / 6 + 4) % 6) / 6);
 }
