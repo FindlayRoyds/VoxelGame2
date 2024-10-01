@@ -15,7 +15,7 @@ import kotlin.math.sin
 class Camera() {
     var upVector = Double3(0, 0, 0)
     var rightVector = Double3(0, 0, 0)
-    var position = Double3(-24.5, 0.0, 25.5)
+    var position = Double3(0.5, 0.5, 0.5)
         set(value) {
             Debugger.position = value
             Debugger.chunk = client.world.chunkManager.worldPositionToChunkPosition(value)

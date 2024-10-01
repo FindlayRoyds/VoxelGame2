@@ -2,6 +2,9 @@ package client.graphics
 
 import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL42.*
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.IntBuffer
 
 
 class Mesh(meshData: MeshData) {
@@ -69,7 +72,12 @@ class Mesh(meshData: MeshData) {
         glBindBuffer(GL_ARRAY_BUFFER, vboId)
         glBufferData(GL_ARRAY_BUFFER, meshData.packedData, GL_STATIC_DRAW)
         glEnableVertexAttribArray(0)
-        glVertexAttribPointer(0, 1, GL_INT, false, 0, 0)
+
+        val intBuffer = IntBuffer.allocate(meshData.packedData.size)
+        intBuffer.put(meshData.packedData)
+        intBuffer.flip()
+
+        glVertexAttribIPointer(0, 1, GL_INT, 0, intBuffer)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
