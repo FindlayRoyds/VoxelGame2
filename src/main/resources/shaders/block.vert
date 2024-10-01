@@ -48,10 +48,8 @@ void main()
     viewDir = -viewPos.xyz;
 
     switch (blockType) {
-        case 3:
-            worldPos += vec3(0, 0.1 * (0.5 * sin(time * 5 + worldPos.x - worldPos.z) - 0.5), 0);
-            break;
         default:
+            worldPos += vec3(0, 2 * (3 * sin(time * 0.2 + (worldPos.x - worldPos.z + worldPos.y) * 0.04) - 0.5), 0);
             break;
     }
 
