@@ -270,7 +270,10 @@ class MainRenderer(window: Window, width: Int, height: Int) {
         for (player in client.players.getPlayerList()) {
             if (player == client.players.localPlayer)
                 continue
-            selectionBoxUniformsMap.setUniform("selectionBoxPosition", (player.position - Double3(0.5, 0.5, 0.5)).toVector3f())
+
+            player.smoothedPosition += (player.position - player.smoothedPosition) * 0.2
+
+            selectionBoxUniformsMap.setUniform("selectionBoxPosition", (player.smoothedPosition - Double3(0.5, 0.5, 0.5)).toVector3f())
             glBindVertexArray(selectionBoxVaoId)
             glDrawArrays(GL_LINES, 0, 24)
             glBindVertexArray(0)

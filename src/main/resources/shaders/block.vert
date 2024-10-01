@@ -41,7 +41,7 @@ void main()
     vec3 pos = vertexPositionArray[vertexDataIndex];
     texCoord = textureCoordArray[vertexDataIndex];
     normal = normalVectorArray[vertexDataIndex];
-    texIndexFloat = float(textureIndexArray[vertexDataIndex]);
+    texIndexFloat = float(textureIndexArray[vertexDataIndex]) + 0.5;
     vec3 offset = vec3(int(blockPosition / (CHUNK_SIZE * CHUNK_SIZE)), int((blockPosition / CHUNK_SIZE)) % CHUNK_SIZE, blockPosition % CHUNK_SIZE);
     vec3 worldPos = pos + offset + WORLD_OFFSET + chunkPosition * CHUNK_SIZE;
     vec4 viewPos = viewMatrix * vec4(worldPos, 1.0);

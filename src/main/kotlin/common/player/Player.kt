@@ -7,6 +7,8 @@ import java.io.Serializable
 class Player(var userID: Int, var username: String) {
     var position = Double3(0, 0, 0)
 
+    var smoothedPosition = Double3(0, 0, 0)
+
     val loadedChunks = HashSet<Int3>()
 
     fun getTransferObject(isLocalPlayer: Boolean) = PlayerTransferObject(this, isLocalPlayer)
