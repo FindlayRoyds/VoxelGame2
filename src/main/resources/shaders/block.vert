@@ -1,7 +1,7 @@
 #version 410
 
-#define BLOCK_DATA_SIZE 42
-#define ARRAY_SIZE 6
+#define BLOCK_DATA_SIZE 36
+#define ARRAY_SIZE 7
 #define CHUNK_SIZE 32
 #define WORLD_OFFSET vec3(0.5, 0.5, 0.5)
 

@@ -3,7 +3,6 @@ package client.graphics.input
 import client.graphics.Window
 import client.graphics.input.action.*
 import common.block.blocks.Block
-import common.block.blocks.StoneSlab
 import org.lwjgl.glfw.GLFW.*
 
 
@@ -17,8 +16,8 @@ class KeyboardInput(private val window: Window) {
         GLFW_KEY_A to mutableListOf(MoveLeftAction()),
         GLFW_KEY_D to mutableListOf(MoveRightAction()),
         GLFW_KEY_ESCAPE to mutableListOf(EscapeAction()),
-        GLFW_KEY_E to mutableListOf(PlaceAction(Block.grass)),
-        GLFW_KEY_F to mutableListOf(PlaceAction(StoneSlab())),
+        GLFW_KEY_E to mutableListOf(PlaceAction(Block.stone)),
+        GLFW_KEY_F to mutableListOf(PlaceAction(Block.log)),
         GLFW_KEY_Q to mutableListOf(BreakAction()),
         GLFW_KEY_R to mutableListOf(RunAction()),
     )

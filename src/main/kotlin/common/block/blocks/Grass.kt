@@ -5,7 +5,7 @@ import common.block.models.VerticalPlaneCrossModel
 import common.math.Int3
 
 class Grass : Block() {
-    override val id: UByte = 2u
+    override val id: UByte = 4u
     override val models = listOf(VerticalPlaneCrossModel(6))
 
     override val isSolid = false

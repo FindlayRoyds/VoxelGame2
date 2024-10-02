@@ -39,7 +39,7 @@ class MainRenderer(window: Window, width: Int, height: Int) {
     var textureIndexArray = arrayOf<Int>()
 
 
-    private val blockDataArraysElementSize = 42
+    private val blockDataArraysElementSize = 36
 
     private var _client: Client? = null
     private val client: Client
@@ -106,7 +106,7 @@ class MainRenderer(window: Window, width: Int, height: Int) {
             listOf(
                 "src/main/resources/textures/blocks/grass-block-side.png",
                 "src/main/resources/textures/blocks/grass-block-top.png",
-                "src/main/resources/textures/blocks/oak-side-shaded.png",
+                "src/main/resources/textures/blocks/oak-side-shaded-warmer.png",
                 "src/main/resources/textures/blocks/stone.png",
                 "src/main/resources/textures/blocks/dirt.png",
                 "src/main/resources/textures/blocks/spruce-log-top.png",
@@ -152,7 +152,7 @@ class MainRenderer(window: Window, width: Int, height: Int) {
         val textureIndexes = arrayListOf<Int>()
 
         var modelIndex = 0
-        for (block in Block.blockList.sortedBy { it.id }) {
+        for (block in Block.blockList) {
             for (model in block.models) {
                 modelMap[model] = modelIndex
 
