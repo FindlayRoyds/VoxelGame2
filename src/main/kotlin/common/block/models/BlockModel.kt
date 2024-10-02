@@ -1,7 +1,7 @@
 package common.block.models
 
 import common.block.faces.FullModelFace
-import common.block.segments.EmptyModelSection
+import common.block.sections.EmptyModelSection
 
 class BlockModel: Model {
     val textureIds: List<Int>

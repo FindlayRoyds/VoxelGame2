@@ -1,4 +1,4 @@
-package common.block.segments
+package common.block.sections
 
 import common.block.Vertex
 import common.math.Double2

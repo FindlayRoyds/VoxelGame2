@@ -1,6 +1,6 @@
 package common.block.faces
 
-import common.block.segments.PlaneModelSection
+import common.block.sections.PlaneModelSection
 import common.math.Double2
 import common.math.Double3
 

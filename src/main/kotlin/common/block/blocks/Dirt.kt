@@ -23,7 +23,7 @@ class Dirt() : Block() {
             return
         val chunkManager = GameEngineProvider.getGameEngine().world.chunkManager
         val topBlock = chunkManager.getBlock(worldPosition + Int3.up)
-        if (topBlock is Air)
+        if (topBlock == null || !topBlock.isSolid)
             return
         val newDirt = copy()
         newDirt.isGrassy = false

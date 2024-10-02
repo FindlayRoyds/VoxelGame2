@@ -9,6 +9,7 @@ import common.math.Double2
 import common.math.Double3
 import org.joml.Matrix4d
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
 
 
@@ -21,6 +22,7 @@ class Camera() {
             Debugger.chunk = client.world.chunkManager.worldPositionToChunkPosition(value)
             field = value
         }
+    private var previousPosition = position
     var rotation = Double3(0, 0, 0)
     var viewMatrix = Matrix4d()
         get() {
@@ -81,28 +83,27 @@ class Camera() {
     }
 
     fun setSelectionBox() {
-        val raycastResult = client.world.raycast(position, lookVector, Config.characterReachDistance)
+        val raycastResult = client.world.raycast(position, lookVector * Config.characterReachDistance, true)
         client.mainRenderer.selectionBoxPosition = raycastResult?.first
     }
 
     fun pollEvents() {
         setSelectionBox()
 
-        val oldPosition = position.copy()
-//        val raycastResult = client.world.raycast(position, Double3(0, -1, 0), 1.6)
-//        if (raycastResult == null || fallSpeed < 0.0) {
-//            fallSpeed = min(fallSpeed + 0.012, 1.2)
-//            // position.y -= fallSpeed
-//        } else {
-//            fallSpeed = 0.0
-//            position.y = raycastResult.first.y.toDouble() + 2.55
-//        }
+        val raycastResult = client.world.raycast(position, Double3(0, -1.6, 0), false)
+        if (raycastResult == null || fallSpeed < 0.0) {
+            fallSpeed = min(fallSpeed + 0.0015, 1.2)
+             position -= Double3(0, fallSpeed, 0)
+        } else {
+            fallSpeed = 0.0
+            position = Double3(position.x, raycastResult.first.y.toDouble() + 2.55, position.z)
+        }
 
-        // if (oldPosition != position) {
-            // println("sending")
-        val updatePositionRequestEvent = UpdatePlayerPositionServerEvent(position)
-        val client = GameEngineProvider.getGameEngine() as Client
-        client.socketHandler.sendEvent(updatePositionRequestEvent)
-        // }
+         if ((previousPosition - position).magnitude > 0.2) {
+             val updatePositionRequestEvent = UpdatePlayerPositionServerEvent(position)
+             val client = GameEngineProvider.getGameEngine() as Client
+             client.socketHandler.sendEvent(updatePositionRequestEvent)
+             previousPosition = position
+         }
     }
 }

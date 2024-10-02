@@ -193,6 +193,14 @@ class Chunk(val chunkPosition: Int3) {
                 blockPalette.set(blockPosition, Block.dirt)
             } else if (height + worldPosition.y - 18 == 0) {
                 blockPalette.set(blockPosition, Block.dirt_grassy)
+            } else if (height + worldPosition.y - 19 == 0) {
+                noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2)
+                val simplexNoiseResult1 = noise.GetNoise(worldPosition.x * 79f, worldPosition.z * 79f)
+                if (simplexNoiseResult1 > 0.3) {
+                    blockPalette.set(blockPosition, Block.grass)
+                } else {
+                    blockPalette.set(blockPosition, Block.air)
+                }
             } else {
                 blockPalette.set(blockPosition, Block.air)
             }

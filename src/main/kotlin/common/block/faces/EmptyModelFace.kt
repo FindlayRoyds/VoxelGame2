@@ -1,6 +1,6 @@
 package common.block.faces
 
-import common.block.segments.ModelSection
+import common.block.sections.ModelSection
 
 class EmptyModelFace: ModelFace() {
     override val segments = listOf<ModelSection>()

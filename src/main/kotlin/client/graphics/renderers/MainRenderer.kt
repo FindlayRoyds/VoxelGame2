@@ -9,8 +9,10 @@ import common.block.models.Model
 import common.math.Double3
 import common.math.Int3
 import common.world.World
+import org.joml.Matrix4d
 import org.joml.Vector2f
 import org.joml.Vector3f
+import org.joml.Vector4d
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL41.*
 
@@ -87,9 +89,9 @@ class MainRenderer(window: Window, width: Int, height: Int) {
         blockUniformsMap.createUniform("time")
 
         selectionBoxUniformsMap = UniformsMap(selectionBoxShaderProgram.programId)
-        selectionBoxUniformsMap.createUniform("projectionMatrix");
+        selectionBoxUniformsMap.createUniform("modelMatrix")
+        selectionBoxUniformsMap.createUniform("projectionMatrix")
         selectionBoxUniformsMap.createUniform("viewMatrix")
-        selectionBoxUniformsMap.createUniform("selectionBoxPosition")
 
         glClearColor(0.5f, 0.7f, 1.0f, 1.0f)
 
@@ -102,12 +104,13 @@ class MainRenderer(window: Window, width: Int, height: Int) {
 
         val textureArrayId = Texture.loadTextures(
             listOf(
-                "src/main/resources/textures/blocks/PodzolSide.png",
-                "src/main/resources/textures/blocks/Podzol.png",
+                "src/main/resources/textures/blocks/grass-block-side.png",
+                "src/main/resources/textures/blocks/grass-block-top.png",
                 "src/main/resources/textures/blocks/oak-side-shaded.png",
                 "src/main/resources/textures/blocks/stone.png",
                 "src/main/resources/textures/blocks/dirt.png",
-                "src/main/resources/textures/blocks/spruce_log_top.png"
+                "src/main/resources/textures/blocks/spruce-log-top.png",
+                "src/main/resources/textures/blocks/grass-transparency-fix-brighter.png",
             )
         )
         glActiveTexture(GL_TEXTURE0)
@@ -245,12 +248,22 @@ class MainRenderer(window: Window, width: Int, height: Int) {
 
         blockShaderProgram.unbind()
 
-        if (selectionBoxPosition != null) {
+
+        val nullSafePosition = selectionBoxPosition
+        if (nullSafePosition != null) {
             selectionBoxShaderProgram.bind()
+
+            val pos = nullSafePosition.toDouble3() + Double3(0.5, 0.5, 0.5)
+            val modelMatrix = Matrix4d(
+                Vector4d(1.0, 0.0, 0.0, 0.0),
+                Vector4d(0.0, 1.0, 0.0, 0.0),
+                Vector4d(0.0, 0.0, 1.0, 0.0),
+                Vector4d(pos.x, pos.y, pos.z, 1.0)
+            )
+            selectionBoxUniformsMap.setUniform("modelMatrix", modelMatrix)
 
             selectionBoxUniformsMap.setUniform("projectionMatrix", projection.matrix)
             selectionBoxUniformsMap.setUniform("viewMatrix", camera.viewMatrix)
-            selectionBoxUniformsMap.setUniform("selectionBoxPosition", selectionBoxPosition!!.toDouble3().toVector3f())
 
             glEnable(GL_POLYGON_OFFSET_LINE)
             glPolygonOffset(-10.0f, -10.0f)
@@ -273,7 +286,15 @@ class MainRenderer(window: Window, width: Int, height: Int) {
 
             player.smoothedPosition += (player.position - player.smoothedPosition) * 0.2
 
-            selectionBoxUniformsMap.setUniform("selectionBoxPosition", (player.smoothedPosition - Double3(0.5, 0.5, 0.5)).toVector3f())
+            val sp = player.smoothedPosition - Double3(0, 0.5, 0)
+            val modelMatrix = Matrix4d(
+                Vector4d(1.0, 0.0, 0.0, 0.0),
+                Vector4d(0.0, 2.0, 0.0, 0.0),
+                Vector4d(0.0, 0.0, 1.0, 0.0),
+                Vector4d(sp.x, sp.y, sp.z, 1.0)
+            )
+            selectionBoxUniformsMap.setUniform("modelMatrix", modelMatrix)
+
             glBindVertexArray(selectionBoxVaoId)
             glDrawArrays(GL_LINES, 0, 24)
             glBindVertexArray(0)

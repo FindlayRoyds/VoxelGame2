@@ -1,7 +1,7 @@
 package common.block.models
 
 import common.block.faces.EmptyModelFace
-import common.block.segments.EmptyModelSection
+import common.block.sections.EmptyModelSection
 
 class EmptyModel: Model(
     EmptyModelFace(), EmptyModelFace(),

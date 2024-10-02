@@ -1,7 +1,7 @@
 package common.block.faces
 
 import common.block.Vertex
-import common.block.segments.ModelSection
+import common.block.sections.ModelSection
 import common.math.Double3
 import java.io.Serializable
 

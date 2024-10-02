@@ -2,6 +2,7 @@ package client
 
 import client.graphics.Window
 import client.graphics.renderers.MainRenderer
+import common.Debugger
 import common.GameEngine
 import common.GameEngineProvider
 import common.event.clientevents.DisconnectClientEvent
@@ -30,6 +31,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
         socketHandler.sendEvent(ConnectionRequestServerEvent("MineOrienteer69"))
 
+        socketHandler.getLocalIPv4Address()?.let { Debugger.ipAddress = it }
+
         main()
     }
 
@@ -55,12 +58,8 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
         world.chunkManager.createChunkMeshingExecutor()
         world.chunkManager.chunkMeshingExecutor!!.run()
 
-        val targetFps = 60
         var startTime = System.currentTimeMillis()
-        val targetFrameTime = 1000.0 / targetFps
 
-        var frameCount = 0
-        val frameCountStartTime = System.currentTimeMillis()
         while (running && !window.shouldClose) {
             val currentTime = System.currentTimeMillis()
             val deltaTimeMillis = currentTime - startTime
@@ -81,16 +80,11 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
 
             startTime = currentTime
 
-            frameCount++
-
 //            val sleepTime = (targetFrameTime - deltaTimeMillis).coerceAtLeast(0.0)
 //            if (sleepTime > 0.0) {
 //                Thread.sleep(sleepTime.toLong())
 //            }
         }
-
-        val averageFps = frameCount / ((System.currentTimeMillis() - frameCountStartTime).toDouble()) * 1000
-        println("Average FPS: $averageFps")
 
         cleanup()
     }

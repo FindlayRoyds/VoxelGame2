@@ -16,9 +16,12 @@ class Player(var userID: Int, var username: String) {
     class PlayerTransferObject(player: Player, val isLocalPlayer: Boolean) : Serializable {
         val userID = player.userID
         val username = player.username
+        val position = player.position
 
         fun getPlayer(): Player {
-            return Player(userID, username)
+            val player = Player(userID, username)
+            player.position = position
+            return player
         }
     }
 }

@@ -1,5 +1,6 @@
 package client.graphics
 
+import common.math.Double3
 import common.math.Int3
 import org.joml.Matrix4d
 import org.joml.Vector2f
@@ -86,7 +87,22 @@ class UniformsMap(private val programId: Int) {
         }
     }
 
-    fun setUniform(uniformName: String, value: Vector3f) {
+//    fun setUniform(uniformName: String, value: Vector3f) {
+//        val location = uniforms[uniformName]
+//        if (location == null) {
+//            printWarning("Could not find uniform [$uniformName]")
+//            return
+//        }
+//
+//        MemoryStack.stackPush().use { stack ->
+//            glUniform3f(location, value.x, value.y, value.z)
+//        }
+//    }
+
+    /*
+        Will down cast the values in the Double3 to floats
+     */
+    fun setUniform(uniformName: String, value: Double3) {
         val location = uniforms[uniformName]
         if (location == null) {
             printWarning("Could not find uniform [$uniformName]")
@@ -94,7 +110,7 @@ class UniformsMap(private val programId: Int) {
         }
 
         MemoryStack.stackPush().use { stack ->
-            glUniform3f(location, value.x, value.y, value.z)
+            glUniform3f(location, value.x.toFloat(), value.y.toFloat(), value.z.toFloat())
         }
     }
 

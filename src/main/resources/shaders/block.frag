@@ -23,6 +23,9 @@ void main()
     vec3 texCoord3D = vec3(texCoord, texIndex);
     vec4 originalColor = texture(textureArray, texCoord3D);
 
+    if (originalColor.a < 0.5)
+        discard;
+
     float brightness = max(0, dot(normal, sunDirection));
     vec3 scaledBrightness = (lightValue - shadowValue) * brightness + shadowValue;
 //
@@ -39,7 +42,4 @@ void main()
     fragColor = modifiedColor;
 
     fragColor = mix(vec4(0.5, 0.7, 1.0, 1.0), fragColor, chunkVisibility);
-
-    if (fragColor.a == 0.0)
-        discard;
 }

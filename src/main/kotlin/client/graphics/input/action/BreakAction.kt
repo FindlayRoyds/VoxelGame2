@@ -12,7 +12,7 @@ class BreakAction: Action() {
     override fun execute() {
         val client = GameEngineProvider.getGameEngine() as Client
         val camera = client.mainRenderer.camera
-        val raycastResult = client.world.raycast(camera.position, camera.lookVector, Config.characterReachDistance)
+        val raycastResult = client.world.raycast(camera.position, camera.lookVector * Config.characterReachDistance, true)
 
         if (raycastResult != null) {
             val (breakPosition, _) = raycastResult

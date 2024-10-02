@@ -18,6 +18,7 @@ class DebuggerGuiSection : GuiSection(true) {
         ImGui.text("chunk: ${Debugger.chunk.displayString}")
         ImGui.text("average chunk meshing time: ${"%.${2}f".format(Debugger.averageChunkMeshingTimeNano / 1_000_000.0)}ms")
         ImGui.text("average chunk generation time: ${"%.${2}f".format(Debugger.averageChunkGenerationTimeNano / 1_000_000.0)}ms")
+        ImGui.text("client IPv4 address: ${Debugger.ipAddress}")
 
         if (ImGui.button("Toggle wireframe")) {
             val client = GameEngineProvider.getGameEngine() as Client

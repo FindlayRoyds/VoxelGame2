@@ -7,10 +7,6 @@ class Stone : Block() {
     override val id: UByte = 2u
     override val models = listOf(BlockModel(3))
 
-    init {
-        println(models[0].id)
-    }
-
     override fun update(worldPosition: Int3) {
 //        val chunkManager = GameEngineProvider.getGameEngine().world.chunkManager
 //

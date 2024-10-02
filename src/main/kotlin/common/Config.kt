@@ -1,7 +1,7 @@
 package common
 
 object Config {
-    const val initialBlockPalletePackedArrayElementSizeInBits = 2
+    const val initialBlockPalletePackedArrayElementSizeInBits = 3
 
     const val cameraVerticalAngleLimit = 88
     const val useVSync = true
@@ -14,7 +14,7 @@ object Config {
     const val unloadDistance = 2
 
     const val mouseSensitivity = 0.005
-    const val characterFlySpeed = 8.0
+    const val characterFlySpeed = 5.0
     const val characterReachDistance = 5.0
 
     // AUTOMATIC CONFIG

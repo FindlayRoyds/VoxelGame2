@@ -19,6 +19,8 @@ object Debugger {
     var chunkGenerationCount = 0L
     var averageChunkGenerationTimeNano = 0.0
 
+    var ipAddress = "Unknown"
+
     var menuVisible = false
 
     fun updateFps() {

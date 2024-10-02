@@ -15,12 +15,10 @@ class SetupGameClientEvent(players: Players, sendingToUserId: Int) : ClientEvent
     override fun event() {
         for (playerTransferObject in playerTransferObjects) {
             val player = playerTransferObject.getPlayer()
-            client!!.players.addPlayer(player)
+            client.players.addPlayer(player)
             if (playerTransferObject.isLocalPlayer) {
-                client!!.players.localPlayer = player
+                client.players.localPlayer = player
             }
         }
-
-        println(client!!.players.getPlayerList())
     }
 }

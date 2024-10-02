@@ -3,7 +3,7 @@ package common.block.models
 import common.block.faces.EmptyModelFace
 import common.block.faces.FullModelFace
 import common.block.faces.HalfModelFace
-import common.block.segments.PlaneModelSection
+import common.block.sections.PlaneModelSection
 import common.math.Double2
 import common.math.Double3
 

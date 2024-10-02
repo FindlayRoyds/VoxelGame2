@@ -8,6 +8,8 @@ abstract class Block: Serializable {
     abstract val id: UByte
     abstract val models: List<Model>
 
+    open val isSolid = true
+
     val name: String
         get() {
             return this::class.simpleName!!
@@ -31,9 +33,10 @@ abstract class Block: Serializable {
             val dirt_grassy = Dirt(isGrassy = true)
         val stone = Stone()
         val stoneSlab = StoneSlab()
+        val grass = Grass()
 
         val blockList = listOf(
-            air, dirt, stone, stoneSlab
+            air, dirt, stone, stoneSlab, grass
         )
 
         val blockNeighbors = arrayListOf(Int3(0, 0, -1), Int3(0, 0, 1), Int3(-1, 0, 0), Int3(1, 0, 0), Int3(0, -1, 0), Int3(0, 1, 0))
