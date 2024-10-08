@@ -80,10 +80,10 @@ class MainRenderer(window: Window, width: Int, height: Int) {
         blockUniformsMap = UniformsMap(blockShaderProgram.programId)
         blockUniformsMap.createUniform("projectionMatrix");
         blockUniformsMap.createUniform("viewMatrix")
-        blockUniformsMap.createUniform("vertexPositionArray")
-        blockUniformsMap.createUniform("textureCoordArray")
-        blockUniformsMap.createUniform("textureIndexArray")
-        blockUniformsMap.createUniform("normalVectorArray")
+//        blockUniformsMap.createUniform("vertexPositionArray")
+//        blockUniformsMap.createUniform("textureCoordArray")
+//        blockUniformsMap.createUniform("textureIndexArray")
+//        blockUniformsMap.createUniform("normalVectorArray")
         blockUniformsMap.createUniform("chunkPosition")
         blockUniformsMap.createUniform("chunkVisibility")
         blockUniformsMap.createUniform("time")
@@ -97,10 +97,72 @@ class MainRenderer(window: Window, width: Int, height: Int) {
 
         generateModelData()
 
-        blockUniformsMap.setUniform("vertexPositionArray", vertexPositionArray)
-        blockUniformsMap.setUniform("textureCoordArray", textureCoordArray)
-        blockUniformsMap.setUniform("textureIndexArray", textureIndexArray)
-        blockUniformsMap.setUniform("normalVectorArray", normalVectorArray)
+        // Vertex position ubo
+        val vertexPositionBlock = glGetUniformBlockIndex(blockShaderProgram.programId, "VertexPositionBlock")
+        glUniformBlockBinding(blockShaderProgram.programId, vertexPositionBlock, 0)
+        val vertexPositionUboId = glGenBuffers()
+        glBindBuffer(GL_UNIFORM_BUFFER, vertexPositionUboId)
+        val vertexPositionFloatArray = FloatArray(vertexPositionArray.size * 4) {
+            if (it % 4 == 0) {
+                vertexPositionArray[it / 4].x
+            } else if (it % 4 == 1) {
+                vertexPositionArray[it / 4].y
+            } else {
+                vertexPositionArray[it / 4].z
+            }
+        }
+        glBufferData(GL_UNIFORM_BUFFER, vertexPositionFloatArray.size * 4L, GL_STATIC_DRAW)
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, vertexPositionUboId)
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, vertexPositionFloatArray)
+
+        // Texture Coord ubo
+        val blockDataBlock = glGetUniformBlockIndex(blockShaderProgram.programId, "TextureCoordBlock")
+        glUniformBlockBinding(blockShaderProgram.programId, blockDataBlock, 1)
+        val textureCoordUboId = glGenBuffers()
+        glBindBuffer(GL_UNIFORM_BUFFER, textureCoordUboId)
+        val textureCoordFloatArray = FloatArray(textureCoordArray.size * 4) {
+            if (it % 4 == 0) {
+                textureCoordArray[it / 4].x
+            } else {
+                textureCoordArray[it / 4].y
+            }
+        }
+        glBufferData(GL_UNIFORM_BUFFER, textureCoordFloatArray.size * 4L, GL_STATIC_DRAW)
+        glBindBufferBase(GL_UNIFORM_BUFFER, 1, textureCoordUboId)
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, textureCoordFloatArray)
+
+        // Texture index ubo
+        val textureIndexBlock = glGetUniformBlockIndex(blockShaderProgram.programId, "TextureIndexBlock")
+        glUniformBlockBinding(blockShaderProgram.programId, textureIndexBlock, 2)
+        val textureIndexUboId = glGenBuffers()
+        glBindBuffer(GL_UNIFORM_BUFFER, textureIndexUboId)
+        val textureIndexIntArray = IntArray(textureIndexArray.size * 4) { textureIndexArray[it / 4] }
+        glBufferData(GL_UNIFORM_BUFFER, textureIndexIntArray.size * 4L, GL_STATIC_DRAW)
+        glBindBufferBase(GL_UNIFORM_BUFFER, 2, textureIndexUboId)
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, textureIndexIntArray)
+
+        // Vertex position ubo
+        val normalVectorBlock = glGetUniformBlockIndex(blockShaderProgram.programId, "NormalVectorBlock")
+        glUniformBlockBinding(blockShaderProgram.programId, normalVectorBlock, 3)
+        val normalVectorUboId = glGenBuffers()
+        glBindBuffer(GL_UNIFORM_BUFFER, normalVectorUboId)
+        val normalVectorFloatArray = FloatArray(normalVectorArray.size * 4) {
+            if (it % 4 == 0) {
+                normalVectorArray[it / 4].x
+            } else if (it % 4 == 1) {
+                normalVectorArray[it / 4].y
+            } else {
+                normalVectorArray[it / 4].z
+            }
+        }
+        glBufferData(GL_UNIFORM_BUFFER, normalVectorFloatArray.size * 4L, GL_STATIC_DRAW)
+        glBindBufferBase(GL_UNIFORM_BUFFER, 3, normalVectorUboId)
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, normalVectorFloatArray)
+
+//        blockUniformsMap.setUniform("vertexPositionArray", vertexPositionArray)
+//        blockUniformsMap.setUniform("textureCoordArray", textureCoordArray)
+//        blockUniformsMap.setUniform("textureIndexArray", textureIndexArray)
+//        blockUniformsMap.setUniform("normalVectorArray", normalVectorArray)
 
         val textureArrayId = Texture.loadTextures(
             listOf(

@@ -19,10 +19,26 @@ out vec3 viewDir;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
-uniform vec3 vertexPositionArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
-uniform vec2 textureCoordArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
-uniform int textureIndexArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
-uniform vec3 normalVectorArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+//uniform vec3 vertexPositionArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+//uniform vec2 textureCoordArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+//uniform int textureIndexArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+//uniform vec3 normalVectorArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+
+layout(std140) uniform VertexPositionBlock {
+    vec3 vertexPositionArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+};
+
+layout(std140) uniform TextureCoordBlock {
+    vec2 textureCoordArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+};
+
+layout(std140) uniform TextureIndexBlock {
+    int textureIndexArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+};
+
+layout(std140) uniform NormalVectorBlock {
+    vec3 normalVectorArray[ARRAY_SIZE * BLOCK_DATA_SIZE];
+};
 
 uniform ivec3 chunkPosition;
 uniform float chunkVisibility;
