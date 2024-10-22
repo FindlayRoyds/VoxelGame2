@@ -8,7 +8,7 @@ import server.Server
 
 class SetBlockServerEvent(val position: Int3, val block: Block) : ServerEvent() {
     override fun event() {
-        val server = GameEngineProvider.getGameEngine() as Server
+        val server = GameEngineProvider.gameEngine as Server
         server.world.chunkManager.setBlock(position, block)
     }
 }

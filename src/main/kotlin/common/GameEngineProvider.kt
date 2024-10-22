@@ -2,12 +2,7 @@ package common
 
 object GameEngineProvider {
     private var currentGameEngine = ThreadLocal<GameEngine>()
-
-    fun setGameEngine(gameEngine: GameEngine) {
-        currentGameEngine.set(gameEngine)
-    }
-
-    fun getGameEngine() : GameEngine {
-        return currentGameEngine.get()
-    }
+    var gameEngine: GameEngine
+        get() = currentGameEngine.get()
+        set(value) = currentGameEngine.set(value)
 }

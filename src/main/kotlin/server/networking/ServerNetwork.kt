@@ -18,9 +18,9 @@ class ServerNetwork(port: Int, private val eventQueue: EventQueue) {
     private var listenerThread: Thread
 
     init {
-        val gameEngine = GameEngineProvider.getGameEngine()
+        val gameEngine = GameEngineProvider.gameEngine
         listenerThread = thread {
-            GameEngineProvider.setGameEngine(gameEngine)
+            GameEngineProvider.gameEngine = gameEngine
             this.listener()
         }
     }
@@ -46,14 +46,14 @@ class ServerNetwork(port: Int, private val eventQueue: EventQueue) {
     }
 
     fun sendEventToEveryone(event: Event) {
-        val server = GameEngineProvider.getGameEngine() as Server
+        val server = GameEngineProvider.gameEngine as Server
         for (player in server.players.getPlayerList())
             sendEventToPlayer(event, player)
 
     }
 
     fun sendEventToEveryoneExcluding(event: Event, excludedPlayer: Player) {
-        val server = GameEngineProvider.getGameEngine() as Server
+        val server = GameEngineProvider.gameEngine as Server
         for (player in server.players.getPlayerList())
             if (player != excludedPlayer)
                 sendEventToPlayer(event, player)
@@ -69,13 +69,13 @@ class ServerNetwork(port: Int, private val eventQueue: EventQueue) {
     private fun listener() {
         while (true) {
             val clientSocket = serverSocket.accept()
-            val gameEngine = GameEngineProvider.getGameEngine()
+            val gameEngine = GameEngineProvider.gameEngine
             val userID = gameEngine.players.getNextUserID()
             socketToUserIDMap[clientSocket] = userID
             userIDToSocketMap[userID] = clientSocket
 
             thread {
-                GameEngineProvider.setGameEngine(gameEngine)
+                GameEngineProvider.gameEngine = gameEngine
                 val socketHandler = SocketHandler(clientSocket, eventQueue)
                 socketHandlers[clientSocket] = socketHandler
             }

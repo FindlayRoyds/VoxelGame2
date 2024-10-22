@@ -15,12 +15,12 @@ class ChunkMeshingExecutor(private val numThreads: Int) {
 
     fun run() {
         running = true
-        val gameEngine = GameEngineProvider.getGameEngine()
+        val gameEngine = GameEngineProvider.gameEngine
         for (i in 0..<numThreads) {
             threadPool.execute {
-                GameEngineProvider.setGameEngine(gameEngine)
+                GameEngineProvider.gameEngine = gameEngine
                 while (running) {
-//                    val client = GameEngineProvider.getGameEngine() as Client
+//                    val client = GameEngineProvider.gameEngine as Client
 //                    val playerPosition = client.renderer.camera.position
 //
 //                    var closestChunk: Chunk? = null
@@ -42,7 +42,7 @@ class ChunkMeshingExecutor(private val numThreads: Int) {
                     chunk.buildMesh()
                     // println(chunkQueue.size)
 
-//                    val client = GameEngineProvider.getGameEngine() as Client
+//                    val client = GameEngineProvider.gameEngine as Client
 //                    val playerPosition = client.renderer.camera.position
 //
 //

@@ -19,9 +19,9 @@ class SocketHandler(private val socket: Socket, private val eventQueue: EventQue
     private var listenerThread: Thread
 
     init {
-        val gameEngine = GameEngineProvider.getGameEngine()
+        val gameEngine = GameEngineProvider.gameEngine
         listenerThread = thread {
-            GameEngineProvider.setGameEngine(gameEngine)
+            GameEngineProvider.gameEngine = gameEngine
             this.listener()
         }
     }
@@ -57,7 +57,7 @@ class SocketHandler(private val socket: Socket, private val eventQueue: EventQue
                 }
             }
         } catch (exception: Exception) {
-            val isServer = GameEngineProvider.getGameEngine().isServer()
+            val isServer = GameEngineProvider.gameEngine.isServer()
             println("Exception in socket handler listener: $exception.")
             println("Is server: ${isServer}")
             if (!isServer) {

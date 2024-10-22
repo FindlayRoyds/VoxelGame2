@@ -26,7 +26,7 @@ class Client(serverAddress: String, serverPort: Int): GameEngine() {
 
     init {
         running = true
-        GameEngineProvider.setGameEngine(this)
+        GameEngineProvider.gameEngine = this
 
         socketHandler = SocketHandler(Socket(serverAddress, serverPort), eventQueue)
         socketHandler.sendEvent(ConnectionRequestServerEvent("MineOrienteer69"))

@@ -7,7 +7,7 @@ import server.Server
 
 class DisconnectServerEvent : ServerEvent() {
     override fun event() {
-        val server = GameEngineProvider.getGameEngine() as Server
+        val server = GameEngineProvider.gameEngine as Server
         val userID = server.serverNetwork.getUserIDFromSocket(socket!!)
         if (userID != null) {
             val disconnectEvent = DisconnectClientEvent()

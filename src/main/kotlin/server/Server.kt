@@ -13,7 +13,7 @@ class Server(port: Int) : GameEngine() {
     val pointsInCircle: List<Int3> = pointsInCircle(Config.renderDistance)
 
     init {
-        GameEngineProvider.setGameEngine(this)
+        GameEngineProvider.gameEngine = this
         println("Server starting...")
 
         serverNetwork = ServerNetwork(port, eventQueue)

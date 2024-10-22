@@ -12,7 +12,7 @@ class Players {
     var localPlayer: Player? = null
 
     fun addPlayer(player: Player) {
-        val gameEngine = GameEngineProvider.getGameEngine()
+        val gameEngine = GameEngineProvider.gameEngine
         if (gameEngine.isServer()) {
             val server = gameEngine as Server
             val playerJoinedEvent = PlayerJoinedClientEvent(player)
@@ -38,7 +38,7 @@ class Players {
 
     fun removePlayer(player: Player) {
         removePlayerByUserID(player.userID)
-        val gameEngine = GameEngineProvider.getGameEngine()
+        val gameEngine = GameEngineProvider.gameEngine
         if (gameEngine.isServer()) {
             val server = gameEngine as Server
             val playerLeftEvent = PlayerLeftClientEvent(player.userID)

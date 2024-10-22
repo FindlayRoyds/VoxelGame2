@@ -45,7 +45,7 @@ class MainRenderer(window: Window, width: Int, height: Int) {
     private val client: Client
         get() {
             if (_client == null)
-                _client = GameEngineProvider.getGameEngine() as Client
+                _client = GameEngineProvider.gameEngine as Client
             return _client!!
         }
 

@@ -11,7 +11,7 @@ class Grass : Block() {
     override val isSolid = false
 
     override fun update(worldPosition: Int3) {
-        val chunkManager = GameEngineProvider.getGameEngine().world.chunkManager
+        val chunkManager = GameEngineProvider.gameEngine.world.chunkManager
         val blockBelow = chunkManager.getBlock(worldPosition + Int3(0, -1, 0)) ?: return
         if (!blockBelow.isSolid) {
             chunkManager.setBlock(worldPosition, Block.air)

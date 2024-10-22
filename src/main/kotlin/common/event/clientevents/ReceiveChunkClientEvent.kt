@@ -7,6 +7,6 @@ import common.world.Chunk
 class ReceiveChunkClientEvent(val transferObject: Chunk.ChunkTransferObject) : ClientEvent() {
     override fun event() {
         val newChunk = transferObject.getChunk()
-        GameEngineProvider.getGameEngine().world.chunkManager.setChunk(newChunk)
+        GameEngineProvider.gameEngine.world.chunkManager.setChunk(newChunk)
     }
 }

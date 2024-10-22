@@ -8,7 +8,7 @@ class Stone : Block() {
     override val models = listOf(BlockModel(3))
 
     override fun update(worldPosition: Int3) {
-//        val chunkManager = GameEngineProvider.getGameEngine().world.chunkManager
+//        val chunkManager = GameEngineProvider.gameEngine.world.chunkManager
 //
 //        if (chunkManager.getBlock(worldPosition - Int3(0, 1, 0)) is Air) {
 //            chunkManager.setBlock(worldPosition, Block.air)
@@ -31,7 +31,7 @@ class Stone : Block() {
 //            }
 //        }
 
-//        val world =  GameEngineProvider.getGameEngine().world
+//        val world =  GameEngineProvider.gameEngine.world
 //        val chunkManager = world.chunkManager
 //
 //        if (world.tick % 4 != 0) {

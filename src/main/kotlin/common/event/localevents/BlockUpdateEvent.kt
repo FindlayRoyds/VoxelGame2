@@ -6,7 +6,7 @@ import common.math.Int3
 
 class BlockUpdateEvent(val worldPosition: Int3): Event() {
     override fun event() {
-        val block = GameEngineProvider.getGameEngine().world.chunkManager.getBlock(worldPosition)
+        val block = GameEngineProvider.gameEngine.world.chunkManager.getBlock(worldPosition)
         block?.update(worldPosition)
     }
 }

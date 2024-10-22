@@ -7,7 +7,7 @@ class EscapeAction: Action() {
     override val onHold = true
 
     override fun execute() {
-        val client = GameEngineProvider.getGameEngine() as Client
+        val client = GameEngineProvider.gameEngine as Client
         // GLFW.glfwSetWindowShouldClose(client.window.handle, true)
         client.window.mouseInput.unFocusWindow()
     }

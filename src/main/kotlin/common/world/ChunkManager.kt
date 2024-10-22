@@ -112,7 +112,7 @@ class ChunkManager {
         val blockPosition = chunk.worldPositionToBlockPosition(worldPosition)
         chunk.setBlock(blockPosition, block)
 
-        val gameEngine = GameEngineProvider.getGameEngine()
+        val gameEngine = GameEngineProvider.gameEngine
         if (gameEngine.isServer()) {
             val server = gameEngine as Server
 
@@ -129,7 +129,7 @@ class ChunkManager {
         if (getBlock(worldPosition) == null)
             return
 
-        val gameEngine = GameEngineProvider.getGameEngine()
+        val gameEngine = GameEngineProvider.gameEngine
         gameEngine.eventQueue.addEvent(BlockUpdateEvent(worldPosition))
     }
 
@@ -151,7 +151,7 @@ class ChunkManager {
     }
 
     fun unloadChunks() {
-        val gameEngine = GameEngineProvider.getGameEngine()
+        val gameEngine = GameEngineProvider.gameEngine
         var playerList = gameEngine.players.getPlayerList()
         if (gameEngine.isClient()) {
             val client = gameEngine as Client

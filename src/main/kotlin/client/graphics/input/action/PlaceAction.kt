@@ -10,7 +10,7 @@ class PlaceAction(val block: Block): Action() {
     override val onHold = false
 
     override fun execute() {
-        val client = GameEngineProvider.getGameEngine() as Client
+        val client = GameEngineProvider.gameEngine as Client
         val camera = client.mainRenderer.camera
         val raycastResult = client.world.raycast(camera.position, camera.lookVector * Config.characterReachDistance, true)
 

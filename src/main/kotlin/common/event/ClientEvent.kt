@@ -9,7 +9,7 @@ abstract class ClientEvent : Event(), Serializable {
     protected val client: Client
         get() {
             if (_client == null)
-                _client = GameEngineProvider.getGameEngine() as Client
+                _client = GameEngineProvider.gameEngine as Client
             return _client!!
         }
 

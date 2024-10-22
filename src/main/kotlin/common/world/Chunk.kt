@@ -17,7 +17,7 @@ import kotlin.math.floor
 class Chunk(val chunkPosition: Int3) {
     var mesh: Mesh? = null
     var meshData: MeshData? = null
-    val gameEngine = GameEngineProvider.getGameEngine()
+    val gameEngine = GameEngineProvider.gameEngine
     val chunkManager = gameEngine.world.chunkManager
     private var blockPalette: BlockPalette
 
@@ -59,7 +59,7 @@ class Chunk(val chunkPosition: Int3) {
     fun buildMesh() {
         val startTimeNano = System.nanoTime()
 
-        if (GameEngineProvider.getGameEngine().isServer())
+        if (GameEngineProvider.gameEngine.isServer())
             return
         if (timesBuilt > 0) {
             this.timesBuilt++

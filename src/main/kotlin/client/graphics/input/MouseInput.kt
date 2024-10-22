@@ -20,7 +20,7 @@ class MouseInput(private val window: Window) {
     private val client: Client
         get() {
             if (_client == null)
-                _client = GameEngineProvider.getGameEngine() as Client
+                _client = GameEngineProvider.gameEngine as Client
             return _client!!
         }
 
@@ -59,7 +59,7 @@ class MouseInput(private val window: Window) {
 
             if (displacement.x != 0.0 || displacement.y != 0.0) {
 //                val mouseMovedEvent = MouseMovedEvent(displacement)
-//                val client = GameEngineProvider.getGameEngine() as Client
+//                val client = GameEngineProvider.gameEngine as Client
 //                client.eventQueue.addEvent(mouseMovedEvent)
 
                 client.mainRenderer.camera.addRotation(displacement * Config.mouseSensitivity)

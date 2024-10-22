@@ -21,7 +21,7 @@ class Dirt() : Block() {
     override fun update(worldPosition: Int3) {
         if (!isGrassy)
             return
-        val chunkManager = GameEngineProvider.getGameEngine().world.chunkManager
+        val chunkManager = GameEngineProvider.gameEngine.world.chunkManager
         val topBlock = chunkManager.getBlock(worldPosition + Int3.up)
         if (topBlock == null || !topBlock.isSolid)
             return

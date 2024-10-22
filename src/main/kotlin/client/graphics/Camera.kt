@@ -45,11 +45,11 @@ class Camera() {
 //    private val client: Client
 //        get() {
 //            if (_client == null)
-//                _client = GameEngineProvider.getGameEngine() as Client
+//                _client = GameEngineProvider.gameEngine as Client
 //            return _client!!
 //        }
 
-    private val client: Client by lazy { GameEngineProvider.getGameEngine() as Client }
+    private val client: Client by lazy { GameEngineProvider.gameEngine as Client }
 
     fun addRotation(x: Double, y: Double) {
         rotation += Double3(x, y, 0.0)
@@ -101,7 +101,7 @@ class Camera() {
 
          if ((previousPosition - position).magnitude > 0.2) {
              val updatePositionRequestEvent = UpdatePlayerPositionServerEvent(position)
-             val client = GameEngineProvider.getGameEngine() as Client
+             val client = GameEngineProvider.gameEngine as Client
              client.socketHandler.sendEvent(updatePositionRequestEvent)
              previousPosition = position
          }

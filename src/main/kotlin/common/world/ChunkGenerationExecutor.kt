@@ -16,10 +16,10 @@ class ChunkGenerationExecutor(private val numThreads: Int) {
 
     fun run() {
         running = true
-        val gameEngine = GameEngineProvider.getGameEngine()
+        val gameEngine = GameEngineProvider.gameEngine
         for (i in 0..<numThreads) {
             threadPool.execute {
-                GameEngineProvider.setGameEngine(gameEngine)
+                GameEngineProvider.gameEngine = gameEngine
                 while (running) {
 
                     val position = chunkQueue.take()
@@ -33,7 +33,7 @@ class ChunkGenerationExecutor(private val numThreads: Int) {
 
     fun getMinDistanceFromAllPlayer(chunkPosition: Int3): Double {
         val position = (chunkPosition * Config.chunkSize).toDouble3()
-        val gameEngine = GameEngineProvider.getGameEngine()
+        val gameEngine = GameEngineProvider.gameEngine
         return gameEngine.players.getPlayerList().minOf { (position - it.position).magnitude }
     }
 

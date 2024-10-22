@@ -21,7 +21,7 @@ class DebuggerGuiSection : GuiSection(true) {
         ImGui.text("client IPv4 address: ${Debugger.ipAddress}")
 
         if (ImGui.button("Toggle wireframe")) {
-            val client = GameEngineProvider.getGameEngine() as Client
+            val client = GameEngineProvider.gameEngine as Client
             client.mainRenderer.toggleWireframe()
         }
     }
