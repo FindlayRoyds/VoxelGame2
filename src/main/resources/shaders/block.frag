@@ -12,8 +12,8 @@ in vec3 viewDir;
 uniform sampler2DArray textureArray;
 uniform float chunkVisibility;
 
-vec3 shadowValue = vec3(0.65, 0.65, 0.75);
-vec3 lightValue = vec3(1.1, 1.1, 1.0);
+vec3 shadowValue = vec3(0.65, 0.65, 0.62);
+vec3 lightValue = vec3(1, 1, 1);
 vec3 sunDirection = normalize(vec3(1, 3, 2));
 float shininess = 32.0;
 
@@ -26,7 +26,7 @@ void main()
     if (originalColor.a < 0.5)
         discard;
 
-    float brightness = max(0, dot(normal, sunDirection));
+    float brightness = max(-0.1, dot(normal, sunDirection));
     vec3 scaledBrightness = (lightValue - shadowValue) * brightness + shadowValue;
 //
 //    // Calculate the reflection direction

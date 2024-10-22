@@ -58,6 +58,11 @@ vec3 randomVec3FromBlockPosition(vec3 index) {
     return vec3(rand1, rand2, rand3);
 }
 
+float randomFloatFromBlockPosition(vec3 index) {
+    float seed = index.x + index.y * 32 + index.z * 32*32;
+    return fract(sin(seed * 12.9898) * 43758.5453);
+}
+
 
 void main()
 {
@@ -71,18 +76,30 @@ void main()
     normal = normalVectorArray[vertexDataIndex];
     texIndexFloat = float(textureIndexArray[vertexDataIndex]) + 0.5;
     vec3 blockPosition = vec3(int(blockIndex / (CHUNK_SIZE * CHUNK_SIZE)), int((blockIndex / CHUNK_SIZE)) % CHUNK_SIZE, blockIndex % CHUNK_SIZE);
-    vec3 worldPos = pos + blockPosition + WORLD_OFFSET + chunkPosition * CHUNK_SIZE;
-    vec4 viewPos = viewMatrix * vec4(worldPos, 1.0);
-    viewDir = -viewPos.xyz;
+    vec3 worldBlockPosition = blockPosition + WORLD_OFFSET + chunkPosition * CHUNK_SIZE;
 
     switch (blockType) {
         case 5: // grass
-            worldPos += ((pos.y + 0.5) * vec3(0.2 * sin(time * 2 + (worldPos.x - worldPos.z) * 0.2), 0, 0.2 * cos(time * 1.7 + (worldPos.x - worldPos.z) * 0.2))) * sin(time / 4) * (1.2 + 0.3);
-            worldPos += (randomVec3FromBlockPosition(blockPosition) - vec3(0.5, 0, 0.5)) * vec3(0.5, 0, 0.5);
+            float randomRotation = randomFloatFromBlockPosition(worldBlockPosition) * 2 * 3.1415;
+            mat3 rotationMatrix = mat3(
+                vec3(cos(randomRotation), 0, sin(randomRotation)),
+                vec3(0, 1, 0),
+                vec3(-sin(randomRotation), 0, cos(randomRotation))
+            );
+            pos = rotationMatrix * pos;
+            normal = rotationMatrix * normal;
+
+            pos += ((pos.y + 0.5) * vec3(0.2 * sin(time * 2 + (worldBlockPosition.x - worldBlockPosition.z) * 0.2), 0, 0.2 * cos(time * 1.7 + (worldBlockPosition.x - worldBlockPosition.z) * 0.2))) * sin(time / 4) * (1.2 + 0.3);
+            pos += (randomVec3FromBlockPosition(worldBlockPosition) - vec3(0.5, 0, 0.5)) * vec3(0.5, 0, 0.5);
+            break;
         default:
-//            worldPos += vec3(0, 2 * (3 * sin(time * 0.2 + (worldPos.x - worldPos.z + worldPos.y) * 0.04) - 0.5), 0);
             break;
     }
+//    pos += vec3(0, 2 * (3 * sin(time * 0.6 + ((pos + worldBlockPosition).x - (pos + worldBlockPosition).z + (pos + worldBlockPosition).y) * 0.04) - 0.5), 0);
+
+    vec3 worldPos = pos + worldBlockPosition;
+    vec4 viewPos = viewMatrix * vec4(worldPos, 1.0);
+    viewDir = -viewPos.xyz;
 
     gl_Position = projectionMatrix * viewMatrix * vec4(worldPos, 1.0);
 }

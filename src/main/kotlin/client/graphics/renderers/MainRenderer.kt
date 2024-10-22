@@ -168,10 +168,10 @@ class MainRenderer(window: Window, width: Int, height: Int) {
             listOf(
                 "src/main/resources/textures/blocks/grass-block-side.png",
                 "src/main/resources/textures/blocks/grass-block-top.png",
-                "src/main/resources/textures/blocks/oak-side-shaded-warmer.png",
+                "src/main/resources/textures/blocks/stone-bricks.png",
                 "src/main/resources/textures/blocks/stone.png",
                 "src/main/resources/textures/blocks/dirt.png",
-                "src/main/resources/textures/blocks/spruce-log-top.png",
+                "src/main/resources/textures/blocks/stone-bricks.png",
                 "src/main/resources/textures/blocks/grass-transparency-fix-brighter.png",
             )
         )

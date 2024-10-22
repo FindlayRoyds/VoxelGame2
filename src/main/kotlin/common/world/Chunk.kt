@@ -79,6 +79,7 @@ class Chunk(val chunkPosition: Int3) {
         meshData = null
 
         val packedValues = ArrayList<Int>()
+        val lightValues = ArrayList<Int>()
 
         if (blockPalette.singleBlockType == null) {
             for ((block, blockPosition) in blockPalette.blocksWithPositions) {
@@ -176,12 +177,12 @@ class Chunk(val chunkPosition: Int3) {
                 val x = worldPosition.x.toFloat()
                 val y = worldPosition.z.toFloat()
                 noise.SetNoiseType(FastNoiseLite.NoiseType.Cellular)
-                val cellularNoiseResult = noise.GetNoise(x * 2, y * 2)
+                val cellularNoiseResult = noise.GetNoise(x * 3, y * 3)
                 noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2)
-                val simplexNoiseResult1 = noise.GetNoise(x, y)
+                val simplexNoiseResult1 = noise.GetNoise(x * 0.7f, y * 0.7f)
                 noise.SetSeed(gameEngine.world.seed + 2)
                 val simplexNoiseResult2 = noise.GetNoise(x / 4, y / 4)
-                height = floor(Math.min(cellularNoiseResult * -50 * (-0.5f * simplexNoiseResult2 + 0.5f) + 20 + simplexNoiseResult1 * 10, simplexNoiseResult1 * 7 + 50) + simplexNoiseResult2 * 40).toInt()
+                height = floor(Math.min(cellularNoiseResult * -50 * (-0.5f * simplexNoiseResult2 + 0.5f) + 20 + simplexNoiseResult1 * 20, simplexNoiseResult1 * 3 + 50) + simplexNoiseResult2 * 10).toInt()
                 var heightmapChunk = chunkManager.getHeightmapChunk(chunkPosition.xz)
                 if (heightmapChunk == null)
                     heightmapChunk = HeightmapChunk(chunkPosition.xz)
@@ -196,7 +197,7 @@ class Chunk(val chunkPosition: Int3) {
             } else if (height + worldPosition.y - 19 == 0) {
                 noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2)
                 val simplexNoiseResult1 = noise.GetNoise(worldPosition.x * 79f, worldPosition.z * 79f)
-                if (simplexNoiseResult1 > 0.75) {
+                if (simplexNoiseResult1 > 0.85) {
                     blockPalette.set(blockPosition, Block.grass)
                 } else {
                     blockPalette.set(blockPosition, Block.air)
