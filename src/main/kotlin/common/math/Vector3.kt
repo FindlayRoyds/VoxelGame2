@@ -17,6 +17,8 @@ abstract class Vector3<Type: Number>(open val x: Type, open val y: Type, open va
                     + z.toDouble() * z.toDouble()
             )
         }
+    override val manhattanMagnitude: Double
+        get() = x.toDouble() + y.toDouble()
     abstract override val sign: Vector3<Int>
     abstract val xz: Vector2<Type>
     abstract val normal: Vector3<Double>

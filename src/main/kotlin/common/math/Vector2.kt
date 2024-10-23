@@ -15,13 +15,15 @@ abstract class Vector2<Type: Number>(open val x: Type, open val y: Type) : Vecto
                 x.toDouble() * x.toDouble() + y.toDouble() * y.toDouble()
             )
         }
+    override val manhattanMagnitude: Double
+        get() = x.toDouble() + y.toDouble()
     abstract override val sign: Vector2<Int>
     abstract val normal: Vector2<Double>
     abstract override val abs: Vector2<Type>
     abstract override val minimumComponent: Vector2<Int>
 
     // Ideally these would use vector2<type>'s.
-    // However JVM type erasure makes this not possible as multiple methods have the same signature.
+    // However, JVM type erasure makes this not possible as multiple methods have the same signature.
     abstract operator fun plus(other: Vector2<Type>): Vector2<Type>
     abstract operator fun minus(other: Vector2<Type>): Vector2<Type>
 
