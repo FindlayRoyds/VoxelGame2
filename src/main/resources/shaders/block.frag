@@ -8,6 +8,7 @@ in vec2 texCoord;
 in float texIndexFloat;
 in vec3 normal;
 in vec3 viewDir;
+in float lightValueOut;
 
 uniform sampler2DArray textureArray;
 uniform float chunkVisibility;
@@ -26,8 +27,10 @@ void main()
     if (originalColor.a < 0.5)
         discard;
 
+    float aoBrightness = min(lightValueOut, 1);
+
     float brightness = max(-0.1, dot(normal, sunDirection));
-    vec3 scaledBrightness = (lightValue - shadowValue) * brightness + shadowValue;
+    vec3 scaledBrightness = ((lightValue - shadowValue) * brightness + shadowValue) * aoBrightness;
 //
 //    // Calculate the reflection direction
 //    vec3 reflectDir = reflect(-sunDirection, normal);

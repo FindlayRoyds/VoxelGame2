@@ -41,5 +41,12 @@ abstract class Block: Serializable {
         )
 
         val blockNeighbors = arrayListOf(Int3(0, 0, -1), Int3(0, 0, 1), Int3(-1, 0, 0), Int3(1, 0, 0), Int3(0, -1, 0), Int3(0, 1, 0))
+        val blockDiagonalNeighbors = listOf(-1, 0, 1).flatMap { x ->
+            listOf(-1, 0, 1).flatMap { y ->
+                listOf(-1, 0, 1).map { z ->
+                    Int3(x, y, z)
+                }
+            }
+        }.filter { it != Int3(0, 0, 0) }
     }
 }

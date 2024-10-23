@@ -4,25 +4,25 @@ import common.block.faces.FullModelFace
 import common.block.sections.EmptyModelSection
 
 class BlockModel: Model {
-    val textureIds: List<Int>
+    val textureNames: List<String>
 
-    constructor(textureId: Int) : super(
+    constructor(textureId: String) : super(
             bottomFace = FullModelFace(textureId), topFace = FullModelFace(textureId),
             leftFace = FullModelFace(textureId), rightFace = FullModelFace(textureId),
             backFace = FullModelFace(textureId), frontFace = FullModelFace(textureId),
             EmptyModelSection()
     ) {
-        textureIds = listOf(textureId, textureId, textureId, textureId, textureId, textureId)
+        textureNames = listOf(textureId, textureId, textureId, textureId, textureId, textureId)
         id = registerModel(this)
     }
 
-    constructor(topTextureId: Int, sidesTextureId: Int, bottomTextureId: Int) : super(
+    constructor(topTextureId: String, sidesTextureId: String, bottomTextureId: String) : super(
             bottomFace = FullModelFace(bottomTextureId), topFace = FullModelFace(topTextureId),
             leftFace = FullModelFace(sidesTextureId), rightFace = FullModelFace(sidesTextureId),
             backFace = FullModelFace(sidesTextureId), frontFace = FullModelFace(sidesTextureId),
             EmptyModelSection()
     ) {
-        textureIds = listOf(
+        textureNames = listOf(
             topTextureId, bottomTextureId,
             sidesTextureId, sidesTextureId,
             sidesTextureId, sidesTextureId)
@@ -30,6 +30,6 @@ class BlockModel: Model {
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is BlockModel && textureIds == other.textureIds
+        return other is BlockModel && textureNames == other.textureNames
     }
 }

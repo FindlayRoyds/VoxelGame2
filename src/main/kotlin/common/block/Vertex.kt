@@ -11,7 +11,7 @@ import kotlin.math.sin
 
 class Vertex(
     var position: Double3, var normal: Double3,
-    val textureIndex: Int, var textureCoord: Double2
+    val textureName: String, var textureCoord: Double2
 ): VertexCollection(), Serializable {
 
     fun translate(translation: Double3): Vertex {

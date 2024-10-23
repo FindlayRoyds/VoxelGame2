@@ -4,7 +4,7 @@ import common.block.models.BlockModel
 
 class Log : Block() {
     override val id: UByte = 5u
-    override val models = listOf(BlockModel(5, 2, 5))
+    override val models = listOf(BlockModel("spruce-log-top", "oak-side-shaded-warmer", "spruce-log-top"))
 
     override fun copy(): Log {
         return Log()

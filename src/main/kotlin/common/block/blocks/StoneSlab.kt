@@ -4,7 +4,7 @@ import common.block.models.SlabModel
 
 class StoneSlab : Block() {
     override val id: UByte = 3u
-    override val models = listOf(SlabModel(3))
+    override val models = listOf(SlabModel("stone"))
 
     override fun copy(): StoneSlab {
         return StoneSlab()

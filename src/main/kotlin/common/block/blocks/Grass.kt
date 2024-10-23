@@ -6,7 +6,7 @@ import common.math.Int3
 
 class Grass : Block() {
     override val id: UByte = 4u
-    override val models = listOf(VerticalPlaneCrossModel(6))
+    override val models = listOf(VerticalPlaneCrossModel("grass-transparency-fix-brighter"))
 
     override val isSolid = false
 

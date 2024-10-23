@@ -63,7 +63,7 @@ class Mesh(meshData: MeshData) {
 //        glVertexAttribPointer(2, 1, GL_INT, false, 0, 0)
 
         // Packed vertex Data VBO
-        val vboId = glGenBuffers()
+        var vboId = glGenBuffers()
         vboIdList.add(vboId)
         // val vertexIdsBuffer = stack.calloc(vertexIds.size)
         // vertexIdsBuffer.put(0, vertexIds)
@@ -77,6 +77,16 @@ class Mesh(meshData: MeshData) {
         glEnableVertexAttribArray(0)
 
         glVertexAttribIPointer(0, 1, GL_INT, 0, 0)
+
+        // Light values
+        vboId = glGenBuffers()
+        vboIdList.add(vboId)
+        // val blockPositionsBuffer = IntArray(blockPositions.size)
+        // blockPositionsBuffer.put(0, blockPositions)
+        glBindBuffer(GL_ARRAY_BUFFER, vboId)
+        glBufferData(GL_ARRAY_BUFFER, meshData.lightValues, GL_STATIC_DRAW)
+        glEnableVertexAttribArray(1)
+        glVertexAttribPointer(1, 1, GL_FLOAT, false, 0, 0)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)

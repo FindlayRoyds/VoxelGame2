@@ -8,5 +8,6 @@ data class MeshData(
 //    val vertexIds: IntArray,
 //    val blockPositions: IntArray,
 //    val blockTypes: IntArray,
-    val packedData: IntArray
+    val packedData: IntArray,
+    val lightValues: FloatArray
 )

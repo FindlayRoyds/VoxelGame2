@@ -5,7 +5,7 @@ import common.math.Int3
 
 class Stone : Block() {
     override val id: UByte = 2u
-    override val models = listOf(BlockModel(3))
+    override val models = listOf(BlockModel("stone"))
 
     override fun update(worldPosition: Int3) {
 //        val chunkManager = GameEngineProvider.gameEngine.world.chunkManager

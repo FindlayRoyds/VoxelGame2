@@ -8,8 +8,12 @@ import common.math.Int3
 class Dirt() : Block() {
     override val id: UByte = 1u
     override val models = listOf(
-        BlockModel(1, 0, 4),
-        BlockModel(4)
+        BlockModel(
+            "grass-block-top",
+            "grass-block-side",
+            "dirt"
+        ),
+        BlockModel("dirt")
     )
 
     var isGrassy = false

@@ -15,6 +15,7 @@ import org.joml.Vector3f
 import org.joml.Vector4d
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL41.*
+import java.io.File
 
 class MainRenderer(window: Window, width: Int, height: Int) {
     private val blockShaderProgram: ShaderProgram
@@ -95,6 +96,21 @@ class MainRenderer(window: Window, width: Int, height: Int) {
 
         glClearColor(0.5f, 0.7f, 1.0f, 1.0f)
 
+        val directory = File("src/main/resources/textures/blocks/")
+        val textureArrayId = Texture.loadFromDirectory(
+            directory
+        )
+//        val textureArrayId = Texture.loadTextures(
+//            listOf(
+//                "src/main/resources/textures/blocks/grass-block-side.png",
+//                "src/main/resources/textures/blocks/grass-block-top.png",
+//                "src/main/resources/textures/blocks/stone-bricks.png",
+//                "src/main/resources/textures/blocks/stone.png",
+//                "src/main/resources/textures/blocks/dirt.png",
+//                "src/main/resources/textures/blocks/stone-bricks.png",
+//                "src/main/resources/textures/blocks/grass-transparency-fix-brighter.png",
+//            )
+//        )
         generateModelData()
 
         // Vertex position ubo
@@ -164,17 +180,6 @@ class MainRenderer(window: Window, width: Int, height: Int) {
 //        blockUniformsMap.setUniform("textureIndexArray", textureIndexArray)
 //        blockUniformsMap.setUniform("normalVectorArray", normalVectorArray)
 
-        val textureArrayId = Texture.loadTextures(
-            listOf(
-                "src/main/resources/textures/blocks/grass-block-side.png",
-                "src/main/resources/textures/blocks/grass-block-top.png",
-                "src/main/resources/textures/blocks/stone-bricks.png",
-                "src/main/resources/textures/blocks/stone.png",
-                "src/main/resources/textures/blocks/dirt.png",
-                "src/main/resources/textures/blocks/stone-bricks.png",
-                "src/main/resources/textures/blocks/grass-transparency-fix-brighter.png",
-            )
-        )
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D_ARRAY, textureArrayId)
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
@@ -224,7 +229,7 @@ class MainRenderer(window: Window, width: Int, height: Int) {
                     vertexPositions.add(vertex.position.toVector3f())
                     normalVectors.add(vertex.normal.toVector3f())
                     textureCoords.add(vertex.textureCoord.toVector2f())
-                    textureIndexes.add(vertex.textureIndex)
+                    textureIndexes.add(Texture.getIdOf(vertex.textureName))
                     vertexIndex += 1
                 }
                 for (i in 0..<(blockDataArraysElementSize - vertexIndex)) {

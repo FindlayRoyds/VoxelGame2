@@ -5,6 +5,7 @@ import client.graphics.MeshData
 import common.Config
 import common.Debugger
 import common.GameEngineProvider
+import common.block.Vertex
 import common.block.blocks.Air
 import common.block.blocks.Block
 import common.block.faces.ModelFace
@@ -79,7 +80,7 @@ class Chunk(val chunkPosition: Int3) {
         meshData = null
 
         val packedValues = ArrayList<Int>()
-        val lightValues = ArrayList<Int>()
+        val lightValues = ArrayList<Float>()
 
         if (blockPalette.singleBlockType == null) {
             for ((block, blockPosition) in blockPalette.blocksWithPositions) {
@@ -112,6 +113,8 @@ class Chunk(val chunkPosition: Int3) {
 
                         val blockIndex = blockPositionToBlockIndex(blockPosition)
                         packedValues.add((blockIndex shl 12) or (blockType shl 8) or blockVertexID)
+
+                        lightValues.add(getAmbientOcclusion(vertex, blockPosition).toFloat())
                         vertexIndex += 1
                     }
                 }
@@ -121,17 +124,47 @@ class Chunk(val chunkPosition: Int3) {
 
                     val blockIndex = blockPositionToBlockIndex(blockPosition)
                     packedValues.add((blockIndex shl 12) or (blockType shl 8) or blockVertexID)
+                    lightValues.add(getAmbientOcclusion(vertex, blockPosition).toFloat())
                     vertexIndex += 1
                 }
             }
         }
 
-        meshData = MeshData(packedValues.toIntArray())
+        meshData = MeshData(packedValues.toIntArray(), lightValues.toFloatArray())
 
         gameEngine.world.chunkManager.uploadChunkToGPU(this)
 
         val elapsedTime = System.nanoTime() - startTimeNano
         Debugger.logChunkMeshingTime(elapsedTime)
+    }
+
+    fun getAmbientOcclusion(vertex: Vertex, blockPosition: Int3): Double {
+        var brightness = 2.0
+        for (neighborOffset in Block.blockDiagonalNeighbors) {
+//            if (vertex.normal.dot(neighborOffset.toDouble3()) < 0) {
+//                continue
+//            }
+            if (vertex.normal.dot(neighborOffset.toDouble3() - vertex.position) <= 0)
+                continue
+
+            val neighborWorldPosition = blockPositionToWorldPosition(blockPosition + neighborOffset)
+            val neighbor = chunkManager.getBlock(neighborWorldPosition)
+                ?: continue
+            if (!neighbor.isSolid)
+                continue
+            for (neighborVertex in neighbor.getModel().getVertices()) {
+                val neighborVertexPosition = neighborOffset.toDouble3() + neighborVertex.position
+                val offset = (neighborVertexPosition - vertex.position).abs
+                val distance = offset.x + offset.y + offset.z
+                if (distance < brightness) {
+                    brightness = distance
+                    if (brightness == 0.0) {
+                        return 0.0
+                    }
+                }
+            }
+        }
+        return brightness
     }
 
     fun uploadToGPU() {

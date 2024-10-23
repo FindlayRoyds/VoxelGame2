@@ -9,12 +9,14 @@
 //layout (location=1) in int blockPosition;
 //layout (location=2) in int blockType;
 layout (location=0) in int inputData;
+layout (location=1) in float lightValueIn;
 
 // out vec3 outColor;
 out vec2 texCoord;
 out float texIndexFloat;
 out vec3 normal;
 out vec3 viewDir;
+out float lightValueOut;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -102,4 +104,6 @@ void main()
     viewDir = -viewPos.xyz;
 
     gl_Position = projectionMatrix * viewMatrix * vec4(worldPos, 1.0);
+
+    lightValueOut = lightValueIn;
 }
