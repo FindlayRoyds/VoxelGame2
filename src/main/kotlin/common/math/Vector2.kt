@@ -3,10 +3,7 @@ package common.math
 import org.joml.Vector2d
 import org.joml.Vector2f
 import org.joml.Vector2i
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
+import kotlin.math.*
 
 abstract class Vector2<Type: Number>(open val x: Type, open val y: Type) : Vector<Type> {
     override val magnitude: Double
@@ -16,7 +13,7 @@ abstract class Vector2<Type: Number>(open val x: Type, open val y: Type) : Vecto
             )
         }
     override val manhattanMagnitude: Double
-        get() = x.toDouble() + y.toDouble()
+        get() = x.toDouble().absoluteValue + y.toDouble().absoluteValue
     abstract override val sign: Vector2<Int>
     abstract val normal: Vector2<Double>
     abstract override val abs: Vector2<Type>
