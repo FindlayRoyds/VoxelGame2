@@ -27,7 +27,7 @@ void main()
     if (originalColor.a < 0.5)
         discard;
 
-    float aoBrightness = min(lightValueOut, 1);
+    float aoBrightness = min(lightValueOut, 1) * 0.3 + (1 - 0.3);
 
     float brightness = max(-0.1, dot(normal, sunDirection));
     vec3 scaledBrightness = ((lightValue - shadowValue) * brightness + shadowValue) * aoBrightness;
