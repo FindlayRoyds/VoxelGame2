@@ -1,8 +1,9 @@
-package client.graphics.input
+package client.input
 
 import client.Client
 import client.graphics.Window
 import common.Config
+import common.Debugger
 import common.GameEngineProvider
 import common.math.Double2
 import org.lwjgl.glfw.GLFW.*
@@ -47,7 +48,7 @@ class MouseInput(private val window: Window) {
             leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS
             rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS
 
-            if (!windowFocused) {
+            if (!windowFocused && !Debugger.menuVisible) {
                 focusWindow()
             }
         }

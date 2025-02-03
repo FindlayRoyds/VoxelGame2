@@ -1,7 +1,7 @@
-package client.graphics.input
+package client.input
 
 import client.graphics.Window
-import client.graphics.input.action.*
+import client.input.action.*
 import common.block.blocks.Block
 import org.lwjgl.glfw.GLFW.*
 

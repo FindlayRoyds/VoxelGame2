@@ -1,4 +1,4 @@
-package client.graphics.input.action
+package client.input.action
 
 import common.Debugger
 

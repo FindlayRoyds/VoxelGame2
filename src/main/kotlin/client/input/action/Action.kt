@@ -1,4 +1,4 @@
-package client.graphics.input.action
+package client.input.action
 
 abstract class Action {
     // if true method will continuously be called each tick

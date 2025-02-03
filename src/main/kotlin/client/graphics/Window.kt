@@ -2,8 +2,8 @@ package client.graphics
 
 import client.graphics.gui.CrosshairGuiSection
 import client.graphics.gui.DebuggerGuiSection
-import client.graphics.input.KeyboardInput
-import client.graphics.input.MouseInput
+import client.input.KeyboardInput
+import client.input.MouseInput
 import common.Debugger
 import imgui.ImGui
 import imgui.flag.ImGuiConfigFlags
