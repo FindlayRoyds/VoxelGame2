@@ -1,4 +1,4 @@
-![image](https://github.com/FindlayRoyds/VoxelGame2/blob/main/src/main/resources/other/statue-and-house.png)
+![image](src/main/resources/other/statue-and-house-smaller.png)
 
 A very basic minecraft clone written in Kotlin. A refactor of my old VoxelGame1, which was written in c++.
 
