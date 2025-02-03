@@ -7,6 +7,7 @@ import org.joml.Vector4d
 import java.io.Serializable
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.sign
 import kotlin.math.sin
 
 class Vertex(
@@ -22,6 +23,7 @@ class Vertex(
     fun scale(scale: Double3): Vertex {
         position *= scale
         textureCoord *= Double2(scale.x, scale.z)
+        normal *= sign(scale.x * scale.y * scale.z) // Shouldn't work like this lol
         return this
     }
 
